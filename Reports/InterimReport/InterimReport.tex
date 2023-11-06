@@ -14,37 +14,80 @@
 % Page geometry
 \geometry{a4paper, margin=1in}
 
-% Document Information
-\title{Your Title Here}
-\author{Your Name}
-\date{\today} % or put a specific date
-
 \begin{document}
-\maketitle
 
-\begin{abstract}
-Your abstract goes here.
-\end{abstract}
+%Title Page
+\begin{titlepage}
+    \centering
+    \vspace*{5cm}
 
+    \Large
+    \textbf{Swarm Robotics: Exploration and Mapping in Simulated Environments}
+
+    \vspace{1cm}
+
+    Charlie Anthony [candNo: 246537]\\
+    Supervisor: Dr Chris Johnson
+
+    \vfill
+
+    \vspace{1cm}
+
+    \small
+    Interim report\\
+    Computer Science and Artificial Intelligence BSc
+
+    \includegraphics[width=0.3\linewidth]{sussex_logo.jpg} %Replace 'logo.jpg' with the path to your University of Sussex logo
+
+
+    \small
+    Department of Informatics and Engineering\\
+    University of Sussex\\
+    November 2023
+\end{titlepage}
+
+%Table of Contents
+\tableofcontents
+\newpage
+
+%Introduction
 \section{Introduction}
-\lipsum[1-2] % generates filler text
+Swarms exist everywhere in life. Nearly all organisms exhibit some form of swarming behaviours within their
+communities. Starlings display impressive organisational behaviour, positioning themselves with respect to the
+movement of their neighbours. Humans show swarm behaviours when moving in crowds, for example, moving around sports
+venues or exiting buildings in emergencies. No matter how hard you look, regardless if the context, swarms are
+typically present.\\
+These behaviours can also be artificially created in robotics. Within the realm of computing, parallelising
+processes is breaking barrier after barrier - swarm robotics brings the same benefits. Being able to divide and
+conquer a problem has the ability to reduce computational complexity by whole orders of magnitude. Therefore, it
+would be wasteful not to properly dedicate the time which this discipline deserves.\\
+My agents will be placed within close proximity inside a simulated environment and then allowed to explore and
+combine their findings; ultimately creating a visualization map of its environment. The agents will need to both
+navigate the environment and avoid collisions, whilst creating an internal representation of its surroundings. The
+best-case scenario for the swarm I am developing is a fully decentralised system in simulation.\\
+I will initially explore this problem by creating SLAM simulations, and then attempting to apply similar techniques
+to a centralised system. These initial simulations will employ techniques such as particle filters, loop closures
+and [insert something here] in order to create a base-line representation of the environment.
 
-\section{Background}
+\section{Professional and Ethical Considerations}
+\lipsum[1-2]
+
+\section{Related Work}
 \lipsum[3-4]
 
-\subsection{Subsection Title}
+\subsection{Requirements Analysis}
 \lipsum[5]
 
-\section{Methodology}
+\section{Project Plan}
 \lipsum[6-7]
 
-\section{Results}
+\section{Methods and Preliminary Results}
 \lipsum[8-9]
 
-\subsection{Subsection Title}
+\subsection{Supervisor Meetings}
 \lipsum[10]
 
-\section{Conclusion}
+\section{Appendices}
 \lipsum[11-12]
 
 % References
