@@ -10,6 +10,7 @@
 \usepackage{amssymb}        % for mathematical symbols
 \usepackage{hyperref}       % for hyperlinks
 \usepackage{lipsum}         % for generating filler text
+\usepackage{float}          % for better figure placement
 
 % Page geometry
 \geometry{a4paper, margin=1in}
@@ -81,11 +82,28 @@ any areas of concern with my supervisor.
 
 \section{Related Work}
 \subsection{SLAM}
+SLAM (Simultaneous Localisation and Mapping) is a technique used in robotics to create a map of an unknown environment.
+It is an important area of research in robotics as it is heavily used in autonomous vehicles, drones and vacuum cleaners;
+allowing agents to understand and navigate their environement effectively.\\
+SLAM can be broken down into two sub-problems: localisation and mapping. Localisation is the process of determining the
+location of a robot in its environment, whilst mapping is the process of constructing a map of the environment. The maps
+are constructed using data collected from sensors, such as cameras and laser scanners. A lot of existing work in SLAM is
+based on single robot applications, however, there is a growing interest in multi-agent SLAM. One of the greatest
+challenges in SLAM is crossing the simulation to reality gap, as in the real world, sensor readings are noisy and
+environments are dynamic, which increases the complexity of the problem.
+
+\subsection{Graph-based SLAM}
+It works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
+are usually received by a sensor, such as a camera or laser scanner. The robot then uses these measurements to create an
+internal representation of the map, by combining the measurements with its understanding of the route it has taken. This
+technique is used in many applications, such as autonomous vehicles, drones and vacuum cleaners.\\
+\subsection{Particle Filters}
 \subsection{Swarm}
+\subsection{Random Walks}
 
 \subsection{Requirements Analysis}
 %table with requirements and their justification
-\begin{table}[h!]
+\begin{table}[H]
     \centering
     \begin{tabular}{|p{0.2\linewidth}|p{0.7\linewidth}|}
         \hline
@@ -99,16 +117,24 @@ any areas of concern with my supervisor.
 
 
 \section{Project Plan}
-\lipsum[6-7]
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{gantt_chart.png}
+    \caption{Gantt chart showing the project plan}
+    \label{fig:gantt_chart}
+\end{figure}
+The execution of my project will be split into various phases, where each phase will focus on an area of development. The
+majority of the project will be software development, therefore a large portion time will be spent here. Figure
+\ref{fig:gantt_chart} shows the project plan, where the grey bars represent the time spent at each phase.
 
 \section{Methods and Preliminary Results}
-\lipsum[8-9]
+
 
 \subsection{Supervisor Meetings}
-\lipsum[10]
+
 
 \section{Appendices}
-\lipsum[11-12]
+
 
 \end{document}
 
