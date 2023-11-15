@@ -12,6 +12,7 @@
 \usepackage{lipsum}         % for generating filler text
 \usepackage{float}          % for better figure placement
 \usepackage{natbib}         % for better citations
+\usepackage{pdfpages}       % for including pdfs
 \bibliographystyle{unsrtnat}
 
 % Page geometry
@@ -29,7 +30,7 @@
 
     \vspace{1cm}
 
-    Charlie Anthony [candNo: 246537]\\
+    Charlie Anthony [CandNo: 246537]\\
     Supervisor: Dr Chris Johnson
 
 
@@ -42,7 +43,7 @@
     Interim report\\
     Computer Science and Artificial Intelligence BSc
 
-    \includegraphics[width=0.3\linewidth]{sussex_logo.jpg} %Replace 'logo.jpg' with the path to your University of Sussex logo
+    \includegraphics[width=0.3\linewidth]{sussex_logo.jpg}
 
 
     \small
@@ -82,26 +83,63 @@ My project maintains compliance towards all ethical considerations, as there is 
 humans. The majority of my project will be carried out in simulation, therefore no ethical approval is required. Should
 my project progress to physically implementing agents, considerations such as safety around the robots, will be considered.
 All tests will be carried out in an environment where people cannot be hit, therefore mitigating any trip hazards.\\
-Research in this project also complies with the BCS code of conduct, as it is within my professional competence, as it
-significantly relies upon knowledge obtained from modules such as "Acquired Intelligence and Adaptive Behaviour" and
-"Fundamentals of Machine Learning." Furthermore, I will develop my professional knowledge, skills and competence through
-communicating with my supervisor and ensuring all relevant gaps in knowledge are explored through reading extensively.\\
-To further maintain compliance with the BCS code of conduct, I accept all responsibility for my work, and will ensure that
-all work of colleagues is properly referenced. In order to help make research accessible, I will open-source all of my research
-on Github, allowing others to build upon my work. It can be found here: https://github.com/CharlieAnthony/Dissertation\\
+
+To ensure all elements of the BCS code of conduct are met, I have summarised each section and how I meet certain criteria. \\
+\subsection{Public Interest}
+As mentioned previously, my project has due regard for public health, as there is minimal external involvement from humans.
+Furthermore, no major privacy, security or wellbeing considerations are required due to the nature of this project. Third parties
+will be respected throughout the project with consistent citations and there will be no discrimination against anybody involved.
+Finally, I will promote equal access to the benefits of IT by open-sourcing my research once I have graduated. This will be accessible
+on my Github profile: \href{https://github.com/CharlieAnthony/}{https://github.com/CharlieAnthony/} \\
+\subsection{Professional Competence and Integrity}
+My project is within my professional competence, as it significantly relies upon knowledge obtained from modules such as "Acquired
+Intelligence and Adaptive Behaviour" and "Fundamentals of Machine Learning." Furthermore, I will develop my professional knowledge,
+skills and competence through communicating with my supervisor and ensuring all relevant gaps in knowledge are explored through
+reading extensively. As part of my background reading, I have made myself familiar with the BCS code of conduct and surrounding
+legistlation. I will comply with this throughout when carrying out my professional responsibilities. There will also
+be no unethical inducements offered or accepted throughout the project. \\
+\subsection{Duty to Relevant Authority}
+As the relevant authority will be the University of Sussex, I will comply with all relevant codes of conduct and legislation. I
+will exercise my professional judgement at all times, including avoidance of any situation that may give rise to a conflict of
+interest between myself and the university. I will also make it my responsibility to ensure all colleagues work is properly
+referenced in a bibliography at the end of my dissertation. \\
+\subsection{Duty to the Profession}
+Finally, I accept my duty to uphold the reputation of the profession. I will work to the best of my ability to ensure my project
+is complete to the highest possible standard. As mentioned previously, I will seek to improve professional standards through
+communication with my supervisor. This dissertation will be written with integrity and respect towards all members of BCS and colleagues
+of the profession. \\
+
 
 %Related Work
 \section{Related Work}
 \subsection{SLAM}
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{SLAM_agent} % First image
+        \caption[Short caption]{A visual representation of a robot scanning its environment \cite{SLAM_overview}}
+        \label{fig:SLAM_agent}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{SLAM_map} % Second image
+        \caption[Short caption]{The map (after loop closure) produced by the robot's SLAM algorithm of its environment \cite{SLAM_overview}}
+        \label{fig:SLAM_map}
+    \end{minipage}
+\end{figure}
+
 SLAM (Simultaneous Localisation and Mapping) is a technique used in robotics to create a map of an unknown environment.
 It is an important area of research in robotics as it is heavily used in autonomous vehicles, drones and vacuum cleaners;
-allowing agents to understand and navigate their environment effectively.\\
+allowing agents to understand and navigate their environment effectively. Figure \ref{fig:SLAM_agent} shows an example of a
+robot scanning its environment, with the sensors visually added to the image.\\
 SLAM can be broken down into two sub-problems: localisation and mapping. Localisation is the process of determining the
 location of a robot in its environment, whilst mapping is the process of constructing a map of the environment. The maps
-are constructed using data collected from sensors, such as cameras and laser scanners. A lot of existing work in SLAM is
-based on single robot applications, however, there is a growing interest in multi-agent SLAM. One of the greatest
-challenges in SLAM is crossing the simulation to reality gap, as in the real world, sensor readings are noisy and
-environments are dynamic, which increases the complexity of the problem.
+are constructed using data collected from sensors, such as cameras and laser scanners; Figure \ref{fig:SLAM_map} shows this.
+A lot of existing work in SLAM is based on single robot applications, however, there is a growing interest in multi-agent
+SLAM. One of the greatest challenges in SLAM is crossing the simulation to reality gap, as in the real world, sensor
+readings are noisy and environments are dynamic, which increases the complexity of the problem.
 
 \subsection{Graph-based SLAM}
 Graph-based SLAM is a technique used to create a map of an environment, by using a graph to represent the environment. It
@@ -280,10 +318,15 @@ Discussed potential algorithms, such as particle filters and graph-based SLAM. W
 ensuring that it remains both realistic and achievable. We also discussed the possibility of implementing physical agents,
 and where relevant resources could be found.
 \subsection{Meeting 3 - 14/11/2023}
-%TODO
+Started with feedback on the interim report - discussing the structure and content. After we discussed how the project will
+move forward and the next steps to take. Given the interim report is now complete, we can focus mainly on development, following
+the project plan. As I have already developed a basic simulation interface, I can now move onto implementing my first SLAM algorithm.
 
 %Appendix
 \section{Appendices}
+
+\subsection{Project Proposal}
+\includepdf[pages=-]{ProjectProposal.pdf}
 
 %References
 \section{References}
@@ -294,6 +337,11 @@ and where relevant resources could be found.
     H. Hildenbrandt, C. Carere, C.K. Hemelrijk
     \textit{Self-organized aerial displays of thousands of starlings: a model}
     \href{https://doi.org/10.1093/beheco/arq149}{https://doi.org/10.1093/beheco/arq149}
+
+    \bibitem{SLAM_overview}
+    U. Frese, R. Wagner, T. Röfer
+    \textit{A SLAM overview from a users perspective, 2010}
+    \href{http://dx.doi.org/10.1007/s13218-010-0040-4}{http://dx.doi.org/10.1007/s13218-010-0040-4}
 
     \bibitem{intro_to_swarm}
     Navarro, I., Matía, F.
