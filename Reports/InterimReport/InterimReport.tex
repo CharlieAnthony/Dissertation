@@ -73,8 +73,8 @@ to explore and combine their findings; ultimately creating a visualization map o
 both navigate the environment and avoid collisions, whilst creating an internal representation of its surroundings. The
 best-case scenario for the agents within the swarm is to be fully independent; creating a decentralized system.\\
 I will initially explore this problem by creating SLAM simulations, and then attempting to apply similar techniques
-to a centralised system. These initial simulations will employ techniques such as graph-based SLAM, random walks and particle
-filters in order to create a base-line representation of the environment. This project will also have the flexibility to
+to a centralised system. These initial simulations will employ techniques such as graph-based SLAM, random walks and elements of
+swarm behaviours in order to create a base-line representation of the environment. This project will also have the flexibility to
 potentially implement physical robots, given time permits.\\
 
 %Professional and Ethical Considerations
@@ -130,7 +130,7 @@ of the profession. \\
     \end{minipage}
 \end{figure}
 
-SLAM (Simultaneous Localisation and Mapping) is a technique used in robotics to create a map of an unknown environment.
+SLAM (Simultaneous Localisation and Mapping) is a technique used in robotics to create a map of an unknown environment \cite{SLAM_overview}.
 It is an important area of research in robotics as it is heavily used in autonomous vehicles, drones and vacuum cleaners;
 allowing agents to understand and navigate their environment effectively. Figure \ref{fig:SLAM_agent} shows an example of a
 robot scanning its environment, with the sensors visually added to the image.\\
@@ -180,7 +180,7 @@ research and development.
 \subsection{Random Walks}
 Random walk exploration in the context of swarm mapping is a technique where agents individually map an environment, using
 methods like Graph-based SLAM, Particle Filters, etc. and them combine their findings to a single global map; this is an
-example of a centralised system.\\
+example of a centralised system \cite{swarm_random_walks}.\\
 A example of an implementation of random walk exploration is Brownian motion \cite{brownian_motion}, which is a physics-inspired
 approach. It works by applying a random force to each agent, which determines its direction. The agents then move in this
 direction until they detect an obstacle, at which point they will change direction. This process is repeated until the
@@ -347,6 +347,11 @@ the project plan. As I have already developed a basic simulation interface, I ca
     Navarro, I., Matía, F.
     \textit{An Introduction to Swarm Robotics, 2013}
     \href{https://doi.org/10.5402/2013/608164}{https://doi.org/10.5402/2013/608164}
+
+    \bibitem{swarm_random_walks}
+    M. Kegeleirs, D. Garzón Ramos,  M. Birattari
+    \textit{Random walk exploration for swarm mapping, 2019}
+    \href{https://doi.org/10.1007/978-3-030-25332-5_50}{https://doi.org/10.1007/978-3-030-25332-5_50}
 
     \bibitem{brownian_motion}
     Khmelnitsky, E.
