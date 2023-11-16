@@ -65,7 +65,7 @@ venues or exiting buildings in emergencies. No matter how hard you look, regardl
 typically present.\\
 These behaviours can also be artificially created in robotics \cite{intro_to_swarm}. Within the realm of computing, parallelising
 processes is breaking barrier after barrier - swarm robotics brings the same benefits. Being able to divide and
-conquer a problem has the ability massively increase the rate of work by employing multiple robots. Therefore, it
+conquer a problem has the ability to massively increase the rate of work by employing multiple robots. Therefore, it
 would be wasteful not to properly dedicate the time which this discipline deserves.\\
 For my project, I am going to try and reproduce some of these behaviours artificially. I will start by simulating robotic
 agents in a 2D environment. The agents will be placed within close proximity inside a simulated environment and then allowed
@@ -73,7 +73,7 @@ to explore and combine their findings; ultimately creating a visualization map o
 both navigate the environment and avoid collisions, whilst creating an internal representation of its surroundings. The
 best-case scenario for the agents within the swarm is to be fully independent; creating a decentralized system.\\
 I will initially explore this problem by creating SLAM simulations, and then attempting to apply similar techniques
-to a centralised system. These initial simulations will employ techniques such as graph-based SLAM, random walks and elements of
+to a centralised system. These initial simulations will employ techniques such as graph-based SLAM, random walks and other elements of
 swarm behaviours in order to create a base-line representation of the environment. This project will also have the flexibility to
 potentially implement physical robots, given time permits.\\
 
@@ -146,7 +146,7 @@ Graph-based SLAM is a technique used to create a map of an environment, by using
 works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
 are usually received by a sensor, such as a camera or laser scanner. The robot then uses these measurements to create a
 plot of where objects may be, by combining the measurements from sensors with its memory of the route it has taken. This
-technique is used in many applications, such as autonomous vehicles\\
+technique is used in many applications, both in research and in the real world.\\
 One limitation of graph-based SLAM is that it is computationally expensive, as it requires a lot of memory to store the
 sensor readings. Also, it is not very scalable, as the more sensors that are added, the more memory is required. Another
 limitation is that it cannot always be reliable, as the algorithm depends heavily on detecting loop closures, which when
@@ -156,19 +156,20 @@ makes it difficult to apply to the real world.
 \subsection{Particle Filters}
 Another technique used in SLAM is particle filters. Particle filters, also known as Monte Carlo localisation, is a probabalistic
 technique used to estimate the localisation of a robot in its environment. It starts with a set of particles randomly distributed
-across the environment, which represent possible locations of the robot. Then as the robot moves around the environment, the
-particles weights are updated based on the robots sensors. Overall, this technique is very effective, as it is able to localise
-the robot in its environment, even when the environment is dynamic. Also, this process is highly parallelisable, as each particle
-can be updated independently; which makes this a viable solution for real-world applications. However, particle filters are
-susceptible to the "curse of dimensionality", which means that as the number of dimensions increases, the problem's complexity
-rapidly increases.
+across the environment, which represent possible locations of the robot. Each particle has an associated weight, representing the
+probability that the particle is the true location of the robot. As the robot moves around the environment, the particles weights
+are then updated based on an algorithm which takes the robots sensors as input. Overall, this technique is very effective, as it
+is able to localise the robot in its environment, even when the environment is dynamic. Also, this process is highly parallelisable,
+as each particle can be updated independently; which makes this a viable solution for real-world applications. However, particle
+filters are susceptible to the "curse of dimensionality", which means that as the number of dimensions increases, the problem's
+complexity rapidly increases.
 
 \subsection{Swarm}
 Swarm robotics \cite{intro_to_swarm} is a discipline which studies the coordination of large numbers of robots. It is largely inspired by biology,
 where social organisms achieve complex behaviours through simple interactions with each other and the environment. Swarm
 robotics is an important area of research in robotics, as it has many applications, such as search and rescue, exploration
 and mapping.\\
-One of the benefits of swarm robotics is the scalability and flexibility of the system. This is because the system is
+One of the benefits of swarm robotics is the scalability and flexibility of the system \cite{swarm_SLAM}. This is because the system is
 decentralized, meaning that each agent is able to make decisions independently. This allows for repeatability, as the system
 can be scaled up or down simply by adding or removing agents. Also, it allows for flexibility, as the system can be adapted
 to different environments, as each agent is able to make decisions based on its surroundings.\\
@@ -188,7 +189,7 @@ environment is fully mapped. There is randomness provided from the environment, 
 and randomness in motion, as each path is determined by a random force. Overall, collective behaviour emerges from these simple
 rules, which lead to a global behaviour which efficiently maps an environment.\\
 One of the biggest drawbacks of this approach is that it is not scalable, as the agents are not able to communicate their
-maps to each other, which can lead to a lot of redundant exploration \cite{random_walks}. This is because equally, sharing their maps with each
+maps to each other, which can lead to a lot of redundant exploration. This is because equally, sharing their maps with each
 other would be very computationally expensive. Also, another limitation is that this approach doesn't guarantee effiency.
 This is because of the inherent randomness, which means areas of the environment may be unexplored.\\
 
@@ -196,9 +197,9 @@ This is because of the inherent randomness, which means areas of the environment
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
 create a simulation interface, where the user can see the agents, the environment and a representation of the agents internal
-map. After I will work towards implementing SLAM and swarm algorithms.\\
-As an extension, I will attempt to implement physical agents, which will act in the real world. This will require a lot of
-additional work, so will only be attempted if time permits.\\
+map. After I will work towards implementing SLAM and swarm algorithms. As an extension, I will attempt to implement physical
+agents, which will act in the real world. This will require a lot of additional work, so will only be attempted if time permits.
+I have included a number of optional requirements below to compensate for this.\\
 When creating the simulation interface, I will be using the Python programming language, along with the PyGame library. This
 will abstract away a lot of the complexity of creating a graphical user interface, allowing me to focus on the core functionality.
 I will also use various other scientific python libraries throughout my project, such as NumPy, SciPy and Matplotlib.\\
@@ -254,7 +255,7 @@ I will also use various other scientific python libraries throughout my project,
         Implement a decentralized multi-agent SLAM algorithm, where the agents communicate their findings during exploration and create individual representations of the environment\\
         \hline
     \end{tabular}
-    \caption{Requirements and their justification}\label{tab:requirements_table}
+    \caption{Table of requirements and their justification}\label{tab:requirements_table}
 \end{table} \\
 Along with this table of requirements, there will also be a number of opportunities for optional extensions, should time permit.
 These include:
@@ -272,7 +273,7 @@ These include:
     \label{fig:gantt_chart}
 \end{figure}
 The execution of my project will be split into various phases, where each phase will focus on an area of development. The
-majority of the project will be software development, therefore a large portion time will be spent here. Figure
+majority of the project will be software development, therefore I have chosen to split this process into various stages. Figure
 \ref{fig:gantt_chart} shows the project plan, where the grey bars represent the time spent at each phase. Should my project
 overrun, I will have contingency time built into both the Christmas break and the Easter break, which is currently unaccounted
 for in the project plan.\\
@@ -283,10 +284,20 @@ research SLAM and swarm algorithms, and write this interim report. This phase wi
 to carry out this phase as it provides structure for the whole project, which will help ensure that the project is completed
 on time.
 \subsection{Phase 2 - Single SLAM Agent}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\linewidth]{flowchart.png}
+    \caption{A flow chart of the Pose Graph SLAM algorithm}
+    \label{fig:flowchart}
+\end{figure}
+
 The second phase of my project is where development will start. I will start by creating a basic simulation environment, where
-the user can see the agent and the environment. After, I will implement the Pose Graph SLAM algorithm on a single agent system.
-This will give me the experience of implementing SLAM, which will be useful when implementing swarm algorithms as a good portion
-of the code will be reusable. This phase will be completed by week 8, and will allow me to follow on to multi-agent random walks.
+the user can see the agent and the environment. After, I will implement the Pose Graph SLAM algorithm seen in Figure \ref{fig:flowchart},
+on a single agent system. This will give me the experience of implementing SLAM, which will be useful when implementing swarm
+algorithms as a good portion of the code will be reusable. This phase will be completed by week 8, and will allow me to follow
+on to multi-agent random walks.
+
 \subsection{Phase 3 - Multi-agent Random Walk}
 In the third phase, I will implement a multi-agent random walk algorithm. This will allow me to explore the challenges of swarm
 communication and agent coordination. I plan to implement the Brownian motion algorithm as a starting point, then if time permits,
@@ -344,9 +355,14 @@ the project plan. As I have already developed a basic simulation interface, I ca
     \href{http://dx.doi.org/10.1007/s13218-010-0040-4}{http://dx.doi.org/10.1007/s13218-010-0040-4}
 
     \bibitem{intro_to_swarm}
-    Navarro, I., Matía, F.
+    I. Navarro, F. Matía
     \textit{An Introduction to Swarm Robotics, 2013}
     \href{https://doi.org/10.5402/2013/608164}{https://doi.org/10.5402/2013/608164}
+
+    \bibitem{swarm_SLAM}
+    K. Miquel, G. Giorgio, B. Mauro
+    \textit{Swarm SLAM: Challenges and Perspectives, 2021}
+    \href{https://doi.org/10.3389/frobt.2021.618268}{https://doi.org/10.3389/frobt.2021.618268}
 
     \bibitem{swarm_random_walks}
     M. Kegeleirs, D. Garzón Ramos,  M. Birattari
@@ -354,14 +370,9 @@ the project plan. As I have already developed a basic simulation interface, I ca
     \href{https://doi.org/10.1007/978-3-030-25332-5_50}{https://doi.org/10.1007/978-3-030-25332-5_50}
 
     \bibitem{brownian_motion}
-    Khmelnitsky, E.
+    E. Khmelnitsky
     \textit{Brownian Motion and Swarm Dynamics. In Autonomous Mobile Robots and Multi-Robot Systems, 2019}
     \href{https://doi.org/10.1002/9781119213154.ch12}{https://doi.org/10.1002/9781119213154.ch12}
-
-    \bibitem{random_walks}
-    Kegeleirs, M., Garzón Ramos, D., Birattari, M.
-    \textit{Random Walk Exploration for Swarm Mapping, 2019}
-    \href{https://doi.org/10.1007/978-3-030-25332-5_19}{https://doi.org/10.1007/978-3-030-25332-5_19}
 
     \bibitem{C-SLAM}
     P. Lajoie, G. Beltrame
