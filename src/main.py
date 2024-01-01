@@ -39,8 +39,8 @@ def main():
 
         for agent in agents:
             agent.update(agents)
-            agent.draw(screen)
-            agent.handle_agent_collisions(agents, environment)
+            # agent.draw(screen)
+            agent.handle_agent_collisions(environment)
             agent.handle_environment_collisions(environment)
 
         pygame.display.flip()
