@@ -28,7 +28,7 @@ def main():
     #         agent.handle_environment_collisions(environment)
     #
     #     pygame.display.flip()
-    #     clock.tick(60)
+#     clock.tick(60)
 
 
 def create_environment(width, height):

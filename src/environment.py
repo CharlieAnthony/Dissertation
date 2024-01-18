@@ -1,26 +1,27 @@
 # environment.py
 import pygame
+import cv2
 
 class Environment:
-    def __init__(self, width, height, color=(0, 0, 0)):
+    def __init__(self, width, height, env=None):
         self.width = width
         self.height = height
-        self.color = color
-        self.obstacles = []
-        self.agents = []
+        if not env:
+            self.env = [[0] * width for _ in range(height)]
+        else:
+            self.env = env
 
-    def add_obstacle(self, x, y, width, height):
-        # Obstacles will be represented as rectangles for simplicity
-        self.obstacles.append(pygame.Rect(x, y, width, height))
+    def get_cell_val(self, x, y):
+        if x < 0 or x >= self.width or y < 0 or y >= self.height:
+            return 1
+        return self.env[y][x]
 
-    def add_agent(self, x, y, radius):
-        # Agents represented as a circle
-        # Triple stores x, y position and radius
-        self.agents.append((x, y, radius))
+@staticmethod
+def Img_to_env(img):
+    # TODO: take image and create environment
+    pass
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, self.color, (0, 0, self.width, self.height), width=2)
-        for obstacle in self.obstacles:
-            pygame.draw.rect(screen, (0, 0, 0), obstacle, 2)
-        for agent in self.agents:
-            pygame.draw.circle(screen, (0, 160, 0), (agent[0], agent[1]), agent[2], width=2)
+
+if __name__ == "__main__":
+    e = Environment(10, 10)
+    print(e.env)

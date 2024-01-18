@@ -1,12 +1,21 @@
 import math
 
-
 class ProximitySensor:
-    def __init__(self, angle_offset, detection_range):
+
+    def __init__(self, agent, environment, angle_offset, detection_range):
+        """
+        Creates a Proximity sensor
+        :param agent: the agent which the sensor is attached to
+        :param environment: the environment object
+        :param angle_offset: the angle offset of the sensor from the front of the agent
+        :param detection_range: the detection range of the sensor
+        """
         self.angle_offset = angle_offset
         self.detection_range = detection_range
+        self.env = environment
+        self.agent = agent
 
-    def detect(self, agent, agents, environment):
+    def old_detect(self, agent, agents, environment):
         """
         Detects if the sensor detects presence of another object
         :param environment: environment to check
@@ -35,16 +44,24 @@ class ProximitySensor:
 
         return 0.0
 
-    @staticmethod
-    def line_circle_collision(x1, y1, x2, y2, cx, cy, cr):
-        # Check if any point on the line segment (x1,y1) to (x2,y2) is inside the circle with center (cx,
-        # cy) and radius cr.
-        line_len = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
-        dot = (((cx - x1) * (x2 - x1)) + ((cy - y1) * (y2 - y1))) / line_len ** 2
-        closest_x = x1 + (dot * (x2 - x1))
-        closest_y = y1 + (dot * (y2 - y1))
-        distance = ((closest_x - cx) ** 2 + (closest_y - cy) ** 2) ** 0.5
-        return distance < cr
+    def detect(self):
+        """
+        Detects presence of other objects
+        :return: value between 0 and 1 indicating the distance to the detected object
+        """
+        agent_x, agent_y = self.agent.x, self.agent.y
+        agent_bearing = self.agent.bearing
+        sensor_bearing = angle_below_360(agent_bearing + self.angle_offset)
+        i = 1
+        while i <= self.detection_range:
+            px = agent_x + i * math.cos(math.radians(sensor_bearing))
+            py = agent_y + i * math.sin(math.radians(sensor_bearing))
+            if self.env.get_cell_val(px, py) == 1:
+                return i / self.detection_range
+            i += 1
+        return 0
+
+# TODO: check this actually works
 
 
 class LidarSensor:
@@ -64,6 +81,15 @@ class LidarSensor:
         # TODO: Implement Lidar sensor
 
 
+def line_circle_collision(x1, y1, x2, y2, cx, cy, cr):
+    # Check if any point on the line segment (x1,y1) to (x2,y2) is inside the circle with center (cx,
+    # cy) and radius cr.
+    line_len = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+    dot = (((cx - x1) * (x2 - x1)) + ((cy - y1) * (y2 - y1))) / line_len ** 2
+    closest_x = x1 + (dot * (x2 - x1))
+    closest_y = y1 + (dot * (y2 - y1))
+    distance = ((closest_x - cx) ** 2 + (closest_y - cy) ** 2) ** 0.5
+    return distance < cr
 
 def line_rect_collision(x1, y1, x2, y2, rect):
     # Define the four sides of the rectangle
@@ -94,3 +120,12 @@ def line_line_collision(x1, y1, x2, y2, x3, y3, x4, y4):
         return True
 
     return False
+
+def angle_below_360(angle):
+    while angle > 360:
+        angle -= 360
+    return angle
+
+
+if __name__ == "__main__":
+    print(angle_below_360(730))
