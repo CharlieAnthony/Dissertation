@@ -1,5 +1,6 @@
 import math
 
+
 class ProximitySensor:
     def __init__(self, angle_offset, detection_range):
         self.angle_offset = angle_offset
@@ -19,7 +20,8 @@ class ProximitySensor:
 
         for other_agent in agents:
             if other_agent is not agent and self.line_circle_collision(agent.x, agent.y, sensor_end_x, sensor_end_y,
-                                                                       other_agent.x, other_agent.y, agent.AGENT_RADIUS):
+                                                                       other_agent.x, other_agent.y,
+                                                                       agent.AGENT_RADIUS):
                 dist_to_agent = ((agent.x - other_agent.x) ** 2 + (agent.y - other_agent.y) ** 2) ** 0.5
                 x = (self.detection_range ** 2 + self.detection_range ** 2) ** 0.5
                 if dist_to_agent > x:
@@ -28,7 +30,7 @@ class ProximitySensor:
                     return dist_to_agent / x
 
         for obstacle in environment.obstacles:
-            if self.line_rect_collision(agent.x, agent.y, sensor_end_x, sensor_end_y, obstacle):
+            if line_rect_collision(agent.x, agent.y, sensor_end_x, sensor_end_y, obstacle):
                 return 1.0  # Detected an obstacle
 
         return 0.0
@@ -44,34 +46,51 @@ class ProximitySensor:
         distance = ((closest_x - cx) ** 2 + (closest_y - cy) ** 2) ** 0.5
         return distance < cr
 
-    @staticmethod
-    def line_rect_collision(x1, y1, x2, y2, rect):
-        # Define the four sides of the rectangle
-        left = rect.left
-        right = rect.right
-        top = rect.top
-        bottom = rect.bottom
 
-        # Check each side of the rectangle for intersection with the line segment
-        if ProximitySensor.line_line_collision(x1, y1, x2, y2, left, top, left, bottom):  # Left side
-            return True
-        if ProximitySensor.line_line_collision(x1, y1, x2, y2, right, top, right, bottom):  # Right side
-            return True
-        if ProximitySensor.line_line_collision(x1, y1, x2, y2, left, top, right, top):  # Top side
-            return True
-        if ProximitySensor.line_line_collision(x1, y1, x2, y2, left, bottom, right, bottom):  # Bottom side
-            return True
+class LidarSensor:
 
-        return False
+    def __init__(self, detection_range, num_rays):
+        self.detection_range = detection_range
+        self.num_rays = num_rays
 
-    @staticmethod
-    def line_line_collision(x1, y1, x2, y2, x3, y3, x4, y4):
-        # Determine the direction of the lines
-        uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
-        uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+    def detect(self, agent, agents, environment):
+        """
+        Simulates Lidar readings
+        :param agent:
+        :param agents:
+        :param environment:
+        :return:
+        """
+        # TODO: Implement Lidar sensor
 
-        # If uA and uB are between 0-1, lines are colliding
-        if 0 <= uA <= 1 and 0 <= uB <= 1:
-            return True
 
-        return False
+
+def line_rect_collision(x1, y1, x2, y2, rect):
+    # Define the four sides of the rectangle
+    left = rect.left
+    right = rect.right
+    top = rect.top
+    bottom = rect.bottom
+
+    # Check each side of the rectangle for intersection with the line segment
+    if line_line_collision(x1, y1, x2, y2, left, top, left, bottom):  # Left side
+        return True
+    if line_line_collision(x1, y1, x2, y2, right, top, right, bottom):  # Right side
+        return True
+    if line_line_collision(x1, y1, x2, y2, left, top, right, top):  # Top side
+        return True
+    if line_line_collision(x1, y1, x2, y2, left, bottom, right, bottom):  # Bottom side
+        return True
+    return False
+
+
+def line_line_collision(x1, y1, x2, y2, x3, y3, x4, y4):
+    # Determine the direction of the lines
+    uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+    uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1))
+
+    # If uA and uB are between 0-1, lines are colliding
+    if 0 <= uA <= 1 and 0 <= uB <= 1:
+        return True
+
+    return False
