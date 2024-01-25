@@ -52,16 +52,15 @@ class ProximitySensor:
         agent_x, agent_y = self.agent.x, self.agent.y
         agent_bearing = self.agent.bearing
         sensor_bearing = angle_below_360(agent_bearing + self.angle_offset)
-        i = 1
-        while i <= self.detection_range:
+        i = self.detection_range
+        while i >= 0:
             px = agent_x + i * math.cos(math.radians(sensor_bearing))
             py = agent_y + i * math.sin(math.radians(sensor_bearing))
             if self.env.get_cell_val(px, py) == 1:
                 return i / self.detection_range
-            i += 1
+            i -= 1
         return 0
 
-# TODO: check this actually works
 
 
 class LidarSensor:

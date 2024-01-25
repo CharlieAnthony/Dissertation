@@ -10,8 +10,6 @@ AGENT_SPEED = 2
 
 class Agent:
     def __init__(self, screen_width, screen_height, x=None, y=None, sensors=None, sensor_range=50, show_sensors=True):
-        if sensors is None:
-            sensors = []
         if x:
             self.x = x
         else:
@@ -99,3 +97,8 @@ class Agent:
             self.bearing = math.pi - self.bearing
         if self.y - AGENT_RADIUS < 0 or self.y + AGENT_RADIUS > self.screen_height:
             self.bearing = -self.bearing
+
+    def add_sensor(self, sensor):
+        self.sensors.append(sensor)
+        return self
+
