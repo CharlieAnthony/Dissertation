@@ -77,7 +77,10 @@ class LidarSensor:
         :param environment:
         :return:
         """
-        # TODO: Implement Lidar sensor
+        data = []
+        x1, y1 = agent.x, agent.y
+        # for i in range(self.num_rays):
+        # TODO: sort this
 
 
 def line_circle_collision(x1, y1, x2, y2, cx, cy, cr):

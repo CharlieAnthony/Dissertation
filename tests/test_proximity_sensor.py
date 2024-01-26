@@ -4,6 +4,9 @@ from src.sensors import ProximitySensor
 
 
 class ProximitySensorTest(unittest.TestCase):
+
+    # TODO: sort out these tests
+
     def setUp(self):
         self.env = Mock()
         self.agent = Mock()
