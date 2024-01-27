@@ -1,5 +1,8 @@
 import math
 
+import numpy as np
+
+
 class ProximitySensor:
 
     def __init__(self, agent, environment, angle_offset, detection_range):
@@ -65,9 +68,10 @@ class ProximitySensor:
 
 class LidarSensor:
 
-    def __init__(self, detection_range, num_rays):
+    def __init__(self, detection_range, num_rays, environment):
         self.detection_range = detection_range
         self.num_rays = num_rays
+        self.env = environment
 
     def detect(self, agent, agents, environment):
         """
@@ -79,8 +83,40 @@ class LidarSensor:
         """
         data = []
         x1, y1 = agent.x, agent.y
-        # for i in range(self.num_rays):
-        # TODO: sort this
+        for i in np.linspace(0, 360, self.num_rays):
+            x2 = x1 + self.detection_range * math.cos(math.radians(i))
+            y2 = y1 + self.detection_range * math.sin(math.radians(i))
+            for j in range(self.detection_range):
+                px = x1 + j * math.cos(math.radians(i))
+                py = y1 + j * math.sin(math.radians(i))
+                if self.env.get_cell_val(px, py) == 1:
+                    output = []
+                    output.append((1 - (j / self.detection_range), i))
+                    output.append((x1, y1))
+                    data.append(output)
+                    break
+        if len(data) > 0:
+            return data
+        else:
+            return False
+
+
+    def sensor_to_position(self, agent, data):
+        """
+        Takes a lidar reading and returns the position of detected objects
+        :param agent:
+        :param sensor:
+        :return:
+        """
+        output = []
+        for reading in data:
+            dist, angle = reading[0]
+            x = agent.x + dist * math.cos(math.radians(angle))
+            y = agent.y + dist * math.sin(math.radians(angle))
+            output.append((x, y))
+        return output
+
+
 
 
 def line_circle_collision(x1, y1, x2, y2, cx, cy, cr):
