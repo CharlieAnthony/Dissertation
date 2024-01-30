@@ -14,24 +14,21 @@ def main():
     environment = create_environment(env_width, env_height)
     interface = EnvironmentInterface(environment)
 
+    running = True
 
-    # while True:
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             pygame.quit()
-    #             sys.exit()
-    #
-    #     screen.fill(BACKGROUND_COLOR)
-    #     environment.draw(screen)
-    #
-    #     for agent in agents:
-    #         agent.update(agents)
-    #         # agent.draw(screen)
-    #         agent.handle_agent_collisions(environment)
-    #         agent.handle_environment_collisions(environment)
-    #
-    #     pygame.display.flip()
-#     clock.tick(60)
+    while running:
+        sensor_on = False
+        for event in pygame.event.get():
+            if event.type == pygame.quit():
+                running = False
+            if event.type == pygame.mouse.get_focused():
+                sensor_on = True
+            elif not pygame.mouse.get_focused():
+                sensor_on = False
+
+        if sensor_on:
+            position = pygame.mouse.get_pos()
+
 
 
 def data_to_pointcloud(positions):
