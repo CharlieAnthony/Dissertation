@@ -14,20 +14,22 @@ class Environment:
             return 1
         return self.env[int(y)][int(x)]
 
-@staticmethod
-def img_to_env(img):
-    """
-    Converts an image to an environment
-    :param img: cv2 image
-    :return: Environment object
-    """
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = gray / 255
-    gray[gray > 0.5] = 1
-    gray[gray <= 0.5] = 0
-    height, width = gray.shape
-    env = Environment(width, height, env=gray)
-    return env
+    @staticmethod
+    def img_to_env(img):
+        """
+        Converts an image to an environment
+        :param img: cv2 image
+        :return: Environment object
+        """
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+        gray = gray / 255
+        gray[gray > 0.5] = 1
+        gray[gray <= 0.5] = 0
+        # invert 0s and 1s
+        gray = 1 - gray
+        height, width = gray.shape
+        env = Environment(width, height, env=gray)
+        return env
 
 if __name__ == "__main__":
     e = Environment(10, 10)

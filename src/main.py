@@ -2,7 +2,7 @@ import pygame
 import sys
 import cv2
 from agent import Agent
-from environment import Environment, img_to_env
+from environment import Environment
 from sensors import LidarSensor
 from ui import EnvironmentInterface
 
@@ -14,9 +14,9 @@ def main():
     env_width = 1280
     env_height = 720
     map = cv2.imread('map.png')
-    environment = img_to_env(map)
+    environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment)
-    lidar = LidarSensor(50, 180, environment)
+    lidar = LidarSensor(50, 60, environment)
 
 
     running = True
@@ -34,9 +34,10 @@ def main():
         if sensor_on:
             pos = pygame.mouse.get_pos()
             d = lidar.detect(None, environment, position=pos)
-            p = lidar.sensor_to_position(d, position=pos)
-            data_to_pointcloud(p)
-            show_pointcloud(interface.get_screen())
+            if d is not False:
+                p = lidar.sensor_to_position(d)
+                data_to_pointcloud(p)
+                show_pointcloud(interface.get_screen())
 
 
         pygame.display.update()

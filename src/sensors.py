@@ -73,7 +73,7 @@ class LidarSensor:
         self.num_rays = num_rays
         self.env = environment
 
-    def detect(self, agents, environment, agent=None, position=None):
+    def detect(self, agents, environment=None, agent=None, position=None):
         """
         Simulates Lidar readings
         :param agent:
@@ -81,20 +81,27 @@ class LidarSensor:
         :param environment:
         :return:
         """
+        if environment is None:
+            e = self.env
+        else:
+            e = environment
         data = []
         if agent is None:
             x1, y1 = position[0], position[1]
         else:
             x1, y1 = agent.x, agent.y
-        for i in np.linspace(0, 360, self.num_rays):
+        for i in np.linspace(0, 360, self.num_rays, False):
             x2 = x1 + self.detection_range * math.cos(math.radians(i))
-            y2 = y1 + self.detection_range * math.sin(math.radians(i))
-            for j in range(self.detection_range):
-                px = x1 + j * math.cos(math.radians(i))
-                py = y1 + j * math.sin(math.radians(i))
-                if self.env.get_cell_val(px, py) == 1:
+            y2 = y1 - self.detection_range * math.sin(math.radians(i))
+            for j in range(100):
+                u = j / 100
+                x = int(x2 * u + x1 * (1 - u))
+                y = int(y2 * u + y1 * (1 - u))
+                # px = x1 + j * math.cos(math.radians(i))
+                # py = y1 + j * math.sin(math.radians(i))
+                if e.get_cell_val(x, y) == 1:
                     output = []
-                    output.append((1 - (j / self.detection_range), i))
+                    output.append((u, i))
                     output.append((x1, y1))
                     data.append(output)
                     break
@@ -104,7 +111,7 @@ class LidarSensor:
             return False
 
 
-    def sensor_to_position(self, data, agent=None, position=None):
+    def sensor_to_position(self, data):
         """
         Takes a lidar reading and returns the position of detected objects
         :param agent:
@@ -112,18 +119,14 @@ class LidarSensor:
         :return:
         """
         output = []
-        if agent is None:
-            agent_x = position[0]
-            agent_y = position[1]
-        else:
-            agent_x = agent.x
-            agent_y = agent.y
 
         for reading in data:
             dist, angle = reading[0]
-            x = agent_x + dist * math.cos(math.radians(angle))
-            y = agent_y + dist * math.sin(math.radians(angle))
-            output.append((x, y))
+            print(dist, angle)
+            x, y = reading[1]
+            px = x + (dist * self.detection_range * math.cos(math.radians(angle)))
+            py = y - dist * self.detection_range * math.sin(math.radians(angle))
+            output.append((px, py))
 
         return output
 
