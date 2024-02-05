@@ -97,11 +97,9 @@ class LidarSensor:
                 u = j / 100
                 x = int(x2 * u + x1 * (1 - u))
                 y = int(y2 * u + y1 * (1 - u))
-                # px = x1 + j * math.cos(math.radians(i))
-                # py = y1 + j * math.sin(math.radians(i))
                 if e.get_cell_val(x, y) == 1:
                     output = []
-                    output.append((u, i))
+                    output.append(add_noise(u, i, 0.005))
                     output.append((x1, y1))
                     data.append(output)
                     break
@@ -177,6 +175,15 @@ def angle_below_360(angle):
     while angle > 360:
         angle -= 360
     return angle
+
+
+def add_noise(dist, angle, sigma):
+    mean = np.array([dist, angle])
+    cov = np.array([[sigma, 0], [0, sigma]])
+    dist, angle = np.random.multivariate_normal(mean, cov)
+    dist = max(0, dist)
+    angle = angle_below_360(angle)
+    return [dist, angle]
 
 
 if __name__ == "__main__":
