@@ -1,5 +1,6 @@
 import cv2
 
+
 class Environment:
     def __init__(self, width, height, env=None):
         self.width = width
@@ -25,11 +26,11 @@ class Environment:
         gray = gray / 255
         gray[gray > 0.5] = 1
         gray[gray <= 0.5] = 0
-        # invert 0s and 1s
         gray = 1 - gray
         height, width = gray.shape
         env = Environment(width, height, env=gray)
         return env
+
 
 if __name__ == "__main__":
     e = Environment(10, 10)

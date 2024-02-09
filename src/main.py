@@ -5,9 +5,10 @@ from agent import Agent
 from environment import Environment
 from sensors import LidarSensor
 from ui import EnvironmentInterface
-
+from features import feature_dectection
 
 pointcloud = []
+
 
 def main():
     # Initialize environment
@@ -17,12 +18,20 @@ def main():
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment)
     lidar = LidarSensor(50, 60, environment)
-
+    feature_map = feature_dectection()
 
     running = True
 
+
     while running:
+
         sensor_on = False
+        feature_detection = True
+        break_point_ind = 0
+        endpoints = [0, 0]
+        sensor_on = False
+        predicted_points_todraw = []
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -36,16 +45,38 @@ def main():
             d = lidar.detect(None, environment, position=pos)
             if d is not False:
                 p = lidar.sensor_to_position(d)
+                feature_map.laser_point_set(p)
+                while break_point_ind < (feature_map.NP - feature_map.PMIN):
+                    seed_seg = feature_map.seed_segment_detection(pos, break_point_ind)
+                    if seed_seg == False:
+                        break
+                    else:
+                        seed_segment = seed_seg[0]
+                        predicted_points_todraw = seed_seg[1]
+                        INDICES = seed_seg[2]
+                        results = feature_map.seed_segment_growing(INDICES, break_point_ind)
+                        if results == False:
+                            break_point_ind = INDICES[1]
+                            continue
+                        else:
+                            line_eq = results[1]
+                            m, c = results[5]
+                            line_seg = results[0]
+                            OUTMOST = results[2]
+                            break_point_ind = results[3]
+
+                            endpoints[0] = feature_map.projection_point2line(OUTMOST[0], m, c)
+                            endpoints[1] = feature_map.projection_point2line(OUTMOST[1], m, c)
+
+                            color = (255, 0, 0)
+                            
+
                 data_to_pointcloud(p)
                 show_pointcloud(interface.get_screen())
-
 
         pygame.display.update()
 
     pygame.quit()
-
-
-
 
 
 def data_to_pointcloud(positions):

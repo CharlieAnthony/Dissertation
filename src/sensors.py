@@ -120,7 +120,6 @@ class LidarSensor:
 
         for reading in data:
             dist, angle = reading[0]
-            print(dist, angle)
             x, y = reading[1]
             px = x + (dist * self.detection_range * math.cos(math.radians(angle)))
             py = y - dist * self.detection_range * math.sin(math.radians(angle))
