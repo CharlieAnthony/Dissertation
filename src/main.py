@@ -17,10 +17,11 @@ def main():
     map = cv2.imread('map.png')
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment)
-    lidar = LidarSensor(50, 60, environment)
+    lidar = LidarSensor(300, 60, environment)
     feature_map = feature_dectection()
 
     running = True
+
 
 
     while running:
@@ -44,8 +45,7 @@ def main():
             pos = pygame.mouse.get_pos()
             d = lidar.detect(None, environment, position=pos)
             if d is not False:
-                p = lidar.sensor_to_position(d)
-                feature_map.laser_point_set(p)
+                feature_map.laser_point_set(d)
                 while break_point_ind < (feature_map.NP - feature_map.PMIN):
                     seed_seg = feature_map.seed_segment_detection(pos, break_point_ind)
                     if seed_seg == False:
@@ -69,10 +69,19 @@ def main():
                             endpoints[1] = feature_map.projection_point2line(OUTMOST[1], m, c)
 
                             color = (255, 0, 0)
-                            
+                            for point in line_seg:
+                                # px, py = point[0]
+                                # pygame.draw.circle(interface.get_screen(), (0, 0, 255), (px, py), 2)
+                                # print("point: ", point)
+                                pass
+                            pygame.draw.line(interface.get_screen(), color, endpoints[0], endpoints[1], 2)
 
-                data_to_pointcloud(p)
-                show_pointcloud(interface.get_screen())
+                points = []
+                for reading in d:
+                    print(reading)
+                    points.append(feature_map.AD2pos(reading[0], reading[1], reading[2]))
+                data_to_pointcloud(points)
+                # show_pointcloud(interface.get_screen())
 
         pygame.display.update()
 
@@ -98,7 +107,7 @@ def show_pointcloud(screen):
     """
     global pointcloud
     for pos in pointcloud:
-        pygame.draw.circle(screen, (0, 255, 0), (int(pos[0]), int(pos[1])), 5)
+        pygame.draw.circle(screen, (0, 255, 0), (int(pos[0]), int(pos[1])), 2)
 
 
 if __name__ == "__main__":

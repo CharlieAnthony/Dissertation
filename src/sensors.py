@@ -98,8 +98,10 @@ class LidarSensor:
                 x = int(x2 * u + x1 * (1 - u))
                 y = int(y2 * u + y1 * (1 - u))
                 if e.get_cell_val(x, y) == 1:
+                    print("wall detected")
                     output = []
-                    output.append(add_noise(u, i, 0.005))
+                    # output = add_noise(u * self.detection_range, i, 0.005)
+                    output = [u * self.detection_range, i]
                     output.append((x1, y1))
                     data.append(output)
                     break
@@ -119,8 +121,8 @@ class LidarSensor:
         output = []
 
         for reading in data:
-            dist, angle = reading[0]
-            x, y = reading[1]
+            dist, angle = reading[0], reading[1]
+            x, y = reading[2]
             px = x + (dist * self.detection_range * math.cos(math.radians(angle)))
             py = y - dist * self.detection_range * math.sin(math.radians(angle))
             output.append((px, py))

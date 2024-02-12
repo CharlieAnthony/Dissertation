@@ -8,7 +8,7 @@ class feature_dectection:
 
     def __init__(self):
         self.EPSILON = 10
-        self.DELTA = 20
+        self.DELTA = 501
         self.SNUM = 6
         self.PMIN = 20
         self.GMAX = 20
@@ -65,7 +65,7 @@ class feature_dectection:
         :return: slope and y-intercept
         """
         m = -a / b
-        n = c / b
+        n = -c / b
         return m, n
 
     def lineForm_SI2G(self, m, n):
@@ -122,7 +122,7 @@ class feature_dectection:
         x, y = point
         m2 = -1 / m
         c2 = y - m2 * x
-        x_intercept = (b - c2) / (m - m2)
+        x_intercept = - (b - c2) / (m - m2)
         y_intercept = m2 * x_intercept + c2
         return x_intercept, y_intercept
 
@@ -134,8 +134,9 @@ class feature_dectection:
         :param robot_pos: robot position
         :return: position
         """
-        x = distance * math.cos(angle) + robot_pos[0]
-        y = -distance * math.sin(angle) + robot_pos[1]
+        angle = math.radians(angle)
+        x = (distance * math.cos(angle)) + robot_pos[0]
+        y = (-distance * math.sin(angle)) + robot_pos[1]
         return (int(x), int(y))
 
     def laser_point_set(self, data):
@@ -150,6 +151,7 @@ class feature_dectection:
         else:
             for p in data:
                 coord = self.AD2pos(p[0], p[1], p[2])
+                # coord = (int(p[0]), int(p[1]))
                 self.LASERPOINTS.append([coord, p[1]])
         self.NP = len(self.LASERPOINTS) - 1
 
@@ -209,12 +211,14 @@ class feature_dectection:
 
                 if d1 > self.DELTA:
                     flag = False
+                    break
 
                 d2 = self.dist_point2line(params, self.LASERPOINTS[k][0])
 
                 if d2 > self.EPSILON:
                     flag = False
                     break
+
             if flag:
                 self.LINE_PARAMS = params
                 return [self.LASERPOINTS[i:j], predicted_points_to_draw, (i, j)]
