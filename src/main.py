@@ -17,7 +17,7 @@ def main():
     map = cv2.imread('map.png')
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment)
-    lidar = LidarSensor(300, 60, environment)
+    lidar = LidarSensor(300, 100, environment)
     feature_map = feature_dectection()
 
     running = True
