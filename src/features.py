@@ -21,7 +21,7 @@ class feature_dectection:
         self.LR = 0
         self.PR = 0
 
-    def dist_point2point(self, point1, point2):
+    def euclidean_distance(self, point1, point2):
         """
         Calculates the euclidean distance between two points
         :param point1:
@@ -139,7 +139,7 @@ class feature_dectection:
         y = (-distance * math.sin(angle)) + robot_pos[1]
         return (int(x), int(y))
 
-    def laser_point_set(self, data):
+    def set_laser_points(self, data):
         """
         Sets the laser points
         :param data: laser data
@@ -207,7 +207,7 @@ class feature_dectection:
             for k in range(i, j):
                 predicted_point = self.predictPoint(params, self.LASERPOINTS[k][0], robot_pos)
                 predicted_points_to_draw.append(predicted_point)
-                d1 = self.dist_point2point(predicted_point, self.LASERPOINTS[k][0])
+                d1 = self.euclidean_distance(predicted_point, self.LASERPOINTS[k][0])
 
                 if d1 > self.DELTA:
                     flag = False
@@ -238,7 +238,7 @@ class feature_dectection:
 
             PF = PF + 1
             NEXTPOINT = self.LASERPOINTS[PF][0]
-            if self.dist_point2point(POINT, NEXTPOINT) > self.GMAX:
+            if self.euclidean_distance(POINT, NEXTPOINT) > self.GMAX:
                 break
         PF = PF - 1
 
@@ -251,11 +251,11 @@ class feature_dectection:
                 POINT = self.LASERPOINTS[PB][0]
             PB = PB - 1
             NEXTPOINT = self.LASERPOINTS[PB][0]
-            if self.dist_point2point(POINT, NEXTPOINT) > self.GMAX:
+            if self.euclidean_distance(POINT, NEXTPOINT) > self.GMAX:
                 break
         PB = PB + 1
 
-        LR = self.dist_point2point(self.LASERPOINTS[PB][0], self.LASERPOINTS[PF][0])
+        LR = self.euclidean_distance(self.LASERPOINTS[PB][0], self.LASERPOINTS[PF][0])
         PR = len(self.LASERPOINTS[PB:PF])
 
         if (LR >= self.LMIN) and (PR >= self.PMIN):

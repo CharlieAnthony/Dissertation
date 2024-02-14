@@ -45,7 +45,7 @@ def main():
             pos = pygame.mouse.get_pos()
             d = lidar.detect(None, environment, position=pos)
             if d is not False:
-                feature_map.laser_point_set(d)
+                feature_map.set_laser_points(d)
                 while break_point_ind < (feature_map.NP - feature_map.PMIN):
                     seed_seg = feature_map.seed_segment_detection(pos, break_point_ind)
                     if seed_seg == False:
