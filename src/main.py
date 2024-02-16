@@ -17,7 +17,7 @@ def main():
     map = cv2.imread('map.png')
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment)
-    lidar = LidarSensor(300, 100, environment)
+    lidar = LidarSensor(300, 180, environment)
     feature_map = feature_dectection()
 
     running = True
@@ -79,7 +79,7 @@ def main():
                 points = []
                 for reading in d:
                     print(reading)
-                    points.append(feature_map.AD2pos(reading[0], reading[1], reading[2]))
+                    points.append(feature_map.angle_dist_2_coord(reading[0], reading[1], reading[2]))
                 data_to_pointcloud(points)
                 # show_pointcloud(interface.get_screen())
 

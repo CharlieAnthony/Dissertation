@@ -7,19 +7,19 @@ from scipy.odr import *
 class feature_dectection:
 
     def __init__(self):
-        self.EPSILON = 10
-        self.DELTA = 501
-        self.SNUM = 6
-        self.PMIN = 20
-        self.GMAX = 20
+        self.EPSILON = 10 # maximum distance from a point to a line
+        self.DELTA = 20 # maximum distance between two points
+        self.SNUM = 6 # number of points to fit a line
+        self.PMIN = 20 # minimum points seed segment should have
+        self.GMAX = 20 # maximum distance between two points in a line segment
         self.SEED_SEGMENTS = []
         self.LINE_SEGMENTS = []
         self.LASERPOINTS = []
         self.LINE_PARAMS = None
         self.NP = len(self.LASERPOINTS) - 1
-        self.LMIN = 20
-        self.LR = 0
-        self.PR = 0
+        self.LMIN = 20  # minimum length of a line segment
+        self.LR = 0 # real length of line segment
+        self.PR = 0 # number of points in line segment
 
     def euclidean_distance(self, point1, point2):
         """
@@ -45,7 +45,7 @@ class feature_dectection:
 
     def line_2point(self, m, b):
         """
-        Extract two points from a line equation under the slope intercept form
+        Extract two points from a line given a line equation
         :param m: slope
         :param b: y-intercept
         :return: line parameters
@@ -90,6 +90,12 @@ class feature_dectection:
         return a * lcm, b * lcm, c * lcm
 
     def line_intersect_general(self, params1, params2):
+        """
+        Calculates the intersection between two lines
+        :param params1: 1st line parameters
+        :param params2: 2nd line parameters
+        :return: intersection point
+        """
         a1, b1, c1 = params1
         a2, b2, c2 = params2
         x = (c1 * b2 - b1 * c2) / (b1 * a2 - a1 * b2)
@@ -126,7 +132,7 @@ class feature_dectection:
         y_intercept = m2 * x_intercept + c2
         return x_intercept, y_intercept
 
-    def AD2pos(self, distance, angle, robot_pos):
+    def angle_dist_2_coord(self, distance, angle, robot_pos):
         """
         Converts a distance and angle to a position
         :param distance: distance from the robot
@@ -150,7 +156,7 @@ class feature_dectection:
             pass
         else:
             for p in data:
-                coord = self.AD2pos(p[0], p[1], p[2])
+                coord = self.angle_dist_2_coord(p[0], p[1], p[2])
                 # coord = (int(p[0]), int(p[1]))
                 self.LASERPOINTS.append([coord, p[1]])
         self.NP = len(self.LASERPOINTS) - 1
