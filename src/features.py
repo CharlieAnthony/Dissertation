@@ -3,6 +3,7 @@ import math
 from fractions import Fraction
 from scipy.odr import *
 
+Landmarks = []
 
 class feature_dectection:
 
@@ -20,8 +21,10 @@ class feature_dectection:
         self.LMIN = 20  # minimum length of a line segment
         self.LR = 0 # real length of line segment
         self.PR = 0 # number of points in line segment
+        self.FEATURES = []
 
-    def euclidean_distance(self, point1, point2):
+    @staticmethod
+    def euclidean_distance(point1, point2):
         """
         Calculates the euclidean distance between two points
         :param point1:
@@ -274,6 +277,43 @@ class feature_dectection:
         else:
             return False
 
+
+
+    def lineFeats2point(self):
+        new_rep = []
+
+        for feature in self.FEATURES:
+            projection = self.projection_point2line((0, 0), feature[0][0], feature[0][1])
+            new_rep.append([feature[0], feature[1], projection])
+
+        return new_rep
+
+def is_overlap(seg1, seg2):
+    length1 = feature_dectection.euclidean_distance(seg1[0], seg1[1])
+    length2 = feature_dectection.euclidean_distance(seg2[0], seg2[1])
+    center1 = ((seg1[0][0] + seg1[1][0]) / 2, (seg1[0][1] + seg1[1][1]) / 2)
+    center2 = ((seg2[0][0] + seg2[1][0]) / 2, (seg2[0][1] + seg2[1][1]) / 2)
+    dist = feature_dectection.euclidean_distance(point1=center1, point2=center2)
+    if dist < (length1 + length2) / 2:
+        return True
+    else:
+        return False
+
+def landmark_association(landmarks):
+    thres = 10
+    for l in landmarks:
+        flag = False
+        for i, Landmark in enumerate(Landmarks):
+            dist = feature_dectection.euclidean_distance(point1=l[2], point2=Landmark[2])
+            if dist < thres:
+                if not is_overlap(l[1], Landmark[1]):
+                    continue
+                else:
+                    Landmarks.pop(i)
+                    Landmarks.insert(i, l)
+                    flag = True
+        if not flag:
+            Landmarks.append(l)
 
 
 

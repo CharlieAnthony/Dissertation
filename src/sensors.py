@@ -98,7 +98,6 @@ class LidarSensor:
                 x = int(x2 * u + x1 * (1 - u))
                 y = int(y2 * u + y1 * (1 - u))
                 if e.get_cell_val(x, y) == 1:
-                    print("wall detected")
                     output = []
                     output = add_noise(u * self.detection_range, i, 0.005)
                     # output = [u * self.detection_range, i]

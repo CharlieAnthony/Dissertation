@@ -265,6 +265,8 @@ These include:
     \item Develop a performance metric, allowing the user to compare SLAM algorithm performances
 \end{itemize}
 
+\pagebreak
+
 \section{Project Plan}
 \begin{figure}[H]
     \centering
@@ -275,50 +277,49 @@ These include:
 The execution of my project will be split into various phases, where each phase will focus on an area of development. The
 majority of the project will be software development, therefore I have chosen to split this process into various stages. Figure
 \ref{fig:gantt_chart} shows the project plan, where the grey bars represent the time spent at each phase. Should my project
-overrun, I will have contingency time built into both the Christmas break and the Easter break, which is currently unaccounted
+overrun, I will have contingency time built into both the Christmas break and prior to the due date, which is currently unaccounted
 for in the project plan.\\
 
 \subsection{Phase 1 - Research and Planning}
 The first phase of my project involves researching and planning. During this period I will create a project proposal,
-research SLAM and swarm algorithms, and write this interim report. This phase will be completed by week 7. It is important
-to carry out this phase as it provides structure for the whole project, which will help ensure that the project is completed
-on time.
-\subsection{Phase 2 - Single SLAM Agent}
+research single and multi-agent SLAM algorithms, and write my interim report. This phase will be completed by week 7. It is
+important to carry out this phase as it provides structure for the whole project, which will help ensure that the project is
+completed on time.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=1\linewidth]{flowchart.png}
-    \caption{A flow chart of the Pose Graph SLAM algorithm}
-    \label{fig:flowchart}
-\end{figure}
+\subsection{Phase 2 - Environment Development}
+The second phase of my project will be to develop the simulation environment. This will involve creating a graphical user
+interface, using the PyGame library, where the user can see the agent, the environment and a representation of the agents
+internal map. This phase will be completed by week 11 - putting me in a good place to work on implementing SLAM algorithms
+after the Christmas break.
 
-The second phase of my project is where development will start. I will start by creating a basic simulation environment, where
-the user can see the agent and the environment. After, I will implement the Pose Graph SLAM algorithm seen in Figure \ref{fig:flowchart},
-on a single agent system. This will give me the experience of implementing SLAM, which will be useful when implementing swarm
-algorithms as a good portion of the code will be reusable. This phase will be completed by week 8, and will allow me to follow
-on to multi-agent random walks.
+\subsection{Phase 3 - Single-agent SLAM}
+The third phase of my project will be to implement a SLAM algorithm on a single agent system. This will involve implementing
+graph-based SLAM, mentioned in my related work section. The algorithm will work by having the agent move around its environment,
+whilst taking measurements of its surroundings. These measurements will then be used to predict where objects may be, through
+feature extraction. Then, the features detected will be combined to define landmarks, which will be used to create a map of
+the environment. Finally, once the algorithm has been implemented, I will create a simple agent which will move around the
+environment, using a random walk algorithm. I aim to complete this phase by the end of week 4 of the Spring semester.
 
-\subsection{Phase 3 - Multi-agent Random Walk}
-In the third phase, I will implement a multi-agent random walk algorithm. This will allow me to explore the challenges of swarm
-communication and agent coordination. I plan to implement the Brownian motion algorithm as a starting point, then if time permits,
-I will explore other algorithms, such as Ballistic motion and Levy walk. I will complete this phase by week 11, which will allow me
-plenty of time to implement the more complex swarm algorithms.
-\subsection{Phase 4 - Centralised Multi-agent SLAM}
-The fourth phase will consist of implementing a centralised multi-agent SLAM algorithm. This will finally allow me to combine
-the knowledge I would've gained from the previous phases and apply it to a more complex problem. I will look to implement an
-algorithm like the multi agent map merging algorithm, which will allow me to combine the maps of single SLAM agents. Furthermore,
-I will bring in the communication system developed in Phase 3, which will help structure the agents. This phase will be completed by
-week 2 of the Spring semester.
-\subsection{Phase 5 - Decentralised Multi-agent SLAM}
-The fifth and final phase of development will see me implement a decentralised multi-agent SLAM algorithm. This will be the most
-complex phase of development, as it will require me me to combine the SLAM elements of the previous phase with the communication
-from Phase 3. I will look to implement an algorithm like C-SLAM (Collaborative Simultaneous Localization And Mapping) \cite{C-SLAM}, and will analyse it's performance and how it scales. This phase
-will be completed by week 5 of the Spring semester.
-\subsection{Phase 6 - Analysis and Conclusion}
-The final phase of my project will largely consist of writing up my findings and analysing the performance of the algorithms. I will
-write up my final dissertation, along with creating a poster for the event. I may also spend some time creating visual representations
-of my findings, such as graphs and charts. This phase may begin as early as week 4 of the Spring semester and will be completed by
-week 10.
+
+\subsection{Phase 4 - Multi-agent SLAM}
+In the fourth phase of my project, I will implement a multi-agent SLAM. This will involve creating a centralized multi-agent
+SLAM algorithm, where the agents individually collect data and then feed to a global map. To achieve this, I will need to
+modify my single-agent SLAM algorithm to firstly allow for a central server to exist, and then I will need to implement a
+communication protocol between the agents and the server. To create a complete map, the server will need to combine the maps
+from each agent; implementing cross-agent feature matching. The server will also need to have a mechanism which resolves conflicts
+in data association, for example, when two agents have conflicting information about a landmark's position. This phase needs
+to be completed by week 8 of the Spring semester, which allows for a reasonable amount of time to work on the final report.
+
+
+\subsection{Phase 5 - Analysis and Conclusion}
+I will start the final phase of my project during the Easter break, where I will collect data which will be used to analyse
+the performance of the algorithm. I will then use this data to create a series of graphs and charts, which will be used to
+visualise performance and draw conclusions. After, a lot of time will be spent writing up my findings and analysing the performance
+of the algorithms. Finally, I will conclude my project by writing a conclusion, which will summarise my findings and discuss
+potential future work. Prior to submitting my report, I will also spend time proofreading and editing my work.
+
+\pagebreak
+
 \section{Supervisor Meetings}
 \subsection{Meeting 1 - 11/10/2023}
 Discussed on the project idea and potential directions to take. Discussed the possibility of implementing physical agents,

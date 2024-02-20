@@ -5,7 +5,7 @@ from agent import Agent
 from environment import Environment
 from sensors import LidarSensor
 from ui import EnvironmentInterface
-from features import feature_dectection
+from features import  *
 
 pointcloud = []
 
@@ -68,6 +68,11 @@ def main():
                             endpoints[0] = feature_map.projection_point2line(OUTMOST[0], m, c)
                             endpoints[1] = feature_map.projection_point2line(OUTMOST[1], m, c)
 
+                            feature_map.FEATURES.append([[m, c], endpoints])
+                            feature_map.FEATURES = feature_map.lineFeats2point()
+                            landmark_association(feature_map.FEATURES)
+
+
                             color = (255, 0, 0)
                             for point in line_seg:
                                 # px, py = point[0]
@@ -78,11 +83,11 @@ def main():
 
                 points = []
                 for reading in d:
-                    print(reading)
                     points.append(feature_map.angle_dist_2_coord(reading[0], reading[1], reading[2]))
                 data_to_pointcloud(points)
                 # show_pointcloud(interface.get_screen())
-
+            for landmark in Landmarks:
+                pygame.draw.line(interface.get_screen(), (0, 0, 255), landmark[1][0], landmark[1][1], 2)
         pygame.display.update()
 
     pygame.quit()
