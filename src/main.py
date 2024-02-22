@@ -14,16 +14,14 @@ def main():
     # Initialize environment
     env_width = 1280
     env_height = 720
-    map = cv2.imread('map.png')
+    map = cv2.imread('map1.png')
     environment = Environment.img_to_env(map)
+
     interface = EnvironmentInterface(environment)
     lidar = LidarSensor(300, 180, environment)
     feature_map = feature_dectection()
 
     running = True
-
-
-
     while running:
 
         sensor_on = False
@@ -31,7 +29,6 @@ def main():
         break_point_ind = 0
         endpoints = [0, 0]
         sensor_on = False
-        predicted_points_todraw = []
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
