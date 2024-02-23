@@ -5,19 +5,19 @@ from agent import Agent
 from environment import Environment
 from sensors import LidarSensor
 from ui import EnvironmentInterface
-from features import  *
+from features import *
 
 pointcloud = []
 
 
-def main():
+def main1():
     # Initialize environment
     env_width = 1280
     env_height = 720
     map = cv2.imread('map1.png')
     environment = Environment.img_to_env(map)
 
-    interface = EnvironmentInterface(environment)
+    interface = EnvironmentInterface(environment, map)
     lidar = LidarSensor(300, 180, environment)
     feature_map = feature_dectection()
 
@@ -69,7 +69,6 @@ def main():
                             feature_map.FEATURES = feature_map.lineFeats2point()
                             landmark_association(feature_map.FEATURES)
 
-
                             color = (255, 0, 0)
                             for point in line_seg:
                                 # px, py = point[0]
@@ -85,6 +84,35 @@ def main():
                 # show_pointcloud(interface.get_screen())
             for landmark in Landmarks:
                 pygame.draw.line(interface.get_screen(), (0, 0, 255), landmark[1][0], landmark[1][1], 2)
+        pygame.display.update()
+
+    pygame.quit()
+
+
+def main():
+    # Initialize environment
+    env_width = 1280
+    env_height = 720
+    map_path = "map1.png"
+    map = cv2.imread(map_path)
+    environment = Environment.img_to_env(map)
+    interface = EnvironmentInterface(environment, map_path)
+    agent = Agent(environment, radius=10, step_size=50)
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        agent.move()
+        interface.draw()
+        agent.detect()
+        pygame.time.wait(100)
+        agent.draw_agent(interface.get_screen())
+
+        for landmark in Landmarks:
+            pygame.draw.line(interface.get_screen(), (0, 0, 255), landmark[1][0], landmark[1][1], 2)
+
         pygame.display.update()
 
     pygame.quit()

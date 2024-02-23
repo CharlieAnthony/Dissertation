@@ -1,27 +1,39 @@
 from features import *
 from sensors import LidarSensor
+import pygame
+import numpy as np
 
 
-class Agent():
+class Agent:
 
-    def __init__(self, environment):
-        self.position = (0, 0)
+    def __init__(self, environment, radius=3, step_size=5):
+        self.position = (10, 10)
         self.bearing = 0
         self.velocity = 0
         self.feature_detection = feature_dectection()
+        self.radius = radius
+        self.step_size = step_size
         self.env = environment
         self.lidar = LidarSensor(300, 180, self.env)
 
 
-    def move(self, dist):
-        pass
+    def move(self):
+        # random walk algorithm
+        angle = np.random.randint(low=0, high=359)
+        self.step(self.step_size, angle)
 
 
-    def rotate(self, deg):
-        pass
+    def step(self, dist, angle):
+        x1, y1 = self.position
+        # check to see if there are obstacles between (x1, y1) and (x2, y2)
+        for i in range(dist):
+            x, y = self.feature_detection.angle_dist_2_coord(i, angle, (x1, y1))
+            if self.env.get_cell_val(x, y) != 1:
+                self.position = (x, y)
+            else:
+                break
 
-    def next_move(self):
-        pass
+
 
     def detect(self):
         readings = self.lidar.detect(None, self.env, position=self.position)
@@ -52,3 +64,8 @@ class Agent():
                         self.feature_detection.FEATURES.append([[m, c], endpoints])
                         self.feature_detection.FEATURES = self.feature_detection.lineFeats2point()
                         landmark_association(self.feature_detection.FEATURES)
+
+    def draw_agent(self, screen):
+        x, y = self.position
+        pygame.draw.circle(screen, ( 255, 0, 0), (x, y), self.radius)
+        return screen
