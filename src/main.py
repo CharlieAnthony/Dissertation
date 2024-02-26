@@ -14,10 +14,10 @@ def main1():
     # Initialize environment
     env_width = 1280
     env_height = 720
-    map = cv2.imread('map1.png')
+    map_path = "map1.png"
+    map = cv2.imread(map_path)
     environment = Environment.img_to_env(map)
-
-    interface = EnvironmentInterface(environment, map)
+    interface = EnvironmentInterface(environment)
     lidar = LidarSensor(300, 180, environment)
     feature_map = feature_dectection()
 
@@ -105,13 +105,11 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         agent.move()
-        interface.draw()
-        agent.detect()
-        pygame.time.wait(100)
+        # interface.draw()
+        # agent.detect()
+        # pygame.time.wait(100)
         agent.draw_agent(interface.get_screen())
 
-        for landmark in Landmarks:
-            pygame.draw.line(interface.get_screen(), (0, 0, 255), landmark[1][0], landmark[1][1], 2)
 
         pygame.display.update()
 
