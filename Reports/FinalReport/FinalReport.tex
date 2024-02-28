@@ -26,7 +26,7 @@
     \vspace*{5cm}
 
     \Large
-    \textbf{Swarm Robotics: Exploration and Mapping in Simulated testing Environments}
+    \textbf{Multi-Agent SLAM: Exploration and Mapping in Simulated testing Environments}
 
     \vspace{1cm}
 
@@ -40,7 +40,7 @@
     \vspace{1cm}
 
     \small
-    Interim report\\
+    Dissertation\\
     Computer Science and Artificial Intelligence BSc
 
     \includegraphics[width=0.3\linewidth]{sussex_logo.jpg}
@@ -49,7 +49,7 @@
     \small
     Department of Informatics and Engineering\\
     University of Sussex\\
-    November 2023
+    May 2024
 \end{titlepage}
 
 %Table of Contents
@@ -78,39 +78,7 @@ swarm behaviours in order to create a base-line representation of the environmen
 potentially implement physical robots, given time permits.\\
 
 %Professional and Ethical Considerations
-\section{Professional and Ethical Considerations}
-My project maintains compliance towards all ethical considerations, as there is minimal external involvement from
-humans. The majority of my project will be carried out in simulation, therefore no ethical approval is required. Should
-my project progress to physically implementing agents, considerations such as safety around the robots, will be considered.
-All tests will be carried out in an environment where people cannot be hit, therefore mitigating any trip hazards.\\
 
-To ensure all elements of the BCS code of conduct are met, I have summarised each section and how I meet certain criteria. \\
-\subsection{Public Interest}
-As mentioned previously, my project has due regard for public health, as there is minimal external involvement from humans.
-Furthermore, no major privacy, security or wellbeing considerations are required due to the nature of this project. Third parties
-will be respected throughout the project with consistent citations and there will be no discrimination against anybody involved.
-Finally, I will promote equal access to the benefits of IT by open-sourcing my research once I have graduated. This will be accessible
-on my Github profile: \href{https://github.com/CharlieAnthony/}{https://github.com/CharlieAnthony/} \\
-\subsection{Professional Competence and Integrity}
-My project is within my professional competence, as it significantly relies upon knowledge obtained from modules such as "Acquired
-Intelligence and Adaptive Behaviour" and "Fundamentals of Machine Learning." Furthermore, I will develop my professional knowledge,
-skills and competence through communicating with my supervisor and ensuring all relevant gaps in knowledge are explored through
-reading extensively. As part of my background reading, I have made myself familiar with the BCS code of conduct and surrounding
-legistlation. I will comply with this throughout when carrying out my professional responsibilities. There will also
-be no unethical inducements offered or accepted throughout the project. \\
-\subsection{Duty to Relevant Authority}
-As the relevant authority will be the University of Sussex, I will comply with all relevant codes of conduct and legislation. I
-will exercise my professional judgement at all times, including avoidance of any situation that may give rise to a conflict of
-interest between myself and the university. I will also make it my responsibility to ensure all colleagues work is properly
-referenced in a bibliography at the end of my dissertation. \\
-\subsection{Duty to the Profession}
-Finally, I accept my duty to uphold the reputation of the profession. I will work to the best of my ability to ensure my project
-is complete to the highest possible standard. As mentioned previously, I will seek to improve professional standards through
-communication with my supervisor. This dissertation will be written with integrity and respect towards all members of BCS and colleagues
-of the profession. \\
-
-
-%Related Work
 \section{Related Work}
 \subsection{SLAM}
 
@@ -194,6 +162,7 @@ other would be very computationally expensive. Also, another limitation is that 
 This is because of the inherent randomness, which means areas of the environment may be unexplored.\\
 
 %Requirements Analysis
+
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
 create a simulation interface, where the user can see the agents, the environment and a representation of the agents internal
@@ -318,47 +287,81 @@ visualise performance and draw conclusions. After, a lot of time will be spent w
 of the algorithms. Finally, I will conclude my project by writing a conclusion, which will summarise my findings and discuss
 potential future work. Prior to submitting my report, I will also spend time proofreading and editing my work.
 
-\pagebreak
 
-\section{Supervisor Meetings}
-\subsection{Meeting 1 - 11/10/2023}
+\section{Professional and Ethical Considerations}
+My project maintains compliance towards all ethical considerations, as there is minimal external involvement from
+humans. The majority of my project will be carried out in simulation, therefore no ethical approval is required. Should
+my project progress to physically implementing agents, considerations such as safety around the robots, will be considered.
+All tests will be carried out in an environment where people cannot be hit, therefore mitigating any trip hazards.\\
+
+To ensure all elements of the BCS code of conduct are met, I have summarised each section and how I meet certain criteria. \\
+\subsection{Public Interest}
+As mentioned previously, my project has due regard for public health, as there is minimal external involvement from humans.
+Furthermore, no major privacy, security or wellbeing considerations are required due to the nature of this project. Third parties
+will be respected throughout the project with consistent citations and there will be no discrimination against anybody involved.
+Finally, I will promote equal access to the benefits of IT by open-sourcing my research once I have graduated. This will be accessible
+on my Github profile: \href{https://github.com/CharlieAnthony/}{https://github.com/CharlieAnthony/} \\
+\subsection{Professional Competence and Integrity}
+My project is within my professional competence, as it significantly relies upon knowledge obtained from modules such as "Acquired
+Intelligence and Adaptive Behaviour" and "Fundamentals of Machine Learning." Furthermore, I will develop my professional knowledge,
+skills and competence through communicating with my supervisor and ensuring all relevant gaps in knowledge are explored through
+reading extensively. As part of my background reading, I have made myself familiar with the BCS code of conduct and surrounding
+legistlation. I will comply with this throughout when carrying out my professional responsibilities. There will also
+be no unethical inducements offered or accepted throughout the project. \\
+\subsection{Duty to Relevant Authority}
+As the relevant authority will be the University of Sussex, I will comply with all relevant codes of conduct and legislation. I
+will exercise my professional judgement at all times, including avoidance of any situation that may give rise to a conflict of
+interest between myself and the university. I will also make it my responsibility to ensure all colleagues work is properly
+referenced in a bibliography at the end of my dissertation. \\
+\subsection{Duty to the Profession}
+Finally, I accept my duty to uphold the reputation of the profession. I will work to the best of my ability to ensure my project
+is complete to the highest possible standard. As mentioned previously, I will seek to improve professional standards through
+communication with my supervisor. This dissertation will be written with integrity and respect towards all members of BCS and colleagues
+of the profession. \\
+
+
+%Related Work
+
+\section{Methods}
+
+
+\section{Appendices}
+\subsection{Supervisor Meetings}
+\subsubsection{Meeting 1 - 11/10/2023}
 Discussed on the project idea and potential directions to take. Discussed the possibility of implementing physical agents,
 challenges that may occur and potential ways of implementing swarm algorithms. Need to focus on researching SLAM and swarm
 and looking into existing resources.
-\subsection{Meeting 2 - 27/10/2023}
+\subsubsection{Meeting 2 - 27/10/2023}
 Discussed potential algorithms, such as particle filters and graph-based SLAM. We also discussed the logistics of the project,
 ensuring that it remains both realistic and achievable. We also discussed the possibility of implementing physical agents,
 and where relevant resources could be found.
-\subsection{Meeting 3 - 14/11/2023}
+\subsubsection{Meeting 3 - 14/11/2023}
 Started with feedback on the interim report - discussing the structure and content. After we discussed how the project will
 move forward and the next steps to take. Given the interim report is now complete, we can focus mainly on development, following
 the project plan. As I have already developed a basic simulation interface, I can now move onto implementing my first SLAM algorithm.
-\subsection{Meeting 4 - 08/12/2023}
+\subsubsection{Meeting 4 - 08/12/2023}
 In this meeting, we turned to ironing out the specifics of the implementation - including looking at existing resources, like
 Enki, and concepts that need to be considered, such as Differential Turning. The goal of this meeting was to guide me into
 starting to create my environment and first SLAM algorithm, which will be implemented over the christmas break.
-\subsection{Meeting 5 - 02/02/2024}
+\subsubsection{Meeting 5 - 02/02/2024}
 We firstly caught up on progress made over the christmas break. After, we started to look forward to the next steps of the project,
 discussing the projects overall direction and the next steps to take. One notable suggestion was the move away from swarm algorithms
 and perhaps the move towards multi-agent SLAM, as this would be more achievable in the time frame. Finally, we discussed how I
 should manage my time towards the end of the project and how I could start working on my dissertation.
-\subsection{Meeting 6 - 09/02/2024}
+\subsubsection{Meeting 6 - 09/02/2024}
 Started with me demonstrating my current progress, with my environment working, LIDAR sensor appropriately implemented and
 my work-in-progress feature detection. We discussed then how I could approach landmark detection and how I planned on implementing
 it. We ended the meeting with clearing up questions regarding the project presentation, poster competition and submission.
-\subsection{Meeting 7 - 16/02/2024}
+\subsubsection{Meeting 7 - 16/02/2024}
 We discussed how my project was going; talking about feature extraction and landmark detection. As I had been having troubles
 with bugs in the previous week, Chris suggested spending more time writing test cases. We then discussed how I should approach
 writing the final report; considering structure and content. We agreed that there are parts of the report that I could start
 now, such as my literature review and methodology used in feature detection and landmark detection.
-\subsection{Meeting 8 - 23/02/2024}
+\subsubsection{Meeting 8 - 23/02/2024}
 Started with showing my progress on landmark detection and randon walk exploration. We then discussed different exploration
 algorithms that could be used, as random walk exploration isn't efficient. We discussed creating some form of wall-avoidance
 navigation, which would be far more efficient. We then reviewed my plan and reflected on how progress was going. We both
 agreed that progress isn't as fast as we would like, but we are still on track to complete the project on time.
-
-%Appendix
-\section{Appendices}
 
 \subsection{Project Proposal}
 \includepdf[pages=-]{ProjectProposal.pdf}

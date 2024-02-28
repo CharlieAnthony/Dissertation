@@ -8,7 +8,7 @@ class Agent:
 
     def __init__(self, environment, radius=3, step_size=5):
         self.position = (10, 10)
-        self.bearing = 0
+        self.bearing = np.random.randint(low=0, high=359)
         self.velocity = 0
         self.feature_detection = feature_dectection()
         self.radius = radius
@@ -19,8 +19,10 @@ class Agent:
 
     def move(self):
         # random walk algorithm
-        angle = np.random.randint(low=0, high=359)
-        self.step(self.step_size, angle)
+        angle = np.random.randint(low=0, high=90)
+        new_bearing = self.bearing + angle - 45
+        self.bearing = new_bearing if new_bearing < 360 else new_bearing - 360
+        self.step(self.step_size, self.bearing)
 
 
     def step(self, dist, angle):
