@@ -16,14 +16,12 @@ class Agent:
         self.env = environment
         self.lidar = LidarSensor(300, 180, self.env)
 
-
     def move(self):
         # random walk algorithm
         angle = np.random.randint(low=0, high=90)
         new_bearing = self.bearing + angle - 45
         self.bearing = new_bearing if new_bearing < 360 else new_bearing - 360
         self.step(self.step_size, self.bearing)
-
 
     def step(self, dist, angle):
         x1, y1 = self.position
@@ -34,8 +32,6 @@ class Agent:
                 self.position = (x, y)
             else:
                 break
-
-
 
     def detect(self):
         readings = self.lidar.detect(None, self.env, position=self.position)
@@ -69,5 +65,9 @@ class Agent:
 
     def draw_agent(self, screen):
         x, y = self.position
-        pygame.draw.circle(screen, ( 255, 0, 0), (x, y), self.radius)
+        pygame.draw.circle(screen, (255, 0, 0), (x, y), self.radius)
         return screen
+
+    def draw_landmarks(self, screen):
+        for landmark in Landmarks:
+            pygame.draw.line(screen, (0, 0, 255), landmark[1][0], landmark[1][1], 2)
