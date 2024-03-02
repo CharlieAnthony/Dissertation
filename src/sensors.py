@@ -93,8 +93,8 @@ class LidarSensor:
         for i in np.linspace(0, 360, self.num_rays, False):
             x2 = x1 + self.detection_range * math.cos(math.radians(i))
             y2 = y1 - self.detection_range * math.sin(math.radians(i))
-            for j in range(100):
-                u = j / 100
+            for j in range(self.detection_range):
+                u = j / self.detection_range
                 x = int(x2 * u + x1 * (1 - u))
                 y = int(y2 * u + y1 * (1 - u))
                 if e.get_cell_val(x, y) == 1:

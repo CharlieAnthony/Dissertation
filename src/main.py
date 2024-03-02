@@ -10,7 +10,7 @@ from features import *
 pointcloud = []
 
 
-def main1():
+def main():
     # Initialize environment
     env_width = 1280
     env_height = 720
@@ -75,7 +75,7 @@ def main1():
                                 # pygame.draw.circle(interface.get_screen(), (0, 0, 255), (px, py), 2)
                                 # print("point: ", point)
                                 pass
-                            pygame.draw.line(interface.get_screen(), color, endpoints[0], endpoints[1], 2)
+                            # pygame.draw.line(interface.get_screen(), color, endpoints[0], endpoints[1], 2)
 
                 points = []
                 for reading in d:
@@ -89,7 +89,7 @@ def main1():
     pygame.quit()
 
 
-def main():
+def main1():
     # Initialize environment
     env_width = 1280
     env_height = 720
