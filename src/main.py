@@ -105,9 +105,12 @@ def main1():
             if event.type == pygame.QUIT:
                 running = False
         agent.move()
+        agent.detect()
         # interface.draw()
-        # agent.detect()
-        # pygame.time.wait(100)
+        agent.draw_agent(interface.get_screen())
+        agent.draw_landmarks(interface.get_screen())
+
+        # pygame.time.wait(50)
         agent.draw_agent(interface.get_screen())
 
 
