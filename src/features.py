@@ -101,8 +101,13 @@ class feature_dectection:
         """
         a1, b1, c1 = params1
         a2, b2, c2 = params2
-        x = (c1 * b2 - b1 * c2) / (b1 * a2 - a1 * b2)
-        y = (a1 * c2 - a2 * c1) / (b1 * a2 - a1 * b2)
+
+        denominator = (b1 * a2 - a1 * b2)
+        if denominator == 0:
+            return None
+
+        x = (c1 * b2 - b1 * c2) / denominator
+        y = (a1 * c2 - a2 * c1) / denominator
         return x, y
 
     def points_2line(self, point1, point2):
@@ -199,8 +204,11 @@ class feature_dectection:
         """
         m, b = self.points_2line(robot_pos, sensed_points)
         params1 = self.lineForm_SI2G(m, b)
-        predx, predy = self.line_intersect_general(params1, line_params)
-        return predx, predy
+        preds = self.line_intersect_general(params1, line_params)
+        if preds:
+            return preds[0], preds[1]
+        else:
+            return None
 
     def seed_segment_detection(self, robot_pos, break_point_ind):
         flag = True
@@ -215,6 +223,8 @@ class feature_dectection:
 
             for k in range(i, j):
                 predicted_point = self.predictPoint(params, self.LASERPOINTS[k][0], robot_pos)
+                if not predicted_point:
+                    continue
                 predicted_points_to_draw.append(predicted_point)
                 d1 = self.euclidean_distance(predicted_point, self.LASERPOINTS[k][0])
 
@@ -300,7 +310,7 @@ def is_overlap(seg1, seg2):
         return False
 
 def landmark_association(landmarks):
-    thres = 10
+    thres = 30
     for l in landmarks:
         flag = False
         for i, Landmark in enumerate(Landmarks):

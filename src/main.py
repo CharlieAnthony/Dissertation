@@ -10,7 +10,7 @@ from features import *
 pointcloud = []
 
 
-def main():
+def main1():
     # Initialize environment
     env_width = 1280
     env_height = 720
@@ -89,7 +89,7 @@ def main():
     pygame.quit()
 
 
-def main1():
+def main():
     # Initialize environment
     env_width = 1280
     env_height = 720
@@ -97,21 +97,26 @@ def main1():
     map = cv2.imread(map_path)
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment, map_path)
-    agent = Agent(environment, radius=10, step_size=50)
+    agent = Agent(environment, radius=10, step_size=10)
+    clock = pygame.time.Clock()
+    fps_limit = 60
 
     running = True
     while running:
+        clock.tick(fps_limit)
+        interface.draw()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+                
         agent.move()
-        agent.detect()
-        # interface.draw()
+        # agent.detect()
         agent.draw_agent(interface.get_screen())
-        agent.draw_landmarks(interface.get_screen())
+        # agent.draw_landmarks(interface.get_screen())
 
         # pygame.time.wait(50)
-        agent.draw_agent(interface.get_screen())
+        # agent.draw_agent(interface.get_screen())
 
 
         pygame.display.update()
