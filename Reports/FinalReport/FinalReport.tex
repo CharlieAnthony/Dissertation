@@ -60,10 +60,10 @@
 \section{Introduction}
 Swarms exist everywhere in life. Nearly all organisms exhibit some form of swarming behaviours within their
 communities. Starlings display impressive organisational behaviour, positioning themselves with respect to the
-movement of their neighbours \cite{starling_swarm}. Humans show swarm behaviours when moving in crowds, for example, moving around sports
+movement of their neighbours. Humans show swarm behaviours when moving in crowds, for example, moving around sports
 venues or exiting buildings in emergencies. No matter how hard you look, regardless if the context, swarms are
 typically present.\\
-These behaviours can also be artificially created in robotics \cite{intro_to_swarm}. Within the realm of computing, parallelising
+These behaviours can also be artificially created in robotics. Within the realm of computing, parallelising
 processes is breaking barrier after barrier - swarm robotics brings the same benefits. Being able to divide and
 conquer a problem has the ability to massively increase the rate of work by employing multiple robots. Therefore, it
 would be wasteful not to properly dedicate the time which this discipline deserves.\\
@@ -133,11 +133,11 @@ filters are susceptible to the "curse of dimensionality", which means that as th
 complexity rapidly increases.
 
 \subsection{Swarm}
-Swarm robotics \cite{intro_to_swarm} is a discipline which studies the coordination of large numbers of robots. It is largely inspired by biology,
+Swarm robotics is a discipline which studies the coordination of large numbers of robots. It is largely inspired by biology,
 where social organisms achieve complex behaviours through simple interactions with each other and the environment. Swarm
 robotics is an important area of research in robotics, as it has many applications, such as search and rescue, exploration
 and mapping.\\
-One of the benefits of swarm robotics is the scalability and flexibility of the system \cite{swarm_SLAM}. This is because the system is
+One of the benefits of swarm robotics is the scalability and flexibility of the system. This is because the system is
 decentralized, meaning that each agent is able to make decisions independently. This allows for repeatability, as the system
 can be scaled up or down simply by adding or removing agents. Also, it allows for flexibility, as the system can be adapted
 to different environments, as each agent is able to make decisions based on its surroundings.\\
@@ -149,8 +149,8 @@ research and development.
 \subsection{Random Walks}
 Random walk exploration in the context of swarm mapping is a technique where agents individually map an environment, using
 methods like Graph-based SLAM, Particle Filters, etc. and them combine their findings to a single global map; this is an
-example of a centralised system \cite{swarm_random_walks}.\\
-A example of an implementation of random walk exploration is Brownian motion \cite{brownian_motion}, which is a physics-inspired
+example of a centralised system.\\
+A example of an implementation of random walk exploration is Brownian motion, which is a physics-inspired
 approach. It works by applying a random force to each agent, which determines its direction. The agents then move in this
 direction until they detect an obstacle, at which point they will change direction. This process is repeated until the
 environment is fully mapped. There is randomness provided from the environment, through detecting other agents or obstacles,
@@ -166,16 +166,15 @@ This is because of the inherent randomness, which means areas of the environment
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
 create a simulation interface, where the user can see the agents, the environment and a representation of the agents internal
-map. After I will work towards implementing SLAM and swarm algorithms. As an extension, I will attempt to implement physical
-agents, which will act in the real world. This will require a lot of additional work, so will only be attempted if time permits.
-I have included a number of optional requirements below to compensate for this.\\
+map. After I will work towards implementing single-agent and multi-agent SLAM algorithms. I have also added a couple optional
+requirements, which can be carried out should time permit but are not critical towards the success of the project.\\
 When creating the simulation interface, I will be using the Python programming language, along with the PyGame library. This
 will abstract away a lot of the complexity of creating a graphical user interface, allowing me to focus on the core functionality.
 I will also use various other scientific python libraries throughout my project, such as NumPy, SciPy and Matplotlib.\\
 
 \begin{table}[H]
     \centering
-    \begin{tabular}{|p{0.1\linewidth}|p{0.2\linewidth}|p{0.6\linewidth}|}
+    \begin{tabular}{|p{0.03\linewidth}|p{0.2\linewidth}|p{0.6\linewidth}|}
         \hline
         \textbf{ID} &
         \textbf{Requirement} &
@@ -183,55 +182,33 @@ I will also use various other scientific python libraries throughout my project,
         \hline
         \textbf{1} &
         Simulation Interface &
-        A graphical user interface, where the user can see the agent, the environment, and a representation of
-            the agents internal map\\
+        A graphical user interface will allow me to visually see the agents behaviours, which will aid de-bugging. It will
+        also help understand the algorithms in further detail by allowing me to see how they work live.\\
         \hline
         \textbf{2} &
-        SLAM Implementation &
-        Implement a SLAM algorithm, which allows a single agent to localise and map the environment\\
+        Single-agent SLAM &
+        Implementing a single-agent SLAM algorithm will help provide the required knowledge to tackle the larger challenge
+        of multi-agent SLAM. It will also give me benchmark figures to compare my multi-agent SLAM to when evaluating my project.\\
         \hline
         \textbf{3} &
-        Customise Environment &
-        Allow the environment to be easily modified in the interface - perhaps by uploading a black and white image\\
+        Multi-agent SLAM &
+        This is the main goal of my project. Implementing multi-agent SLAM algorithm will allow me to explore the challenges of
+        navigation and exploration.\\
         \hline
         \textbf{4} &
-        Centralized Swarm &
-        Implement a centralized swarm algorithm, where the agents individually collect data and then feed to a global map\\
-        \hline
-        \textbf{5} &
-        Decentralized Swarm &
-        Implement a decentralized swarm algorithm, where the agents communicate their findings and create individual representations
-            of the environment\\
-        \hline
-        \textbf{6} &
-        User Interface Interactivity &
-        Develop a user interface with interactive elements, which allow the user to change the environment and the properties of the agents.\\
-        \hline
-        \textbf{7} &
-        Single SLAM Agent &
-        Implement a SLAM algorithm on a single agent system, using the Pose Graph Optimization Algorithm\\
-        \hline
-        \textbf{8} &
-        Multi-agent Random Walk Agents &
-        Implement a multi-agent random walk algorithm, where the agents move randomly around the environment\\
-        \hline
-        \textbf{9} &
-        Centralized Multi-agent SLAM System &
-        Implement a centralized multi-agent SLAM algorithm, where the agents individually collect data and then feed to a global map\\
-        \hline
-        \textbf{10} &
-        Decentralized Multi-agent SLAM System &
-        Implement a decentralized multi-agent SLAM algorithm, where the agents communicate their findings during exploration and create individual representations of the environment\\
+        Evaluation Metrics Integration &
+        This will allow me to analyse the performance of my algorithm and make improvements. This requirement includes adding
+        functionality to create graphs and charts, which will be used to visualise performance.\\
         \hline
     \end{tabular}
     \caption{Table of requirements and their justification}\label{tab:requirements_table}
-\end{table} \\
+\end{table}\\
+
 Along with this table of requirements, there will also be a number of opportunities for optional extensions, should time permit.
 These include:
 \begin{itemize}
-    \item Implementing physical agents
-    \item User interface enhancements, such as adding a menu bar, easier ways to change the environment, etc.
-    \item Develop a performance metric, allowing the user to compare SLAM algorithm performances
+    \item Implementing physical robots.
+    \item User interface enhancements, such as adding being able to view each individual agents internal map.
 \end{itemize}
 
 \pagebreak
@@ -326,6 +303,12 @@ of the profession. \\
 
 \subsection{Single-Agent SLAM}
 \subsubsection{Feature Extraction}
+Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
+are points of interest in the environment, such as corners, edges and lines. These features can then be used to create a map
+of the environment. There are many different techniques for feature extraction, such as the Harris corner detector and the
+split-and-merge algorithm. My implementation uses Seeded region growing, which was heavily inspired by the work of
+\cite{seeded_region_growing}.
+
 \subsubsection{Identifying Landmarks}
 \subsubsection{Data Association}
 \subsubsection{Pose Graph}
@@ -386,40 +369,20 @@ about due to it's complexity.
 
 \begin{thebibliography}{9}
 
-    \bibitem{starling_swarm}
-    H. Hildenbrandt, C. Carere, C.K. Hemelrijk
-    \textit{Self-organized aerial displays of thousands of starlings: a model}
-    \href{https://doi.org/10.1093/beheco/arq149}{https://doi.org/10.1093/beheco/arq149}
-
     \bibitem{SLAM_overview}
-    U. Frese, R. Wagner, T. Röfer
-    \textit{A SLAM overview from a users perspective, 2010}
+    Frese, U., Wagner, R. and Röfer, T. (2010). A SLAM Overview from a User’s Perspective.
+    \textit{KI - Künstliche Intelligenz}, 24(3), pp.191–198.
     \href{http://dx.doi.org/10.1007/s13218-010-0040-4}{http://dx.doi.org/10.1007/s13218-010-0040-4}
 
-    \bibitem{intro_to_swarm}
-    I. Navarro, F. Matía
-    \textit{An Introduction to Swarm Robotics, 2013}
-    \href{https://doi.org/10.5402/2013/608164}{https://doi.org/10.5402/2013/608164}
-
-    \bibitem{swarm_SLAM}
-    K. Miquel, G. Giorgio, B. Mauro
-    \textit{Swarm SLAM: Challenges and Perspectives, 2021}
-    \href{https://doi.org/10.3389/frobt.2021.618268}{https://doi.org/10.3389/frobt.2021.618268}
-
-    \bibitem{swarm_random_walks}
-    M. Kegeleirs, D. Garzón Ramos,  M. Birattari
-    \textit{Random walk exploration for swarm mapping, 2019}
-    \href{https://doi.org/10.1007/978-3-030-25332-5_50}{https://doi.org/10.1007/978-3-030-25332-5_50}
-
-    \bibitem{brownian_motion}
-    E. Khmelnitsky
-    \textit{Brownian Motion and Swarm Dynamics. In Autonomous Mobile Robots and Multi-Robot Systems, 2019}
-    \href{https://doi.org/10.1002/9781119213154.ch12}{https://doi.org/10.1002/9781119213154.ch12}
-
     \bibitem{C-SLAM}
-    P. Lajoie, G. Beltrame
-    \textit{Swarm-SLAM : Sparse Decentralized Collaborative Simultaneous Localization and Mapping Framework for Multi-Robot Systems, 2023}
+    Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
+    \textit{arXiv preprint},  arXiv:2301.06230.
     \href{https://doi.org/10.48550/arXiv.2301.06230}{https://doi.org/10.48550/arXiv.2301.06230}
+
+    \bibitem{seeded_region_growing}
+    Gao, H., Zhang, X., Fang, Y. and Yuan, J. (2018). A line segment extraction algorithm using laser data based on seeded region growing.
+    \textit{ International Journal of Advanced Robotic Systems}, p.172988141875524.
+    \href{https://doi.org/10.1177/1729881418755245}{https://doi.org/10.1177/1729881418755245}
 
 \end{thebibliography}
 
