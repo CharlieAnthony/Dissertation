@@ -28,7 +28,7 @@ class EKF(ExtendedKalmanFilter):
             Y1 = Y + V*self.dt*np.sin(YAW)
             V1 = V + a*self.dt
             YAW1 = YAW
-        else:  # Turning
+        else:
             X1 = X + (V/yawrate)*(np.sin(YAW + yawrate*self.dt) - np.sin(YAW))
             Y1 = Y + (V/yawrate)*(np.cos(YAW) - np.cos(YAW + yawrate*self.dt))
             V1 = V + a*self.dt

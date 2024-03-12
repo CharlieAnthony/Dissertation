@@ -79,8 +79,9 @@ potentially implement physical robots, given time permits.\\
 
 %Professional and Ethical Considerations
 
-\section{Related Work}
-\subsection{SLAM}
+\section{Literature Review}
+
+\subsection{Introduction to SLAM} % 300 words
 
 \begin{figure}[h]
     \centering
@@ -107,59 +108,77 @@ location of a robot in its environment, whilst mapping is the process of constru
 are constructed using data collected from sensors, such as cameras and laser scanners; Figure \ref{fig:SLAM_map} shows this.
 A lot of existing work in SLAM is based on single robot applications, however, there is a growing interest in multi-agent
 SLAM. One of the greatest challenges in SLAM is crossing the simulation to reality gap, as in the real world, sensor
-readings are noisy and environments are dynamic, which increases the complexity of the problem.
+readings are noisy and environments are dynamic, which increases the complexity of the problem.\\
+Code implementations of SLAM usually divide the problem into the Front-end and the Back-end \cite{SLAM_components}.
+The Front-end is where the agent interprets the environment; it will receive data, which could be in the form of images,
+LiDAR scans or other sensor data. The Front-end will then process this data, extracting features and identifying landmarks.
+Furthermore, the Front-end will also perform data association, which will compare new features/landmarks to data that has
+been previously collected. The Back-end is where the agent will use the data collected from the Front-end to create a map
+of the environment and localise itself. There are a number of paradigms which may be used during this process, such as Graph-based
+SLAM, Particle filtering and Extended Kalman Filters. By combining the Front-end and the Back-end, the agent will be able to
+create an internal representation of its environment and its position in that environment.
 
-\subsection{Graph-based SLAM}
-Graph-based SLAM is a technique used to create a map of an environment, by using a graph to represent the environment. It
-works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
-are usually received by a sensor, such as a camera or laser scanner. The robot then uses these measurements to create a
-plot of where objects may be, by combining the measurements from sensors with its memory of the route it has taken. This
-technique is used in many applications, both in research and in the real world.\\
-One limitation of graph-based SLAM is that it is computationally expensive, as it requires a lot of memory to store the
-sensor readings. Also, it is not very scalable, as the more sensors that are added, the more memory is required. Another
-limitation is that it cannot always be reliable, as the algorithm depends heavily on detecting loop closures, which when
-not detected, can lead to a lot of errors in the map. This, combined with even the slightest inaccuracy from sensors/motors
-makes it difficult to apply to the real world.
+\subsection{Background and Evolution of SLAM} % 600 words
+%https://ieeexplore.ieee.org/abstract/document/1638022?casa_token=AsoyJu5mFZwAAAAA:auXJSROaBRXsOue-Qu-sNWUyCmfxQTVnMfbL_5bSCXjw2PeQKWwwZEWu4oI8HXSUYvDJvf0WWQ
+%https://ieeexplore.ieee.org/abstract/document/7747236?casa_token=yHhMa-sk3kIAAAAA:OZI4SbZiNSjevJVBOH6BMLFeLEafOkpusTlMLYVERLkQDDtQkxOog0dChrhLhpzATqasjbY2pw
+In the early 1980s, SLAM concepts were first introduced by Smith and Cheeseman /cite{}
 
-\subsection{Particle Filters}
-Another technique used in SLAM is particle filters. Particle filters, also known as Monte Carlo localisation, is a probabalistic
-technique used to estimate the localisation of a robot in its environment. It starts with a set of particles randomly distributed
-across the environment, which represent possible locations of the robot. Each particle has an associated weight, representing the
-probability that the particle is the true location of the robot. As the robot moves around the environment, the particles weights
-are then updated based on an algorithm which takes the robots sensors as input. Overall, this technique is very effective, as it
-is able to localise the robot in its environment, even when the environment is dynamic. Also, this process is highly parallelisable,
-as each particle can be updated independently; which makes this a viable solution for real-world applications. However, particle
-filters are susceptible to the "curse of dimensionality", which means that as the number of dimensions increases, the problem's
-complexity rapidly increases.
+\subsection{Technical Frameworks and Models} % 800 words
+\subsection{Algorithms and Implementations} % 700 words
+\subsection{Real-world Applications and Case Studies} % 600 words
+indoor, outdoor, underwater and airbourne
 
-\subsection{Swarm}
-Swarm robotics is a discipline which studies the coordination of large numbers of robots. It is largely inspired by biology,
-where social organisms achieve complex behaviours through simple interactions with each other and the environment. Swarm
-robotics is an important area of research in robotics, as it has many applications, such as search and rescue, exploration
-and mapping.\\
-One of the benefits of swarm robotics is the scalability and flexibility of the system. This is because the system is
-decentralized, meaning that each agent is able to make decisions independently. This allows for repeatability, as the system
-can be scaled up or down simply by adding or removing agents. Also, it allows for flexibility, as the system can be adapted
-to different environments, as each agent is able to make decisions based on its surroundings.\\
-One of the biggest challenges in swarm robotics is the simulation to reality gap. This is because in simulation, the agents
-are able to easily share information with each other, whilst in the real world, this is more challenging. Furthermore, swarm
-robotics struggles with more complex environments, like outdoors. As a result, swarm robotics still has a lot of room for
-research and development.
-
-\subsection{Random Walks}
-Random walk exploration in the context of swarm mapping is a technique where agents individually map an environment, using
-methods like Graph-based SLAM, Particle Filters, etc. and them combine their findings to a single global map; this is an
-example of a centralised system.\\
-A example of an implementation of random walk exploration is Brownian motion, which is a physics-inspired
-approach. It works by applying a random force to each agent, which determines its direction. The agents then move in this
-direction until they detect an obstacle, at which point they will change direction. This process is repeated until the
-environment is fully mapped. There is randomness provided from the environment, through detecting other agents or obstacles,
-and randomness in motion, as each path is determined by a random force. Overall, collective behaviour emerges from these simple
-rules, which lead to a global behaviour which efficiently maps an environment.\\
-One of the biggest drawbacks of this approach is that it is not scalable, as the agents are not able to communicate their
-maps to each other, which can lead to a lot of redundant exploration. This is because equally, sharing their maps with each
-other would be very computationally expensive. Also, another limitation is that this approach doesn't guarantee effiency.
-This is because of the inherent randomness, which means areas of the environment may be unexplored.\\
+%\subsection{Graph-based SLAM}
+%Graph-based SLAM is a technique used to create a map of an environment, by using a graph to represent the environment. It
+%works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
+%are usually received by a sensor, such as a camera or laser scanner. The robot then uses these measurements to create a
+%plot of where objects may be, by combining the measurements from sensors with its memory of the route it has taken. This
+%technique is used in many applications, both in research and in the real world.\\
+%One limitation of graph-based SLAM is that it is computationally expensive, as it requires a lot of memory to store the
+%sensor readings. Also, it is not very scalable, as the more sensors that are added, the more memory is required. Another
+%limitation is that it cannot always be reliable, as the algorithm depends heavily on detecting loop closures, which when
+%not detected, can lead to a lot of errors in the map. This, combined with even the slightest inaccuracy from sensors/motors
+%makes it difficult to apply to the real world.
+%
+%\subsection{Particle Filters}
+%Another technique used in SLAM is particle filters. Particle filters, also known as Monte Carlo localisation, is a probabalistic
+%technique used to estimate the localisation of a robot in its environment. It starts with a set of particles randomly distributed
+%across the environment, which represent possible locations of the robot. Each particle has an associated weight, representing the
+%probability that the particle is the true location of the robot. As the robot moves around the environment, the particles weights
+%are then updated based on an algorithm which takes the robots sensors as input. Overall, this technique is very effective, as it
+%is able to localise the robot in its environment, even when the environment is dynamic. Also, this process is highly parallelisable,
+%as each particle can be updated independently; which makes this a viable solution for real-world applications. However, particle
+%filters are susceptible to the "curse of dimensionality", which means that as the number of dimensions increases, the problem's
+%complexity rapidly increases.
+%
+%\subsection{Swarm}
+%Swarm robotics is a discipline which studies the coordination of large numbers of robots. It is largely inspired by biology,
+%where social organisms achieve complex behaviours through simple interactions with each other and the environment. Swarm
+%robotics is an important area of research in robotics, as it has many applications, such as search and rescue, exploration
+%and mapping.\\
+%One of the benefits of swarm robotics is the scalability and flexibility of the system. This is because the system is
+%decentralized, meaning that each agent is able to make decisions independently. This allows for repeatability, as the system
+%can be scaled up or down simply by adding or removing agents. Also, it allows for flexibility, as the system can be adapted
+%to different environments, as each agent is able to make decisions based on its surroundings.\\
+%One of the biggest challenges in swarm robotics is the simulation to reality gap. This is because in simulation, the agents
+%are able to easily share information with each other, whilst in the real world, this is more challenging. Furthermore, swarm
+%robotics struggles with more complex environments, like outdoors. As a result, swarm robotics still has a lot of room for
+%research and development.
+%
+%\subsection{Random Walks}
+%Random walk exploration in the context of swarm mapping is a technique where agents individually map an environment, using
+%methods like Graph-based SLAM, Particle Filters, etc. and them combine their findings to a single global map; this is an
+%example of a centralised system.\\
+%A example of an implementation of random walk exploration is Brownian motion, which is a physics-inspired
+%approach. It works by applying a random force to each agent, which determines its direction. The agents then move in this
+%direction until they detect an obstacle, at which point they will change direction. This process is repeated until the
+%environment is fully mapped. There is randomness provided from the environment, through detecting other agents or obstacles,
+%and randomness in motion, as each path is determined by a random force. Overall, collective behaviour emerges from these simple
+%rules, which lead to a global behaviour which efficiently maps an environment.\\
+%One of the biggest drawbacks of this approach is that it is not scalable, as the agents are not able to communicate their
+%maps to each other, which can lead to a lot of redundant exploration. This is because equally, sharing their maps with each
+%other would be very computationally expensive. Also, another limitation is that this approach doesn't guarantee effiency.
+%This is because of the inherent randomness, which means areas of the environment may be unexplored.\\
 
 %Requirements Analysis
 
@@ -302,12 +321,25 @@ of the profession. \\
 \section{Methods}
 
 \subsection{Single-Agent SLAM}
+
 \subsubsection{Feature Extraction}
 Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
 are points of interest in the environment, such as corners, edges and lines. These features can then be used to create a map
 of the environment. There are many different techniques for feature extraction, such as the Harris corner detector and the
-split-and-merge algorithm. My implementation uses Seeded region growing, which was heavily inspired by the work of
-\cite{seeded_region_growing}.
+split-and-merge algorithm. My implementation uses Seeded region growing, which was proposed by Gao et al.
+\cite{seeded_region_growing}.\\
+Seed segment detection works by observing a set of points from a single sweep. The algorithm starts by fitting a line through
+the given points. Then, in order for a seed segment to be further considered, it must satisfy the following two conditions:
+\begin{itemize}
+    \item The distance between the point and the line must be less than a given threshold.
+    \item The distance between the point and it's predicted position must be less than a given threshold.
+\end{itemize}
+Seed segment detection uses orthogonal line fitting to propose a feature through a set of points, as it is more effective
+than using traditional methods, such as standard least square fitting; this is due to the nature of least square fitting
+which only takes into account the vertical distances of each point.\\
+After, the algorithm applies region growing, which helps create line segments; which will then become our features. The
+region growing works by examining neighbouring points and adding them to the line segment if they satisfy the same conditions.
+This process is repeated until no more points can be added to the line segment.\\
 
 \subsubsection{Identifying Landmarks}
 \subsubsection{Data Association}
@@ -373,6 +405,11 @@ about due to it's complexity.
     Frese, U., Wagner, R. and Röfer, T. (2010). A SLAM Overview from a User’s Perspective.
     \textit{KI - Künstliche Intelligenz}, 24(3), pp.191–198.
     \href{http://dx.doi.org/10.1007/s13218-010-0040-4}{http://dx.doi.org/10.1007/s13218-010-0040-4}
+
+    \bibitem{SLAM_components}
+    Alsadik, B. and Karam, S. (2021) The Simultaneous Localization and Mapping (SLAM)-An Overview.
+    \textit{Journal of Applied Science and Technology Trends, 2(02), pp. 147 - 158.}
+    \href{https://doi.org/10.38094/jastt204117}{https://doi.org/10.38094/jastt204117}
 
     \bibitem{C-SLAM}
     Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
