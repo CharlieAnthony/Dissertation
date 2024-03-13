@@ -6,6 +6,7 @@ from environment import Environment
 from sensors import LidarSensor
 from ui import EnvironmentInterface
 from features import *
+from ekf import EKF
 
 pointcloud = []
 
@@ -100,6 +101,9 @@ def main():
     agent = Agent(environment, radius=10, step_size=10)
     clock = pygame.time.Clock()
     fps_limit = 60
+    ekf = EKF()
+
+    dt = 0.01
 
     running = True
     while running:
@@ -111,8 +115,14 @@ def main():
                 running = False
                 
         agent.move()
+
+        # ekf logic
+        mu, sigma = ekf.prediction_update(agent.mu, agent.sigma, [agent.velocity, agent.bearing], dt)
+
+
         # agent.detect()
         agent.draw_agent(interface.get_screen())
+        agent.show_agent_estimate(interface.get_screen(), mu, sigma)
         # agent.draw_landmarks(interface.get_screen())
 
         # pygame.time.wait(50)

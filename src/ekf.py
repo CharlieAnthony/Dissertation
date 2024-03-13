@@ -2,7 +2,7 @@ import numpy as np
 from scipy.linalg import block_diag
 from filterpy.kalman import ExtendedKalmanFilter
 
-class EKF(ExtendedKalmanFilter):
+class old_EKF(ExtendedKalmanFilter):
     def __init__(self, dt, wheelbase, std_acc, std_yawrate):
         ExtendedKalmanFilter.__init__(self, 4, 2)
 
@@ -51,3 +51,34 @@ class EKF(ExtendedKalmanFilter):
         H_result[0, 0] = 1
         H_result[1, 1] = 1
         return H_result
+
+class EKF:
+
+    def __init__(self):
+        # robot parameters
+        self.n_state = 3
+        self.n_landmarks = 1
+
+        # ekf estimation variables
+        self.mu = np.zeros((self.n_state + 2*self.n_landmarks, 1))
+        self.sigma = np.zeros((self.n_state + 2*self.n_landmarks, self.n_state + 2*self.n_landmarks))
+
+        # helpful matrices
+        self.Fx = np.block([[np.eye(3), np.zeros((self.n_state, 2*self.n_landmarks))]])
+
+    def prediction_update(self, mu, sigma, u, dt):
+        rx, ry, theta = mu[0:3]
+        v, w = u[0], u[1]
+        # update state estimate
+        state_model_mat = np.zeros((self.n_state, 1))
+        state_model_mat[0] = -(v/w)*np.sin(theta) + (v/w)*np.sin(theta + w*dt) if abs(w) > 0.001 else v*np.cos(theta)
+        state_model_mat[1] = (v/w)*np.cos(theta) - (v/w)*np.cos(theta + w*dt) if abs(w) > 0.001 else v*np.sin(theta)
+        state_model_mat[2] = w*dt
+        mu += np.transpose(self.Fx).dot(state_model_mat)
+
+
+
+        return mu, sigma
+
+    def measurement_update(self, mu, sigma):
+        pass

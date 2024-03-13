@@ -12,12 +12,18 @@ class Agent:
         self.predicted_position = (10, 10)
         self.bearing = np.random.randint(low=0, high=359)
         self.velocity = 0
-        self.EKF = EKF(0.1, 0.1, 0.1, 0.1)
+        # self.EKF = EKF(0.1, 0.1, 0.1, 0.1)
         self.feature_detection = feature_dectection()
         self.radius = radius
         self.step_size = step_size
         self.env = environment
         self.lidar = LidarSensor(300, 180, self.env)
+        self.n_state = 3
+        self.n_landmarks = 1
+        self.mu = np.zeros((self.n_state + 2 * self.n_landmarks, 1))
+        self.mu[0:3] = np.expand_dims([self.real_position[0], self.real_position[1], self.bearing], axis=1)
+        self.sigma = np.zeros((self.n_state+2*self.n_landmarks,self.n_state+2*self.n_landmarks))
+
 
 
     def move(self):
@@ -79,6 +85,22 @@ class Agent:
         x, y = self.real_position
         pygame.draw.circle(screen, (255, 0, 0), (x, y), self.radius)
         pygame.draw.circle(screen, (0, 255, 0), (int(self.predicted_position[0]), int(self.predicted_position[1])), self.radius - 1)
+        return screen
+
+    def show_agent_estimate(self, screen, mu, sigma):
+        x, y = mu[0], mu[1]
+        width = (50, 50)
+        angle = 0
+        self.draw_agent_uncertainty(screen, (x, y), width, angle)
+
+    def draw_agent_uncertainty(self, screen, center, width, angle):
+        l = center[0] - int(width[0] / 2)
+        t = center[1] - int(width[1] / 2)
+        target_rect = pygame.Rect(l[0], t[0], width[0], width[1])
+        shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
+        pygame.draw.ellipse(shape_surf, (255, 0, 0), (0, 0, *target_rect.size), 2)
+        rotated_surf = pygame.transform.rotate(shape_surf, angle)
+        screen.blit(rotated_surf, rotated_surf.get_rect(center=target_rect.center))
         return screen
 
     def draw_landmarks(self, screen):
