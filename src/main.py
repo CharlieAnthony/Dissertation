@@ -1,3 +1,4 @@
+import numpy as np
 import pygame
 import sys
 import cv2
@@ -117,12 +118,12 @@ def main():
         agent.move()
 
         # ekf logic
-        mu, sigma = ekf.prediction_update(agent.mu, agent.sigma, [agent.velocity, agent.bearing], dt)
+        mu, sigma = ekf.prediction_update(agent.mu, agent.sigma, [agent.velocity, np.deg2rad(agent.bearing)], dt)
 
 
         # agent.detect()
         agent.draw_agent(interface.get_screen())
-        agent.show_agent_estimate(interface.get_screen(), mu, sigma)
+        agent.show_agent_estimate(interface.get_screen(), agent.mu, agent.sigma)
         # agent.draw_landmarks(interface.get_screen())
 
         # pygame.time.wait(50)

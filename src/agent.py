@@ -11,7 +11,7 @@ class Agent:
         self.real_position = (10, 10)
         self.predicted_position = (10, 10)
         self.bearing = np.random.randint(low=0, high=359)
-        self.velocity = 0
+        self.velocity = step_size
         # self.EKF = EKF(0.1, 0.1, 0.1, 0.1)
         self.feature_detection = feature_dectection()
         self.radius = radius
@@ -45,7 +45,9 @@ class Agent:
             if self.env.get_cell_val(x, y) != 1:
                 self.real_position = (x, y)
                 self.predicted_position = (pred_x, pred_y)
+                self.velocity = self.step_size
             else:
+                self.velocity = 0
                 break
 
 
@@ -88,7 +90,10 @@ class Agent:
         return screen
 
     def show_agent_estimate(self, screen, mu, sigma):
-        x, y = mu[0], mu[1]
+        # x, y = mu[0], mu[1]
+        x = mu[0] * 20
+        y = mu[1] * 20
+        print("x, y: ", x, y)
         width = (50, 50)
         angle = 0
         self.draw_agent_uncertainty(screen, (x, y), width, angle)
