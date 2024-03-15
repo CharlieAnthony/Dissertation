@@ -121,7 +121,18 @@ create an internal representation of its environment and its position in that en
 \subsection{Background and Evolution of SLAM} % 600 words
 %https://ieeexplore.ieee.org/abstract/document/1638022?casa_token=AsoyJu5mFZwAAAAA:auXJSROaBRXsOue-Qu-sNWUyCmfxQTVnMfbL_5bSCXjw2PeQKWwwZEWu4oI8HXSUYvDJvf0WWQ
 %https://ieeexplore.ieee.org/abstract/document/7747236?casa_token=yHhMa-sk3kIAAAAA:OZI4SbZiNSjevJVBOH6BMLFeLEafOkpusTlMLYVERLkQDDtQkxOog0dChrhLhpzATqasjbY2pw
-In the early 1980s, SLAM concepts were first introduced by Smith and Cheeseman /cite{}
+In the mid 1980s, SLAM concepts were first introduced by Smith and Cheeseman \cite{Early_SLAM}. They initially laid out
+the foundations of the problem, which was to be able to reason about the position of an object with potentially inaccurate
+information about the environment. Their paper demonstrates a lot of themes which we now associate with SLAM, such as taking
+frames (poses) which have an associated positional uncertainty, taking measurements of the environment at each frame and
+then using these measurements to identify objects in the environment. Smith and Cheeseman used the Kalman Filter equations
+for static-state estimations, and then merged these state estimations to create a representation of the environment.\\
+The next major developments in SLAM came shortly after, in the early 90s, from the work of Leonard and Durrant-Whyte.
+In their paper, they identify further challenges in SLAM, such as the data association problem and environment dynamics.
+They also outlined one of the traditional problems with SLAM, which is the "chicken and egg" problem. This arises as
+to build a useful map, the robot needs to know where it is, and to know where it is, it needs a useful map. To tackle
+this, they proposed the use of an Extended Kalman Filter (EKF), which builds on the traditional Kalman Filter equations by
+allowing for non-linear state estimations.
 
 \subsection{Technical Frameworks and Models} % 800 words
 \subsection{Algorithms and Implementations} % 700 words
@@ -392,6 +403,8 @@ We had a quick online meeting this week; discussing where the project is and the
 my implementations of exploration strategies and how I could improve them. We then discussed evaluation metrics and how I
 could gather and present data. Finally, we talked about how I could approach multi-agent SLAM, as it's an area I am concerned
 about due to it's complexity.
+\subsubsection{Meeting 10 - 15/03/2024}
+This meeting was a clear turning point in the project.
 
 \subsection{Project Proposal}
 \includepdf[pages=-]{ProjectProposal.pdf}
@@ -410,6 +423,16 @@ about due to it's complexity.
     Alsadik, B. and Karam, S. (2021) The Simultaneous Localization and Mapping (SLAM)-An Overview.
     \textit{Journal of Applied Science and Technology Trends, 2(02), pp. 147 - 158.}
     \href{https://doi.org/10.38094/jastt204117}{https://doi.org/10.38094/jastt204117}
+
+    \bibitem{Early_SLAM}
+    Smith, R.C.; Cheeseman, P. (1986). "On the Representation and Estimation of Spatial Uncertainty".
+    \textit{The International Journal of Robotics Research. 5 (4): 56–68.}
+    \href{https://doi.org/10.1177/027836498600500404}{https://doi.org/10.1177/027836498600500404}
+
+    \bibitem{First_EKF}
+    J. J. Leonard and H. F. Durrant-Whyte, "Simultaneous map building and localization for an autonomous mobile robot,"
+    \textit{Proceedings IROS '91:IEEE/RSJ International Workshop on Intelligent Robots and Systems '91, Osaka, Japan, 1991, pp. 1442-1447 vol.3,}
+    \href{https://doi.org/10.1109/IROS.1991.174711}{https://doi.org/10.1109/IROS.1991.174711}
 
     \bibitem{C-SLAM}
     Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
