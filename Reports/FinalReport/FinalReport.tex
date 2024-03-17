@@ -118,27 +118,83 @@ of the environment and localise itself. There are a number of paradigms which ma
 SLAM, Particle filtering and Extended Kalman Filters. By combining the Front-end and the Back-end, the agent will be able to
 create an internal representation of its environment and its position in that environment.
 
-\subsection{Background and Evolution of SLAM} % 600 words
-%https://ieeexplore.ieee.org/abstract/document/1638022?casa_token=AsoyJu5mFZwAAAAA:auXJSROaBRXsOue-Qu-sNWUyCmfxQTVnMfbL_5bSCXjw2PeQKWwwZEWu4oI8HXSUYvDJvf0WWQ
-%https://ieeexplore.ieee.org/abstract/document/7747236?casa_token=yHhMa-sk3kIAAAAA:OZI4SbZiNSjevJVBOH6BMLFeLEafOkpusTlMLYVERLkQDDtQkxOog0dChrhLhpzATqasjbY2pw
+\subsection{Background and Evolution of SLAM} % 600 words - currently 513
 In the mid 1980s, SLAM concepts were first introduced by Smith and Cheeseman \cite{Early_SLAM}. They initially laid out
 the foundations of the problem, which was to be able to reason about the position of an object with potentially inaccurate
 information about the environment. Their paper demonstrates a lot of themes which we now associate with SLAM, such as taking
 frames (poses) which have an associated positional uncertainty, taking measurements of the environment at each frame and
 then using these measurements to identify objects in the environment. Smith and Cheeseman used the Kalman Filter equations
 for static-state estimations, and then merged these state estimations to create a representation of the environment.\\
-The next major developments in SLAM came shortly after, in the early 90s, from the work of Leonard and Durrant-Whyte.
+The next major developments in SLAM came shortly after, in the early 90s, from the work of Leonard and Durrant-Whyte \cite{First_EKF}.
 In their paper, they identify further challenges in SLAM, such as the data association problem and environment dynamics.
 They also outlined one of the traditional problems with SLAM, which is the "chicken and egg" problem. This arises as
 to build a useful map, the robot needs to know where it is, and to know where it is, it needs a useful map. To tackle
 this, they proposed the use of an Extended Kalman Filter (EKF), which builds on the traditional Kalman Filter equations by
-allowing for non-linear state estimations.
+allowing for non-linear state estimations. This was a significant development, as it allowed for the creation of more accurate
+maps; however they also concluded that the EKF was not suitable for large-scale environments, as data association becomes
+increasingly difficult.\\
+Come the 2000s, SLAM had become a well-established area of research, with a number of different paradigms being used to
+approach the problem. One of which was FastSLAM, which was developed by Michael Montemerlo and Sebastian Thrun \cite{FastSLAM}.
+FastSLAM was an attempt to solve one of the fundamental flaws of EKF SLAM, which was scalability. FastSLAM works by using
+a particle filter to estimate the robot's pose, and then constructs a map of the environment using these poses. A particle filter is
+a probabalistic technique used to estimate the robots position, which works by having a set of particles randomly distributed
+across the environment, which represent possible positions the robot could be in. As the robot moves, the particles are adjusted
+based on measurements from the robots sensors; the position of the robot is then estimated by taking the average of the particles.
+FastSLAM main strengths are its ability to handle large environments and improve the computational complexity of EFK SLAM, however
+it's weaknesses are that it is not as accurate as EKF SLAM and it struggles with dynamic environments.\\
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{SLAM_problem} % First image
+        \caption[Short caption]{Formal representation of the SLAM problem. \cite{SLAM_summary}}
+        \label{fig:SLAM_problem}
+    \end{minipage}\hfill
+\end{figure}
+
+Finally, in 2006 Durrant-Whyte and Bailey wrote a significant paper outlining the future of SLAM \cite{SLAM_summary}. They started by
+discussing existing approaches to the problem and then formally outlining the SLAM problem, shown in Figure \ref{fig:SLAM_problem}. They
+then went into further detail on how both EFK SLAM and FastSLAM work, and then discussed the limitations of each approach. They also
+wrote a second paper, discussing the future of SLAM, including multi-agent SLAM, 3D SLAM and Dynamic environments \cite{Further_SLAM}.
+
 
 \subsection{Technical Frameworks and Models} % 800 words
-\subsection{Algorithms and Implementations} % 700 words
-\subsection{Real-world Applications and Case Studies} % 600 words
-indoor, outdoor, underwater and airbourne
+Mapping techniques:
+- grid maps
+- feature-based maps
+- semantic maps
+Localization techniques:
+- Kalman Filters
+- Particle Filters
+- visual odometry
+Sensor technologies:
+- LiDAR
+- Cameras
+- Inertial Measurement Units
 
+\subsection{Algorithms and Implementations} % 700 words
+Algorithms:
+- EKF SLAM
+- FastSLAM
+- ORB-SLAM
+Software:
+- GMapping
+- ROS
+Challenges:
+- Feature extraction in dynamic env
+- Scalability
+- Computational efficiency
+
+\subsection{Real-world Applications and Case Studies} % 600 words
+Real world applications:
+- Autonomous vehicles
+- Drones
+- Vacuum cleaners
+- Search and rescue
+- indoor, outdoor, underwater and airbourne
+
+%deleted shit
 %\subsection{Graph-based SLAM}
 %Graph-based SLAM is a technique used to create a map of an environment, by using a graph to represent the environment. It
 %works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
@@ -276,7 +332,6 @@ feature extraction. Then, the features detected will be combined to define landm
 the environment. Finally, once the algorithm has been implemented, I will create a simple agent which will move around the
 environment, using a random walk algorithm. I aim to complete this phase by the end of week 4 of the Spring semester.
 
-
 \subsection{Phase 4 - Multi-agent SLAM}
 In the fourth phase of my project, I will implement a multi-agent SLAM. This will involve creating a centralized multi-agent
 SLAM algorithm, where the agents individually collect data and then feed to a global map. To achieve this, I will need to
@@ -358,11 +413,10 @@ This process is repeated until no more points can be added to the line segment.\
 \subsubsection{Graph Optimisation}
 
 
-\subsection{Multi-Agent SLAM}
-
-
 \section{Appendices}
-\subsection{Supervisor Meetings}
+
+\subsection{Supervisor Meetings}    % 720 words
+
 \subsubsection{Meeting 1 - 11/10/2023}
 Discussed on the project idea and potential directions to take. Discussed the possibility of implementing physical agents,
 challenges that may occur and potential ways of implementing swarm algorithms. Need to focus on researching SLAM and swarm
@@ -437,6 +491,20 @@ gather data for my analysis and how I could present it.
     J. J. Leonard and H. F. Durrant-Whyte, "Simultaneous map building and localization for an autonomous mobile robot,"
     \textit{Proceedings IROS '91:IEEE/RSJ International Workshop on Intelligent Robots and Systems '91, Osaka, Japan, 1991, pp. 1442-1447 vol.3,}
     \href{https://doi.org/10.1109/IROS.1991.174711}{https://doi.org/10.1109/IROS.1991.174711}
+
+    \bibitem{FastSLAM}
+    Montemerlo, M., Thrun, S., Koller, D. and Wegbreit, B., 2002. "FastSLAM: A factored solution to the simultaneous localization and mapping problem,"
+    \textit{Proceedings of the AAAI National Conference on Artificial Intelligence. pp. 593-598}.
+
+    \bibitem{SLAM_summary}
+    Durrant-Whyte, H. and Bailey, T. (2006). "Simultaneous localization and mapping: part I",
+    \textit{IEEE Robotics & Automation Magazine, [online] 13(2), pp.99–110}.
+    \href{https://doi.org/10.1109/mra.2006.1638022}{https://doi.org/10.1109/mra.2006.1638022}
+
+    \bibitem{Further_SLAM}
+    T. Bailey and H. Durrant-Whyte, "Simultaneous localization and mapping (SLAM): part II,"
+    \textit{IEEE Robotics & Automation Magazine, vol. 13, no. 3, pp. 108-117, Sept. 2006}.
+    \href{https://doi.org/10.1109/MRA.2006.1678144}{https://doi.org/10.1109/MRA.2006.1678144}
 
     \bibitem{C-SLAM}
     Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
