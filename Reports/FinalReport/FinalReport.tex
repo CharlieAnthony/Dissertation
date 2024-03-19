@@ -159,29 +159,68 @@ then went into further detail on how both EFK SLAM and FastSLAM work, and then d
 wrote a second paper, discussing the future of SLAM, including multi-agent SLAM, 3D SLAM and Dynamic environments \cite{Further_SLAM}.
 
 
-\subsection{Technical Frameworks and Models} % 800 words
-Mapping techniques:
-- grid maps
-- feature-based maps
-- semantic maps
-Localization techniques:
+\subsection{Technical Frameworks and Models} % 800 words - currently 285
+\subsubsection{Mapping techniques}
+%- grid maps
+%- feature-based maps
+%- semantic maps
+\begin{figure}[h]
+    \centering
+     \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{occupancy_grid} % First image
+        \caption[Short caption]{Simple visualization of an occupancy grids \cite{occupancy_grid}}
+        \label{fig:simple_occ_grid}
+    \end{minipage}\hfill
+    \begin{minipage}{0.4\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{complex_occ_grid} % Second image
+        \caption[Short caption]{Complex example of occupancy grid in practice \cite{occupancy_grid}}
+        \label{fig:complex_occ_grid}
+    \end{minipage}
+\end{figure}
+
+Mapping techniques are used by the agent to create a representation of its environment. There are a number of different mapping techniques
+commonly used in SLAM, such as grid maps, feature-based maps and semantic maps. Grid maps, or occupancy maps, are the most common
+type of map used in SLAM, as they are easy to implement and computationally efficient. They are typically represented as a 2D array, which
+simply stores a binary value for each cell, which represents whether the cell is occupied or not. Figure \ref{fig:simple_occ_grid} shows a simple
+example of an occupancy grid, where the black cells represent occupied space and the white cells represent free space. Figure \ref{fig:complex_occ_grid}
+demonstrates how an occupancy grid can be used to represent a more complex environment, such as the experiment environment used by Nam
+et al \cite{occupancy_grid}. Occupancy grids are typically implemented in conjunction with distance sensors, such as LiDAR - this allows the
+agent to measure the distances to multiple points in the environment, which can then be used to update the occupancy grid. \\
+Feature-based maps are another common type of map used in SLAM. They work by having the agent detect features in the environment, such as
+walls, corners and edges. These features are then used to define landmarks, which are then used to create a map of the environment. Landmarks
+are distinct features in the environment which can be used to localise the agent; a common metaphor used to describe landmarks is a distinctive
+skyscraper in a city, like the Shard in London, which you could use to figure out your location. Feature-based maps are also implemented with
+distance sensors, as the agent can use points detected by the sensor to detect features. \\
+
+
+
+Finally, semantic maps are a more recent addition to SLAM, which work by allowing the agent to detect and classify objects in the environment.
+
+
+
+
+\subsubsection{Localization techniques}
 - Kalman Filters
 - Particle Filters
 - visual odometry
-Sensor technologies:
+
+
+\subsubsection{Sensor technologies}
 - LiDAR
 - Cameras
 - Inertial Measurement Units
 
 \subsection{Algorithms and Implementations} % 700 words
-Algorithms:
+\subsubsection{Algorithms}
 - EKF SLAM
 - FastSLAM
 - ORB-SLAM
-Software:
+\subsubsection{Software}
 - GMapping
 - ROS
-Challenges:
+\subsubsection{Challenges}
 - Feature extraction in dynamic env
 - Scalability
 - Computational efficiency
@@ -505,6 +544,11 @@ gather data for my analysis and how I could present it.
     T. Bailey and H. Durrant-Whyte, "Simultaneous localization and mapping (SLAM): part II,"
     \textit{IEEE Robotics & Automation Magazine, vol. 13, no. 3, pp. 108-117, Sept. 2006}.
     \href{https://doi.org/10.1109/MRA.2006.1678144}{https://doi.org/10.1109/MRA.2006.1678144}
+
+    \bibitem{occupancy_grid}
+    Nam, Tae & Shim, Jae & Cho, Young. (2017). "A 2.5D Map-Based Mobile Robot Localization via Cooperation of Aerial and Ground Robots",
+    \textit{Sensors 17(12): 2730}.
+    \href{http://dx.doi.org/10.3390/s17122730}{http://dx.doi.org/10.3390/s17122730}
 
     \bibitem{C-SLAM}
     Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
