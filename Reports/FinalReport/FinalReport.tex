@@ -99,11 +99,11 @@ potentially implement physical robots, given time permits.\\
     \end{minipage}
 \end{figure}
 
-SLAM (Simultaneous Localisation and Mapping) is a technique used in robotics to create a map of an unknown environment \cite{SLAM_overview}.
+SLAM (Simultaneous localization and Mapping) is a technique used in robotics to create a map of an unknown environment \cite{SLAM_overview}.
 It is an important area of research in robotics as it is heavily used in autonomous vehicles, drones and vacuum cleaners;
 allowing agents to understand and navigate their environment effectively. Figure \ref{fig:SLAM_agent} shows an example of a
 robot scanning its environment, with the sensors visually added to the image.\\
-SLAM can be broken down into two sub-problems: localisation and mapping. Localisation is the process of determining the
+SLAM can be broken down into two sub-problems: localization and mapping. localization is the process of determining the
 location of a robot in its environment, whilst mapping is the process of constructing a map of the environment. The maps
 are constructed using data collected from sensors, such as cameras and laser scanners; Figure \ref{fig:SLAM_map} shows this.
 A lot of existing work in SLAM is based on single robot applications, however, there is a growing interest in multi-agent
@@ -159,11 +159,8 @@ then went into further detail on how both EFK SLAM and FastSLAM work, and then d
 wrote a second paper, discussing the future of SLAM, including multi-agent SLAM, 3D SLAM and Dynamic environments \cite{Further_SLAM}.
 
 
-\subsection{Technical Frameworks and Models} % 800 words - currently 285
+\subsection{Technical Frameworks and Models} % 800 words - currently 580
 \subsubsection{Mapping techniques}
-%- grid maps
-%- feature-based maps
-%- semantic maps
 \begin{figure}[h]
     \centering
      \begin{minipage}{0.4\textwidth}
@@ -193,33 +190,102 @@ walls, corners and edges. These features are then used to define landmarks, whic
 are distinct features in the environment which can be used to localise the agent; a common metaphor used to describe landmarks is a distinctive
 skyscraper in a city, like the Shard in London, which you could use to figure out your location. Feature-based maps are also implemented with
 distance sensors, as the agent can use points detected by the sensor to detect features. \\
-
-
-
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\linewidth]{semantic_maps}
+    \caption[Short caption]{Example of a semantic map \cite{semantic_map}}
+    \label{fig:semantic_map}
+\end{figure}
 Finally, semantic maps are a more recent addition to SLAM, which work by allowing the agent to detect and classify objects in the environment.
-
-
-
+This is achieved using computer vision techniques, such as object detection and image segmentation. Figure \ref{fig:semantic_map} shows an example
+of a semantic map; you can see the image segmentation has identified various objects, such as the keyboard and the books. Semantic maps are used
+more frequently in research, as they are more computationally expensive and require more complex sensors, such as cameras.\\
 
 \subsubsection{Localization techniques}
-- Kalman Filters
-- Particle Filters
-- visual odometry
-
+%- Kalman Filters
+%- Particle Filters
+%- visual odometry
+Localization techniques are used to help the agent determine its position in a given environment. There are a number of popular techniques commonly
+used in SLAM, such as Extended Kalman Filters, Particle Filters and Visual Odometry. Extended Kalman Filters are a set of mathematical equations which are used to
+estimate the position of the agent given a set of noisy sensor readings. The equations are split into two main functions, the prediction function and the
+update function \cite{intro_to_EKF}. The prediction function is used to predict the agents position based on the previous state, which incorporates uncertainty from the
+agents movement. The update function is then used to update the agents position based on new sensor readings and update the uncertainty. The prediction functions
+are defined as:
+\begin{itemize}
+    \item State Prediction Equation:
+    \begin{equation}
+        \hat{x}_{k+1} = f(\hat{x}_{k}, u_{k}, 0)
+    \end{equation}
+    \item Covariance Prediction Equation:
+    \begin{equation}
+        P_{k+1} = A_{k} P_{k} A_{k}^T + W_{k} Q_{k} W_{k}^T
+    \end{equation}
+\end{itemize}
+The state prediction equation predicts the next state \(\hat{x}_{k+1}\) based on the previous state \(\hat{x}_{k}\), the control input (the agents desired movement) \(u_{k}\)
+and the process noise (which is assumed to be zero here). The covariance prediction equation then updates the uncertainty of the agents position based on the state
+transition matrix \(A_{k}\), the previous position uncertainty \(P_{k}\), the control input matrix \(W_{k}\) and the process noise covariance matrix \(Q_{k}\). The update functions are
+defined as:
+\begin{itemize}
+    \item Kalman Gain Equation:
+    \begin{equation}
+        K_k = P_{k} H_k^T (H_k P_{k} H_k^T + V_k R_k V_k^T)^{-1}
+    \end{equation}
+    \item State Update Equation:
+    \begin{equation}
+        \hat{x}_{k} = \hat{x}_{k} + K(z_k - h(\hat{x}_{k}, 0))
+    \end{equation}
+    \item Covariance Update Equation:
+    \begin{equation}
+        P_{k} = (I - K_k H_k) P_k
+    \end{equation}
+\end{itemize}
+The Kalman Gain equation determines how impactful the new sensor reading \(z_k\) should be, based on the previous position uncertainty \(P_{k}\). \(H_k\) is the Jacobian of the
+measurement function \(h(\hat{x}_{k}, 0)\) with respect to the state, and \(V_k\) is the Jacobian of the measurement function with respect to the measurement noise. The state update
+equation then updates the agents position based on the Kalman Gain. Finally, the covariance update equation updates the uncertainty of the agents position based on the Kalman Gain.\\
+\begin{figure}[h]
+    \centering
+     \begin{minipage}{0.24\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{frame_00_delay-1s} % First image
+    \end{minipage}
+    \begin{minipage}{0.24\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{frame_02_delay-1s}
+    \end{minipage}
+    \begin{minipage}{0.24\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{frame_07_delay-1s}
+    \end{minipage}
+    \begin{minipage}{0.24\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{frame_25_delay-1s}
+    \end{minipage}
+    \caption[Short caption]{Example of Particle Filter in a 2D environment \cite{particle_filter}}
+\end{figure}
 
 \subsubsection{Sensor technologies}
-- LiDAR
-- Cameras
-- Inertial Measurement Units
+There are many different types of sensor technologies used throughout SLAM research, such as LiDAR, cameras and Inertial Measurement
+Units (IMUs). LiDAR (Light Detection and Ranging) is a distance sensor which works by shooting out a laser and measuring the time it takes
+for the laser to bounce off an object (up to a given distance) and return to the sensor. Typically, the sensor will rotate 360 degrees and take
+measurements at regular intervals, which is particularly useful in SLAM as it allows the agent to sense its complete surroundings.\\
+Cameras are another common sensor used in SLAM, which work by taking images of the environment and then using computer vision techniques
+to extract features and landmarks. One of the advantages of cameras is that they can capture a lot of information about the environment, such
+as objects and textures; which make data association easier. However, cameras are also a lot more computationally expensive in comparison to
+LiDAR, as feature extraction and landmark detection have a lot more complexity.\\
+IMUs are used to measure the orientation, velocity and gravitational forces of the agent; this makes them useful in SLAM as they help record
+the agents movement. They are normally used alongside other sensors to help improve the accuracy of the localisation algorithm. \\
+
 
 \subsection{Algorithms and Implementations} % 700 words
 \subsubsection{Algorithms}
 - EKF SLAM
 - FastSLAM
 - ORB-SLAM
+
 \subsubsection{Software}
 - GMapping
 - ROS
+
 \subsubsection{Challenges}
 - Feature extraction in dynamic env
 - Scalability
@@ -247,8 +313,8 @@ Real world applications:
 %makes it difficult to apply to the real world.
 %
 %\subsection{Particle Filters}
-%Another technique used in SLAM is particle filters. Particle filters, also known as Monte Carlo localisation, is a probabalistic
-%technique used to estimate the localisation of a robot in its environment. It starts with a set of particles randomly distributed
+%Another technique used in SLAM is particle filters. Particle filters, also known as Monte Carlo localization, is a probabalistic
+%technique used to estimate the localization of a robot in its environment. It starts with a set of particles randomly distributed
 %across the environment, which represent possible locations of the robot. Each particle has an associated weight, representing the
 %probability that the particle is the true location of the robot. As the robot moves around the environment, the particles weights
 %are then updated based on an algorithm which takes the robots sensors as input. Overall, this technique is very effective, as it
@@ -507,6 +573,7 @@ gather data for my analysis and how I could present it.
 \includepdf[pages=-]{ProjectProposal.pdf}
 
 %References
+
 \section{References}
 
 \begin{thebibliography}{9}
@@ -549,6 +616,21 @@ gather data for my analysis and how I could present it.
     Nam, Tae & Shim, Jae & Cho, Young. (2017). "A 2.5D Map-Based Mobile Robot Localization via Cooperation of Aerial and Ground Robots",
     \textit{Sensors 17(12): 2730}.
     \href{http://dx.doi.org/10.3390/s17122730}{http://dx.doi.org/10.3390/s17122730}
+
+    \bibitem{semantic_map}
+    Y. Wu, Y. Zhang, D. Zhu, Y. Feng, S. Coleman and D. Kerr, (2020). "EAO-SLAM: Monocular Semi-Dense Object SLAM Based on Ensemble Data Association,"
+    \textit{IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), pp. 4966-4973},
+    \href{https://doi.org/10.1109/IROS45743.2020.9341757}{https://doi.org/10.1109/IROS45743.2020.9341757}
+
+    \bibitem{intro_to_EKF}
+    Welch, G. and Bishop, G. (1995). An Introduction to the Kalman Filter.
+    \textit{online}
+    Available at: \href{https://perso.crans.org/club-krobot/doc/kalman.pdf}{https://perso.crans.org/club-krobot/doc/kalman.pdf} (Accessed: 13 February 2024)
+
+    \bibitem{particle_filter}
+    Kim, S. (2023). "FastSLAM: Algorithm for Simultaneous Localization and Mapping,"
+    \textit{[online] MLPurdue.}
+    Available at: \href{https://medium.com/ml-purdue/fastslam-algorithm-for-simultaneous-localization-and-mapping-6fb5bd141f30}{https://medium.com/ml-purdue/fastslam-algorithm-for-simultaneous-localization-and-mapping-6fb5bd141f30}. (Accessed: 20 March 2024)
 
     \bibitem{C-SLAM}
     Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
