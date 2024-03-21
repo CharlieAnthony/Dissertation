@@ -158,8 +158,7 @@ discussing existing approaches to the problem and then formally outlining the SL
 then went into further detail on how both EFK SLAM and FastSLAM work, and then discussed the limitations of each approach. They also
 wrote a second paper, discussing the future of SLAM, including multi-agent SLAM, 3D SLAM and Dynamic environments \cite{Further_SLAM}.
 
-
-\subsection{Technical Frameworks and Models} % 800 words - currently 580
+\subsection{Technical Frameworks and Models} % 800 words - currently 1113
 \subsubsection{Mapping techniques}
 \begin{figure}[h]
     \centering
@@ -202,9 +201,6 @@ of a semantic map; you can see the image segmentation has identified various obj
 more frequently in research, as they are more computationally expensive and require more complex sensors, such as cameras.\\
 
 \subsubsection{Localization techniques}
-%- Kalman Filters
-%- Particle Filters
-%- visual odometry
 Localization techniques are used to help the agent determine its position in a given environment. There are a number of popular techniques commonly
 used in SLAM, such as Extended Kalman Filters, Particle Filters and Visual Odometry. Extended Kalman Filters are a set of mathematical equations which are used to
 estimate the position of the agent given a set of noisy sensor readings. The equations are split into two main functions, the prediction function and the
@@ -260,8 +256,21 @@ equation then updates the agents position based on the Kalman Gain. Finally, the
         \centering
         \includegraphics[width=\linewidth]{frame_25_delay-1s}
     \end{minipage}
-    \caption[Short caption]{Example of Particle Filter in a 2D environment \cite{particle_filter}}
+    \caption[Short caption]{Example of Particle Filter in a 2D environment - reproduced from \cite{particle_filter}}
+    \label{fig:particle_filter}
 \end{figure}
+Particle Filters, or Monte Carlo Localization, is another popular technique used in SLAM, which work by having a set of particles randomly positioned across the environment which represent the
+possible positions of the agent (posterior). Each particle is assigned a weight, which represents the probability that the particle's position is the true position of the agent.
+As the agent moves, the particles are updated based on sensor readings, which are used to adjust the weights of the particles. The problem can be represented as:
+\begin{equation}
+    w_i \propto p(z_t | x_i^t)
+\end{equation}
+Where \(w_i\) is the weight of the particle, \(z_t\) is the observed measurement at time \(t\) and \(x_i^t\) is the state of the particle at time \(t\). As the agent discovers more about its
+environment, the particles will converge towards the true position of the agent - as shown in Figure \ref{fig:particle_filter}. Dellaert et al demonstrated the strengths of particle filters in their paper
+\cite{monte_carlo_slam}, where they showed that particle filters are able to localise the agent in complex environments, even when the environment is dynamic.\\
+Finally, Visual Odometry works by having the agent estimate its position based on visual data. This is achieved using the previously mentioned semantic maps, which are used to detect and classify
+objects in the environment. As the name suggests, visual odometry only uses visual data to estimate the agents position; benefits of this approach are that cameras are cheap and lightweight, however
+they are also computationally expensive. Furthermore, visual odometry is less effective in environments with poor lighting and textureless surfaces, making it less reliable than other techniques. \\
 
 \subsubsection{Sensor technologies}
 There are many different types of sensor technologies used throughout SLAM research, such as LiDAR, cameras and Inertial Measurement
@@ -275,16 +284,37 @@ LiDAR, as feature extraction and landmark detection have a lot more complexity.\
 IMUs are used to measure the orientation, velocity and gravitational forces of the agent; this makes them useful in SLAM as they help record
 the agents movement. They are normally used alongside other sensors to help improve the accuracy of the localisation algorithm. \\
 
-
-\subsection{Algorithms and Implementations} % 700 words
+\subsection{Algorithms and Implementations} % 700 words - currently 170
 \subsubsection{Algorithms}
-- EKF SLAM
-- FastSLAM
-- ORB-SLAM
+%- Graph-based SLAM
+%- ORB-SLAM
+%- Hector SLAM
+Graph-based SLAM is a technique used to create a map of an environment, by using a graph to represent the environment. It
+works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
+are usually received by a sensor, such as a camera or laser scanner. The robot then uses these measurements to create a
+plot of where objects may be, by combining the measurements from sensors with its memory of the route it has taken. This
+technique is used in many applications, both in research and in the real world.\\
+One limitation of graph-based SLAM is that it is computationally expensive, as it requires a lot of memory to store the
+sensor readings. Also, it is not very scalable, as the more sensors that are added, the more memory is required. Another
+limitation is that it cannot always be reliable, as the algorithm depends heavily on detecting loop closures, which when
+not detected, can lead to a lot of errors in the map. This, combined with even the slightest inaccuracy from sensors/motors
+makes it difficult to apply to the real world.\\
+Oriented FAST and Rotated BRIEF (ORB) SLAM is a real-time, visual SLAM algorithm which works by using a camera to detect features
+in the environment. A real-time SLAM algorithm is one that can process data as it is received - this is significant for ORB SLAM
+as the camera input is very computationally expensive to analyse. ORB SLAM works by detecting features in the environment, such
+as corners and edges, and then using these features to create a map of the environment; typically done using the previously
+mentioned semantic maps. Originally, ORB SLAM was a development of bundle adjustment, which is a technique used to get accurate
+estimations of the agents positions, but isn't real-time \cite{ORB_SLAM}. A popular use case of ORB SLAM is in autonomous vehicles,
+as modern vehicles are equipped with cameras and powerful computers, which can run the algorithm in real-time.\\
+
+
 
 \subsubsection{Software}
-- GMapping
-- ROS
+%- ROS
+%- Enki
+%- Gazebo
+There are a number of existing tools and packages that can be used to implement SLAM algorithms; including Robot
+Operating System (ROS), Enki and Gazebo. ROS is a set of soft
 
 \subsubsection{Challenges}
 - Feature extraction in dynamic env
@@ -299,44 +329,7 @@ Real world applications:
 - Search and rescue
 - indoor, outdoor, underwater and airbourne
 
-%deleted shit
-%\subsection{Graph-based SLAM}
-%Graph-based SLAM is a technique used to create a map of an environment, by using a graph to represent the environment. It
-%works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
-%are usually received by a sensor, such as a camera or laser scanner. The robot then uses these measurements to create a
-%plot of where objects may be, by combining the measurements from sensors with its memory of the route it has taken. This
-%technique is used in many applications, both in research and in the real world.\\
-%One limitation of graph-based SLAM is that it is computationally expensive, as it requires a lot of memory to store the
-%sensor readings. Also, it is not very scalable, as the more sensors that are added, the more memory is required. Another
-%limitation is that it cannot always be reliable, as the algorithm depends heavily on detecting loop closures, which when
-%not detected, can lead to a lot of errors in the map. This, combined with even the slightest inaccuracy from sensors/motors
-%makes it difficult to apply to the real world.
-%
-%\subsection{Particle Filters}
-%Another technique used in SLAM is particle filters. Particle filters, also known as Monte Carlo localization, is a probabalistic
-%technique used to estimate the localization of a robot in its environment. It starts with a set of particles randomly distributed
-%across the environment, which represent possible locations of the robot. Each particle has an associated weight, representing the
-%probability that the particle is the true location of the robot. As the robot moves around the environment, the particles weights
-%are then updated based on an algorithm which takes the robots sensors as input. Overall, this technique is very effective, as it
-%is able to localise the robot in its environment, even when the environment is dynamic. Also, this process is highly parallelisable,
-%as each particle can be updated independently; which makes this a viable solution for real-world applications. However, particle
-%filters are susceptible to the "curse of dimensionality", which means that as the number of dimensions increases, the problem's
-%complexity rapidly increases.
-%
-%\subsection{Swarm}
-%Swarm robotics is a discipline which studies the coordination of large numbers of robots. It is largely inspired by biology,
-%where social organisms achieve complex behaviours through simple interactions with each other and the environment. Swarm
-%robotics is an important area of research in robotics, as it has many applications, such as search and rescue, exploration
-%and mapping.\\
-%One of the benefits of swarm robotics is the scalability and flexibility of the system. This is because the system is
-%decentralized, meaning that each agent is able to make decisions independently. This allows for repeatability, as the system
-%can be scaled up or down simply by adding or removing agents. Also, it allows for flexibility, as the system can be adapted
-%to different environments, as each agent is able to make decisions based on its surroundings.\\
-%One of the biggest challenges in swarm robotics is the simulation to reality gap. This is because in simulation, the agents
-%are able to easily share information with each other, whilst in the real world, this is more challenging. Furthermore, swarm
-%robotics struggles with more complex environments, like outdoors. As a result, swarm robotics still has a lot of room for
-%research and development.
-%
+
 %\subsection{Random Walks}
 %Random walk exploration in the context of swarm mapping is a technique where agents individually map an environment, using
 %methods like Graph-based SLAM, Particle Filters, etc. and them combine their findings to a single global map; this is an
@@ -351,8 +344,6 @@ Real world applications:
 %maps to each other, which can lead to a lot of redundant exploration. This is because equally, sharing their maps with each
 %other would be very computationally expensive. Also, another limitation is that this approach doesn't guarantee effiency.
 %This is because of the inherent randomness, which means areas of the environment may be unexplored.\\
-
-%Requirements Analysis
 
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
@@ -631,6 +622,17 @@ gather data for my analysis and how I could present it.
     Kim, S. (2023). "FastSLAM: Algorithm for Simultaneous Localization and Mapping,"
     \textit{[online] MLPurdue.}
     Available at: \href{https://medium.com/ml-purdue/fastslam-algorithm-for-simultaneous-localization-and-mapping-6fb5bd141f30}{https://medium.com/ml-purdue/fastslam-algorithm-for-simultaneous-localization-and-mapping-6fb5bd141f30}. (Accessed: 20 March 2024)
+
+    \bibitem{monte_carlo_slam}
+    F. Dellaert, D. Fox, W. Burgard and S. Thrun, (1999). "Monte Carlo localization for mobile robots,"
+    \textit{Proceedings 1999 IEEE International Conference on Robotics and Automation (Cat. No.99CH36288C), pp. 1322-1328 vol.2,}
+    \href{https://doi.org/10.1109/ROBOT.1999.772544}{https://doi.org/10.1109/ROBOT.1999.772544}
+
+    \bibitem{ORB_SLAM}
+    R. Mur-Artal, J. M. M. Montiel and J. D. Tardós, (2015). "ORB-SLAM: A Versatile and Accurate Monocular SLAM System,"
+    \textit{IEEE Transactions on Robotics, vol. 31, no. 5, pp. 1147-1163,}
+    \href{https://doi.org/10.1109/TRO.2015.2463671}{https://doi.org/10.1109/TRO.2015.2463671}
+
 
     \bibitem{C-SLAM}
     Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
