@@ -284,11 +284,8 @@ LiDAR, as feature extraction and landmark detection have a lot more complexity.\
 IMUs are used to measure the orientation, velocity and gravitational forces of the agent; this makes them useful in SLAM as they help record
 the agents movement. They are normally used alongside other sensors to help improve the accuracy of the localisation algorithm. \\
 
-\subsection{Algorithms and Implementations} % 700 words - currently 170
+\subsection{Algorithms and Implementations} % 700 words - currently 450
 \subsubsection{Algorithms}
-%- Graph-based SLAM
-%- ORB-SLAM
-%- Hector SLAM
 Graph-based SLAM is a technique used to create a map of an environment, by using a graph to represent the environment. It
 works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
 are usually received by a sensor, such as a camera or laser scanner. The robot then uses these measurements to create a
@@ -305,82 +302,95 @@ as the camera input is very computationally expensive to analyse. ORB SLAM works
 as corners and edges, and then using these features to create a map of the environment; typically done using the previously
 mentioned semantic maps. Originally, ORB SLAM was a development of bundle adjustment, which is a technique used to get accurate
 estimations of the agents positions, but isn't real-time \cite{ORB_SLAM}. A popular use case of ORB SLAM is in autonomous vehicles,
-as modern vehicles are equipped with cameras and powerful computers, which can run the algorithm in real-time.\\
-
-
+as modern vehicles are equipped with cameras and powerful computers, which can be used to run complex algorithms.\\
+Hector SLAM is a more recent development in SLAM, which uses LiDAR to create a map of the environment. It is significant because it
+differs from other previously mentioned techniques by relying less on wheel odometry and other forms of motion estimation. Instead,
+Hector SLAM employs a scan matching algorithm, which works by comparing the current LiDAR scan to previous scans, and using the
+differences to estimate the agents position. Hess et al implemented Hector SLAM using a branch and bound algorithm, which allowed
+them to find the best match between scans \cite{Hector_SLAM}; other implementations have used gradient descent to achieve similar
+results. Overall, this technique is particularly useful in environments where wheel information is less reliable, such as on rough terrain
+or on slippery surfaces. \\
 
 \subsubsection{Software}
-%- ROS
-%- Enki
-%- Gazebo
 There are a number of existing tools and packages that can be used to implement SLAM algorithms; including Robot
-Operating System (ROS), Enki and Gazebo. ROS is a set of soft
+Operating System (ROS), Enki and Gazebo. ROS is an open-source community which provides a number of tried and tested
+packages implementing SLAM algorithms. It was created using C++ and Python, and is now widely used in both research and
+industry. More recently, development of ROS2 has picked up pace, which is a more modern version of ROS, aiming to be more
+appropriate for modern applications. \\
+Enki is a robot simulator package, which contains a number of premade robots and environments. It is particularly useful
+for testing SLAM algorithms, as it allows the user to create custom environments and test the algorithms in a controlled
+and realistic setting. Enki is written in C++ and is open-source, which makes it easy to modify and extend. \\
+Gazebo is another robot simulator package, which implements an accurate physics engine to provide accurate simulations
+of robots in the real world. Gazebo is typically used alongside ROS, where ROS is used to control the robot and Gazebo
+handles the physics and environment. Gazebo can be used to create 3D experiments, including implementation of lighting
+and shadows, which means it can also be used for testing visual SLAM algorithms. \\
 
-\subsubsection{Challenges}
-- Feature extraction in dynamic env
-- Scalability
-- Computational efficiency
 
 \subsection{Real-world Applications and Case Studies} % 600 words
-Real world applications:
-- Autonomous vehicles
-- Drones
-- Vacuum cleaners
-- Search and rescue
-- indoor, outdoor, underwater and airbourne
-
-
-%\subsection{Random Walks}
-%Random walk exploration in the context of swarm mapping is a technique where agents individually map an environment, using
-%methods like Graph-based SLAM, Particle Filters, etc. and them combine their findings to a single global map; this is an
-%example of a centralised system.\\
-%A example of an implementation of random walk exploration is Brownian motion, which is a physics-inspired
-%approach. It works by applying a random force to each agent, which determines its direction. The agents then move in this
-%direction until they detect an obstacle, at which point they will change direction. This process is repeated until the
-%environment is fully mapped. There is randomness provided from the environment, through detecting other agents or obstacles,
-%and randomness in motion, as each path is determined by a random force. Overall, collective behaviour emerges from these simple
-%rules, which lead to a global behaviour which efficiently maps an environment.\\
-%One of the biggest drawbacks of this approach is that it is not scalable, as the agents are not able to communicate their
-%maps to each other, which can lead to a lot of redundant exploration. This is because equally, sharing their maps with each
-%other would be very computationally expensive. Also, another limitation is that this approach doesn't guarantee effiency.
-%This is because of the inherent randomness, which means areas of the environment may be unexplored.\\
+Real world applications: \\
+- Autonomous vehicles \\
+- Drones \\
+- Vacuum cleaners \\
+- Search and rescue \\
+- indoor, outdoor, underwater and airbourne \\
 
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
-create a simulation interface, where the user can see the agents, the environment and a representation of the agents internal
-map. After I will work towards implementing single-agent and multi-agent SLAM algorithms. I have also added a couple optional
-requirements, which can be carried out should time permit but are not critical towards the success of the project.\\
+create a simulation interface, where the user can see the agents and the environment. After, I will work towards implementing
+core parts of the SLAM algorithm, such as feature extraction and landmark detection. I will then attempt to implement a Kalman
+Filter, which the agent will use to localise itself in the environment. Finally, I will work towards adding data association, which will
+hopefully complete the SLAM algorithm. The latter stages of the project will be spent on evaluating the performance of the algorithm
+and documenting my findings. I have also added a couple optional requirements, which can be carried out should time permit but are
+not critical towards the success of the project.\\
 When creating the simulation interface, I will be using the Python programming language, along with the PyGame library. This
 will abstract away a lot of the complexity of creating a graphical user interface, allowing me to focus on the core functionality.
-I will also use various other scientific python libraries throughout my project, such as NumPy, SciPy and Matplotlib.\\
-
+I have chosen to use Python in my project as it is a language I am familiar with and is widely documented, which will be useful
+should I run into issues. I will also use various other scientific python libraries throughout my project, such as NumPy, SciPy and
+Matplotlib.\\
 \begin{table}[H]
     \centering
-    \begin{tabular}{|p{0.03\linewidth}|p{0.2\linewidth}|p{0.6\linewidth}|}
+    \begin{tabular}{|p{0.03\linewidth}|p{0.17\linewidth}|p{0.17\linewidth}|p{0.53\linewidth}|}
         \hline
         \textbf{ID} &
+        \textbf{Requirement Type} &
         \textbf{Requirement} &
         \textbf{Justification}\\
         \hline
         \textbf{1} &
+        Funcitonal &
         Simulation Interface &
-        A graphical user interface will allow me to visually see the agents behaviours, which will aid de-bugging. It will
-        also help understand the algorithms in further detail by allowing me to see how they work live.\\
+        A graphical user interface will be critical for demonstrating the agents behaviours, and will also aid de-bugging. Pygame
+        will make it easy to watch the algorithm in real-time and visualise the mapping process.\\
         \hline
         \textbf{2} &
-        Single-agent SLAM &
-        Implementing a single-agent SLAM algorithm will help provide the required knowledge to tackle the larger challenge
-        of multi-agent SLAM. It will also give me benchmark figures to compare my multi-agent SLAM to when evaluating my project.\\
+        Funcitonal &
+        Implement the Extended Kalman Filter (EFK) algorithm &
+        EFK will be essential for estimating the state of the agent and the uncertainty related to it's position, and the position
+        of other agents.\\
         \hline
         \textbf{3} &
-        Multi-agent SLAM &
-        This is the main goal of my project. Implementing multi-agent SLAM algorithm will allow me to explore the challenges of
-        navigation and exploration.\\
+        Funcitonal &
+        Simulation Environment Creation &
+        In order for SLAM to work, a simulated environment will be needed. This will help me demonstrate the SLAM algorithm and
+        test its performance. \\
         \hline
         \textbf{4} &
-        Evaluation Metrics Integration &
-        This will allow me to analyse the performance of my algorithm and make improvements. This requirement includes adding
-        functionality to create graphs and charts, which will be used to visualise performance.\\
+        Non-Funcitonal &
+        Program Performance &
+        The program will need to be efficient and the UI should be smooth. This is necessary to help provide a realistic demonstration
+        of the SLAM algorithm.\\
+        \hline
+        \textbf{5} &
+        Non-Funcitonal &
+        Modularity &
+        The program should be modular, allowing for easy changes to both the agents behaviour and the environment. This is important
+        as it will allow me to easily test different scenarios and variations of the SLAM algorithm.\\
+        \hline
+        \textbf{6} &
+        Non-Funcitonal &
+        Documentation and Code Comments &
+        The code should be well documented and commented, as this will help make the codebase more maintainable and easier to
+        understand.\\
         \hline
     \end{tabular}
     \caption{Table of requirements and their justification}\label{tab:requirements_table}
@@ -391,9 +401,9 @@ These include:
 \begin{itemize}
     \item Implementing physical robots.
     \item User interface enhancements, such as adding being able to view each individual agents internal map.
+    \item Implementing a more complex SLAM algorithm, such as FastSLAM.
 \end{itemize}
 
-\pagebreak
 
 \section{Project Plan}
 \begin{figure}[H]
@@ -559,6 +569,12 @@ the project and how it could be adjusted to ensure that I could complete it on t
 components of SLAM, as they are the most important parts of my project. We also discussed how I could approach the final report -
 including changes that would need to be made to adhere to the new project scope. Finally, we discussed in further detail how I could
 gather data for my analysis and how I could present it.
+\subsubsection{Meeting 11 - 22/03/2024}
+As the final decisions had been made, a lot of the previous week was spent working on my paper; therefore there wasn't much to show.
+We met on zoom and discussed the rate of progress, how the report is coming along and suggestions about my referencing. We also
+discussed the presentation some more, as it has been an area troubling me. Chris talked me through the process - stating that it should
+just be a summary of my project, really focusing on the key points and results. This was the last meeting before the easter break, so
+progress should increase after this point.
 
 \subsection{Project Proposal}
 \includepdf[pages=-]{ProjectProposal.pdf}
@@ -633,6 +649,10 @@ gather data for my analysis and how I could present it.
     \textit{IEEE Transactions on Robotics, vol. 31, no. 5, pp. 1147-1163,}
     \href{https://doi.org/10.1109/TRO.2015.2463671}{https://doi.org/10.1109/TRO.2015.2463671}
 
+    \bibitem{Hector_SLAM}
+    W. Hess, D. Kohler, H. Rapp and D. Andor (2016). "Real-time loop closure in 2D LIDAR SLAM,"
+    \textit{2016 IEEE International Conference on Robotics and Automation (ICRA), pp. 1271-1278,}
+    \href{https://doi.org/10.1109/ICRA.2016.7487258}{https://doi.org/10.1109/ICRA.2016.7487258}
 
     \bibitem{C-SLAM}
     Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
