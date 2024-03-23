@@ -327,12 +327,24 @@ and shadows, which means it can also be used for testing visual SLAM algorithms.
 
 
 \subsection{Real-world Applications and Case Studies} % 600 words
-Real world applications: \\
-- Autonomous vehicles \\
-- Drones \\
-- Vacuum cleaners \\
-- Search and rescue \\
-- indoor, outdoor, underwater and airbourne \\
+%Real world applications:
+%- Autonomous vehicles
+%- Drones
+%- Vacuum cleaners
+%- Search and rescue
+%- indoor, outdoor, underwater and airbourne
+SLAM has a number of real-world applications, such as autonomous vehicles, drones, vacuum cleaners and search and rescue.
+In the context of drones, UAV (Unmanned Aerial Vehicles) SLAM is used to help drones navigate their environment. This is
+particularly challenging as drones are often used in dynamic environments. Furthermore, drones often operate at fast speeds,
+which means the SLAM algorithm needs to be able to process data quickly. UAV SLAM can be implemented using similar techniques
+to ground-based SLAM, using LiDAR and cameras for feature detection; Caballero et al demonstrated how visual SLAM can be used
+in this context \cite{UAV_SLAM}.\\
+Another application of SLAM is in Virtual Reality (VR) and Augmented Reality (AR) technologies. SLAM is used in VR and AR to
+help localise the headset in the environment, which is important for creating realistic and consistent movement. Kuo et al
+demonstrated this well in their paper, where they used ORB SLAM 2 to localise a VR headset in a 3D \cite{VR_SLAM}. Their
+implementation involved using a VR headset to control a robot; they were able to demonstrate that the error rate of the SLAM
+algorithm was at least 0.5cm, which is accurate enough for most VR applications.\\
+
 
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
@@ -653,6 +665,16 @@ progress should increase after this point.
     W. Hess, D. Kohler, H. Rapp and D. Andor (2016). "Real-time loop closure in 2D LIDAR SLAM,"
     \textit{2016 IEEE International Conference on Robotics and Automation (ICRA), pp. 1271-1278,}
     \href{https://doi.org/10.1109/ICRA.2016.7487258}{https://doi.org/10.1109/ICRA.2016.7487258}
+
+    \bibitem{VR_SLAM}
+    Chen-Yu Kuo, Chun-Chi Huang, Chih-Hsuan Tsai, Yun-Shuo Shi, Shana Smith, (2021). "Development of an immersive SLAM-based VR system for teleoperation of a mobile manipulator in an unknown environment,"
+    \textit{2021 Computers in Industry, Volume 132, 103502, ISSN 0166-3615,}
+    \href{https://doi.org/10.1016/j.compind.2021.103502}{https://doi.org/10.1016/j.compind.2021.103502}
+
+    \bibitem{UAV_SLAM}
+    Caballero, F., Merino, L., Ferruz, J. et al. "Vision-Based Odometry and SLAM for Medium and High Altitude Flying UAVs,"
+    \textit{J Intell Robot Syst 54, 137–161 (2009),}
+    \href{https://doi.org/10.1007/s10846-008-9257-y}{https://doi.org/10.1007/s10846-008-9257-y}
 
     \bibitem{C-SLAM}
     Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
