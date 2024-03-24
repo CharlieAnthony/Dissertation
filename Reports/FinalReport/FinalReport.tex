@@ -56,7 +56,6 @@
 \tableofcontents
 \newpage
 
-%Introduction
 \section{Introduction}
 Swarms exist everywhere in life. Nearly all organisms exhibit some form of swarming behaviours within their
 communities. Starlings display impressive organisational behaviour, positioning themselves with respect to the
@@ -79,7 +78,7 @@ potentially implement physical robots, given time permits.\\
 
 %Professional and Ethical Considerations
 
-\section{Literature Review}
+\section{Literature Review} % 3000 words - currently 2800
 
 \subsection{Introduction to SLAM} % 300 words - currently 331
 
@@ -325,14 +324,7 @@ of robots in the real world. Gazebo is typically used alongside ROS, where ROS i
 handles the physics and environment. Gazebo can be used to create 3D experiments, including implementation of lighting
 and shadows, which means it can also be used for testing visual SLAM algorithms. \\
 
-
-\subsection{Real-world Applications and Case Studies} % 600 words
-%Real world applications:
-%- Autonomous vehicles
-%- Drones
-%- Vacuum cleaners
-%- Search and rescue
-%- indoor, outdoor, underwater and airbourne
+\subsection{Real-world Applications and Case Studies} % 600 words - currently 196
 SLAM has a number of real-world applications, such as autonomous vehicles, drones, vacuum cleaners and search and rescue.
 In the context of drones, UAV (Unmanned Aerial Vehicles) SLAM is used to help drones navigate their environment. This is
 particularly challenging as drones are often used in dynamic environments. Furthermore, drones often operate at fast speeds,
@@ -344,7 +336,6 @@ help localise the headset in the environment, which is important for creating re
 demonstrated this well in their paper, where they used ORB SLAM 2 to localise a VR headset in a 3D \cite{VR_SLAM}. Their
 implementation involved using a VR headset to control a robot; they were able to demonstrate that the error rate of the SLAM
 algorithm was at least 0.5cm, which is accurate enough for most VR applications.\\
-
 
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
@@ -359,6 +350,9 @@ will abstract away a lot of the complexity of creating a graphical user interfac
 I have chosen to use Python in my project as it is a language I am familiar with and is widely documented, which will be useful
 should I run into issues. I will also use various other scientific python libraries throughout my project, such as NumPy, SciPy and
 Matplotlib.\\
+ I have chosen to create my own simulation environment, instead of using an existing package, as I believe this will give me more
+control over the project. I enjoy knowing how each component of my project works, and by creating my own environment, I will be able
+to create a more tailored solution.\\
 \begin{table}[H]
     \centering
     \begin{tabular}{|p{0.03\linewidth}|p{0.17\linewidth}|p{0.17\linewidth}|p{0.53\linewidth}|}
@@ -416,7 +410,6 @@ These include:
     \item Implementing a more complex SLAM algorithm, such as FastSLAM.
 \end{itemize}
 
-
 \section{Project Plan}
 \begin{figure}[H]
     \centering
@@ -424,11 +417,13 @@ These include:
     \caption{Gantt chart showing the project plan}
     \label{fig:gantt_chart}
 \end{figure}
-The execution of my project will be split into various phases, where each phase will focus on an area of development. The
-majority of the project will be software development, therefore I have chosen to split this process into various stages. Figure
-\ref{fig:gantt_chart} shows the project plan, where the grey bars represent the time spent at each phase. Should my project
-overrun, I will have contingency time built into both the Christmas break and prior to the due date, which is currently unaccounted
-for in the project plan.\\
+The execution of my project will be split into various phases, where each phase will focus on an area of development.
+In order to remain focused, I will be using an agile-like approach, where I will be working in short sprints to complete
+certain tasks, then writing and reflecting on them in my report. Figure \ref{fig:gantt_chart} shows the project plan,
+where the grey bars represent the time spent at each phase. Should my project overrun, I will have contingency time
+built into both the Christmas break and prior to the due date, which is currently unaccounted for in the project plan.
+I have also tried to be realistic with my time estimations, allowing for a reasonable amount of time to complete each
+phase.\\
 
 \subsection{Phase 1 - Research and Planning}
 The first phase of my project involves researching and planning. During this period I will create a project proposal,
@@ -436,37 +431,34 @@ research single and multi-agent SLAM algorithms, and write my interim report. Th
 important to carry out this phase as it provides structure for the whole project, which will help ensure that the project is
 completed on time.
 
-\subsection{Phase 2 - Environment Development}
-The second phase of my project will be to develop the simulation environment. This will involve creating a graphical user
-interface, using the PyGame library, where the user can see the agent, the environment and a representation of the agents
-internal map. This phase will be completed by week 11 - putting me in a good place to work on implementing SLAM algorithms
+\subsection{Phase 2 - Project Setup}
+The second phase of my project will be to develop the simulation environment and sensors for the agent. This will involve
+creating a graphical user interface, using the PyGame library, where the user can see the agent, the environment and a
+representation of the agents internal map. I will then create a sensor which can detect the presence of walls and objects
+in the environment. I plan on implementing a LiDAR sensor, as this will provide my feature detection system with the information
+it should require. This phase will be completed by week 11 - putting me in a good place to work on implementing SLAM algorithm
 after the Christmas break.
 
-\subsection{Phase 3 - Single-agent SLAM}
-The third phase of my project will be to implement a SLAM algorithm on a single agent system. This will involve implementing
-graph-based SLAM, mentioned in my related work section. The algorithm will work by having the agent move around its environment,
-whilst taking measurements of its surroundings. These measurements will then be used to predict where objects may be, through
-feature extraction. Then, the features detected will be combined to define landmarks, which will be used to create a map of
-the environment. Finally, once the algorithm has been implemented, I will create a simple agent which will move around the
-environment, using a random walk algorithm. I aim to complete this phase by the end of week 4 of the Spring semester.
+\subsection{Phase 3 - Data Preprocessing}
+The third phase of my project will be to establish the fundamenals of the SLAM algorithm. I will start by implementing a feature
+extraction system, which will be used to draw lines and edges through points detected by the LiDAR sensor. I will then work on
+identifying landmarks, which will be used to create a map of the environment. After implementing these, I will spend some time
+writing up my methods in my report, ensuring that I have a clear understanding of the algorithms I have implemented. This phase
+should be completed by week 4 of the Spring semester.
 
-\subsection{Phase 4 - Multi-agent SLAM}
-In the fourth phase of my project, I will implement a multi-agent SLAM. This will involve creating a centralized multi-agent
-SLAM algorithm, where the agents individually collect data and then feed to a global map. To achieve this, I will need to
-modify my single-agent SLAM algorithm to firstly allow for a central server to exist, and then I will need to implement a
-communication protocol between the agents and the server. To create a complete map, the server will need to combine the maps
-from each agent; implementing cross-agent feature matching. The server will also need to have a mechanism which resolves conflicts
-in data association, for example, when two agents have conflicting information about a landmark's position. This phase needs
-to be completed by week 8 of the Spring semester, which allows for a reasonable amount of time to work on the final report.
-
+\subsection{Phase 4 - Algorithm Implementation}
+The fourth phase of my project will be to implement the core parts of the SLAM algorithm. I will start by implementing a Extended
+Kalman Filter, which will be used to estimate the agents position and the position of landmarks in the environment. I will then
+implement a data association algorithm, which will be used to compare new features to existing landmarks. After completing this
+work, I should have fully implemented the SLAM algorithm. I expect this stage of the implementation to take the longest, so I have
+allocated a significant amount of time to complete it. This phase should be completed by week 8 of the Spring semester.
 
 \subsection{Phase 5 - Analysis and Conclusion}
 I will start the final phase of my project during the Easter break, where I will collect data which will be used to analyse
 the performance of the algorithm. I will then use this data to create a series of graphs and charts, which will be used to
 visualise performance and draw conclusions. After, a lot of time will be spent writing up my findings and analysing the performance
-of the algorithms. Finally, I will conclude my project by writing a conclusion, which will summarise my findings and discuss
+of the algorithms. Finally, I will finish my project by writing a conclusion, which will summarise my findings and discuss
 potential future work. Prior to submitting my report, I will also spend time proofreading and editing my work.
-
 
 \section{Professional and Ethical Considerations}
 My project maintains compliance towards all ethical considerations, as there is minimal external involvement from
@@ -504,9 +496,7 @@ of the profession. \\
 
 \section{Methods}
 
-\subsection{Single-Agent SLAM}
-
-\subsubsection{Feature Extraction}
+\subsection{Feature Extraction}
 Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
 are points of interest in the environment, such as corners, edges and lines. These features can then be used to create a map
 of the environment. There are many different techniques for feature extraction, such as the Harris corner detector and the
@@ -525,10 +515,12 @@ After, the algorithm applies region growing, which helps create line segments; w
 region growing works by examining neighbouring points and adding them to the line segment if they satisfy the same conditions.
 This process is repeated until no more points can be added to the line segment.\\
 
-\subsubsection{Identifying Landmarks}
-\subsubsection{Data Association}
-\subsubsection{Pose Graph}
-\subsubsection{Graph Optimisation}
+\subsection{Identifying Landmarks}
+
+\subsection{Extended Kalman Filter}
+
+\subsection{Data Association}
+
 
 
 \section{Appendices}
@@ -675,11 +667,6 @@ progress should increase after this point.
     Caballero, F., Merino, L., Ferruz, J. et al. "Vision-Based Odometry and SLAM for Medium and High Altitude Flying UAVs,"
     \textit{J Intell Robot Syst 54, 137–161 (2009),}
     \href{https://doi.org/10.1007/s10846-008-9257-y}{https://doi.org/10.1007/s10846-008-9257-y}
-
-    \bibitem{C-SLAM}
-    Lajoie, P.Y. and Beltrame, G. (2023). Swarm-slam: Sparse decentralized collaborative simultaneous localization and mapping framework for multi-robot systems.
-    \textit{arXiv preprint},  arXiv:2301.06230.
-    \href{https://doi.org/10.48550/arXiv.2301.06230}{https://doi.org/10.48550/arXiv.2301.06230}
 
     \bibitem{seeded_region_growing}
     Gao, H., Zhang, X., Fang, Y. and Yuan, J. (2018). A line segment extraction algorithm using laser data based on seeded region growing.

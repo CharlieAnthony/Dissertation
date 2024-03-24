@@ -12,7 +12,7 @@ from ekf import EKF
 pointcloud = []
 
 
-def main1():
+def main():
     # Initialize environment
     env_width = 1280
     env_height = 720
@@ -68,6 +68,7 @@ def main1():
                             endpoints[1] = feature_map.projection_point2line(OUTMOST[1], m, c)
 
                             feature_map.FEATURES.append([[m, c], endpoints])
+                            print(f"line =[{m}, {c}, {endpoints}]")
                             feature_map.FEATURES = feature_map.lineFeats2point()
                             landmark_association(feature_map.FEATURES)
 
@@ -91,7 +92,7 @@ def main1():
     pygame.quit()
 
 
-def main():
+def main1():
     # Initialize environment
     env_width = 1280
     env_height = 720

@@ -1,6 +1,7 @@
 import math
 
 import numpy as np
+from features import feature_dectection
 
 
 class ProximitySensor:
@@ -81,11 +82,13 @@ class LidarSensor:
         :param environment:
         :return:
         """
+        fd = feature_dectection()
         if environment is None:
             e = self.env
         else:
             e = environment
         data = []
+        printed_data = []
         if agent is None:
             x1, y1 = position[0], position[1]
         else:
@@ -100,11 +103,13 @@ class LidarSensor:
                 if e.get_cell_val(x, y) == 1:
                     output = []
                     output = add_noise(u * self.detection_range, i, 0.005)
+                    printed_data.append(fd.angle_dist_2_coord(output[0], output[1], (x1, y1)))
                     # output = [u * self.detection_range, i]
                     output.append((x1, y1))
                     data.append(output)
                     break
         if len(data) > 0:
+            print("printed_data =", printed_data)
             return data
         else:
             return False
