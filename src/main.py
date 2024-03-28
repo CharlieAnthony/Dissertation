@@ -12,7 +12,7 @@ from ekf import EKF
 pointcloud = []
 
 
-def main():
+def main1():
     # Initialize environment
     env_width = 1280
     env_height = 720
@@ -92,7 +92,7 @@ def main():
     pygame.quit()
 
 
-def main1():
+def main():
     # Initialize environment
     env_width = 1280
     env_height = 720

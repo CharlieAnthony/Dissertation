@@ -53,6 +53,20 @@ class old_EKF(ExtendedKalmanFilter):
         return H_result
 
 class EKF:
+    '''
+    EKF SLAM Logic
+    mu: state estimate, where our best guess of the state is
+    sigma: state uncertainty, how uncertain we are of our best guess
+    Two steps to the EKF:
+    - Prediction update
+        - From the control inputs u and some model, how does our state estimate change?
+        - Moving only affects the state estimate of the robot
+        - Moving affects uncertainty of the system
+        - Model noise also affects uncertainty
+    - Measurement update
+        - From what the robot observes, how do we change our state estimate?
+        - We reconcile current uncertainty with uncertainty of measurements
+    '''
 
     def __init__(self):
         # robot parameters
@@ -67,17 +81,14 @@ class EKF:
         self.Fx = np.block([[np.eye(3), np.zeros((self.n_state, 2*self.n_landmarks))]])
 
     def prediction_update(self, mu, sigma, u, dt):
-        rx, ry, theta = mu[0:3]
+        rx, ry, theta = mu[0], mu[1], mu[2]
         v, w = u[0], u[1]
         # update state estimate
         state_model_mat = np.zeros((self.n_state, 1))
-        state_model_mat[0] = -(v/w)*np.sin(theta) + (v/w)*np.sin(theta + w*dt) if abs(w) > 0.001 else v*np.cos(theta)
-        state_model_mat[1] = (v/w)*np.cos(theta) - (v/w)*np.cos(theta + w*dt) if abs(w) > 0.001 else v*np.sin(theta)
+        state_model_mat[0] = -(v/w)*np.sin(theta) + (v/w)*np.sin(theta + w*dt) if abs(w) > 0.001 else v * dt * np.cos(theta)
+        state_model_mat[1] = (v/w)*np.cos(theta) - (v/w)*np.cos(theta + w*dt) if abs(w) > 0.001 else v * dt * np.sin(theta)
         state_model_mat[2] = w*dt
         mu += np.transpose(self.Fx).dot(state_model_mat)
-
-
-
         return mu, sigma
 
     def measurement_update(self, mu, sigma):

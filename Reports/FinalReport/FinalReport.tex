@@ -78,6 +78,9 @@ potentially implement physical robots, given time permits.\\
 
 %Professional and Ethical Considerations
 
+%insert new page
+\newpage
+
 \section{Literature Review} % 3000 words - currently 2800
 
 \subsection{Introduction to SLAM} % 300 words - currently 331
@@ -87,13 +90,13 @@ potentially implement physical robots, given time permits.\\
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\linewidth]{SLAM_agent} % First image
-        \caption[Short caption]{A visual representation of a robot scanning its environment \cite{SLAM_overview}}
+        \caption[Short caption]{A visual representation of a robot scanning its environment (reproduced from \cite{SLAM_overview})}
         \label{fig:SLAM_agent}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\linewidth]{SLAM_map} % Second image
-        \caption[Short caption]{The map (after loop closure) produced by the robot's SLAM algorithm of its environment \cite{SLAM_overview}}
+        \caption[Short caption]{The map (after loop closure) produced by the robot's SLAM algorithm of its environment (reproduced from \cite{SLAM_overview})}
         \label{fig:SLAM_map}
     \end{minipage}
 \end{figure}
@@ -124,8 +127,8 @@ information about the environment. Their paper demonstrates a lot of themes whic
 frames (poses) which have an associated positional uncertainty, taking measurements of the environment at each frame and
 then using these measurements to identify objects in the environment. Smith and Cheeseman used the Kalman Filter equations
 for static-state estimations, and then merged these state estimations to create a representation of the environment.\\
-The next major developments in SLAM came shortly after, in the early 90s, from the work of Leonard and Durrant-Whyte \cite{First_EKF}.
-In their paper, they identify further challenges in SLAM, such as the data association problem and environment dynamics.
+The next major developments in SLAM came shortly after, in the early 90s, from the work of Leonard and Durrant-Whyte.
+In their paper, they identify further challenges in SLAM, such as the data association problem and environment dynamics \cite{First_EKF}.
 They also outlined one of the traditional problems with SLAM, which is the "chicken and egg" problem. This arises as
 to build a useful map, the robot needs to know where it is, and to know where it is, it needs a useful map. To tackle
 this, they proposed the use of an Extended Kalman Filter (EKF), which builds on the traditional Kalman Filter equations by
@@ -147,7 +150,7 @@ it's weaknesses are that it is not as accurate as EKF SLAM and it struggles with
     \begin{minipage}{0.8\textwidth}
         \centering
         \includegraphics[width=\linewidth]{SLAM_problem} % First image
-        \caption[Short caption]{Formal representation of the SLAM problem. \cite{SLAM_summary}}
+        \caption[Short caption]{Formal representation of the SLAM problem (reproduced from \cite{SLAM_summary})}
         \label{fig:SLAM_problem}
     \end{minipage}\hfill
 \end{figure}
@@ -164,15 +167,14 @@ wrote a second paper, discussing the future of SLAM, including multi-agent SLAM,
      \begin{minipage}{0.4\textwidth}
         \centering
         \includegraphics[width=\linewidth]{occupancy_grid} % First image
-        \caption[Short caption]{Simple visualization of an occupancy grids \cite{occupancy_grid}}
         \label{fig:simple_occ_grid}
     \end{minipage}\hfill
     \begin{minipage}{0.4\textwidth}
         \centering
         \includegraphics[width=\linewidth]{complex_occ_grid} % Second image
-        \caption[Short caption]{Complex example of occupancy grid in practice \cite{occupancy_grid}}
         \label{fig:complex_occ_grid}
     \end{minipage}
+    \caption[Short caption]{Example of simple (left) and complex (right) occupancy grids (reproduced from \cite{occupancy_grid})}
 \end{figure}
 
 Mapping techniques are used by the agent to create a representation of its environment. There are a number of different mapping techniques
@@ -191,7 +193,7 @@ distance sensors, as the agent can use points detected by the sensor to detect f
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{semantic_maps}
-    \caption[Short caption]{Example of a semantic map \cite{semantic_map}}
+    \caption[Short caption]{Example of a semantic map (reproduced from \cite{semantic_map})}
     \label{fig:semantic_map}
 \end{figure}
 Finally, semantic maps are a more recent addition to SLAM, which work by allowing the agent to detect and classify objects in the environment.
@@ -255,7 +257,7 @@ equation then updates the agents position based on the Kalman Gain. Finally, the
         \centering
         \includegraphics[width=\linewidth]{frame_25_delay-1s}
     \end{minipage}
-    \caption[Short caption]{Example of Particle Filter in a 2D environment - reproduced from \cite{particle_filter}}
+    \caption[Short caption]{Example of Particle Filter in a 2D environment (reproduced from \cite{particle_filter})}
     \label{fig:particle_filter}
 \end{figure}
 Particle Filters, or Monte Carlo Localization, is another popular technique used in SLAM, which work by having a set of particles randomly positioned across the environment which represent the
@@ -336,6 +338,8 @@ help localise the headset in the environment, which is important for creating re
 demonstrated this well in their paper, where they used ORB SLAM 2 to localise a VR headset in a 3D \cite{VR_SLAM}. Their
 implementation involved using a VR headset to control a robot; they were able to demonstrate that the error rate of the SLAM
 algorithm was at least 0.5cm, which is accurate enough for most VR applications.\\
+
+\newpage
 
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
