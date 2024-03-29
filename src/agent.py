@@ -23,16 +23,19 @@ class Agent:
         self.mu[:] = np.nan
         self.mu[0:3] = np.expand_dims(init_pos, axis=1)
         self.sigma = np.zeros((self.n_state+2*self.n_landmarks,self.n_state+2*self.n_landmarks))
+        np.fill_diagonal(self.sigma, 100)
+        self.ekf = EKF()
+        self.sigma[0:3, 0:3] = 0.05 * np.eye(3)
 
     def set_state(self, state):
         """
         state = robot state
             state[0] = x position (m)
             state[1] = y position (m)
-            state[2] = bearing (deg)
+            state[2] = bearing (rad)
         """
         self.state = state
-        self.state[2] = self.state[2] % 360
+        self.state[2] = self.state[2] % (2 * np.pi)
 
     def get_state(self):
         return self.state
@@ -53,7 +56,7 @@ class Agent:
         """
         u[0] = 2
         r = np.random.randint(low=0, high=3)
-        u[1] = (r-1) * 2
+        u[1] = (r-1) * 10
         return u
 
     def move(self, u, dt):
@@ -73,11 +76,12 @@ class Agent:
         #         self.velocity = 0
         #         break
         # new code
-        bearing_rad = np.deg2rad(self.state[2])
+        bearing_rad = self.state[2]
+        # print(f"u0: {u[0]} | state2: {self.state[2]} | dt: {dt}")
         self.state[0] += u[0] * np.cos(bearing_rad) * dt
         self.state[1] += u[0] * np.sin(bearing_rad) * dt
         self.state[2] += u[1] * dt
-        self.state[2] = self.state[2] % 360
+
 
     def detect(self):
         pos = self.state[0:2]
@@ -119,7 +123,8 @@ class Agent:
     def show_agent_estimate(self, screen, mu, sigma):
         x = int(mu[0] / 0.02)
         y = int(mu[1] / 0.02)
-        width = (50, 50)
+        eigenvals, angle = self.ekf.sigma2transform(sigma[0:2, 0:2])
+        width = (int(eigenvals[0]/0.02), int(eigenvals[1]/0.02))
         angle = 0
         self.draw_agent_uncertainty(screen, (x, y), width, angle)
 

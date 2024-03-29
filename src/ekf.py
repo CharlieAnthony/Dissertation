@@ -73,23 +73,40 @@ class EKF:
         self.n_state = 3
         self.n_landmarks = 1
 
-        # ekf estimation variables
+        # ekf estimation variables.
         self.mu = np.zeros((self.n_state + 2*self.n_landmarks, 1))
         self.sigma = np.zeros((self.n_state + 2*self.n_landmarks, self.n_state + 2*self.n_landmarks))
 
         # helpful matrices
         self.Fx = np.block([[np.eye(3), np.zeros((self.n_state, 2*self.n_landmarks))]])
 
+        # noise
+        self.R = np.diag([0.001, 0.001, 0.0005])
+
     def prediction_update(self, mu, sigma, u, dt):
         rx, ry, theta = mu[0], mu[1], mu[2]
         v, w = u[0], u[1]
         # update state estimate
         state_model_mat = np.zeros((self.n_state, 1))
-        state_model_mat[0] = -(v/w)*np.sin(theta) + (v/w)*np.sin(theta + w*dt) if abs(w) > 0.001 else v * dt * np.cos(theta)
-        state_model_mat[1] = (v/w)*np.cos(theta) - (v/w)*np.cos(theta + w*dt) if abs(w) > 0.001 else v * dt * np.sin(theta)
+        state_model_mat[0] = -(v/w)*np.sin(theta) + (v/w)*np.sin(theta + w*dt) if abs(w) > 0.01 else v * dt * np.cos(theta)
+        state_model_mat[1] = (v/w)*np.cos(theta) - (v/w)*np.cos(theta + w*dt) if abs(w) > 0.01 else v * dt * np.sin(theta)
         state_model_mat[2] = w*dt
         mu += np.transpose(self.Fx).dot(state_model_mat)
+        # update state uncertainty with model + noise
+        state_jacobian = np.zeros((self.n_state, self.n_state))
+        state_jacobian[0, 2] = -(v/w)*np.cos(theta) + (v/w)*np.cos(theta + w*dt) if abs(w) > 0.01 else -v * dt * np.sin(theta)
+        state_jacobian[1, 2] = -(v/w)*np.sin(theta) + (v/w)*np.sin(theta + w*dt) if abs(w) > 0.01 else v * dt * np.cos(theta)
+        G = np.eye(sigma.shape[0]) + np.transpose(self.Fx).dot(state_jacobian).dot(self.Fx)
+        sigma = G.dot(sigma).dot(np.transpose(G)) + np.transpose(self.Fx).dot(self.R).dot(self.Fx)
         return mu, sigma
 
     def measurement_update(self, mu, sigma):
         pass
+
+    def sigma2transform(self, sigma):
+        # 2 x 2 matric, uncertainty in the x and y position
+        # for robot uncertainty and landmark uncertainty
+        [eigenvalues, eigenvectors] = np.linalg.eig(sigma)
+        angle = np.arctan2(eigenvectors[1, 0], eigenvectors[0, 0])
+        angle = np.rad2deg(angle)
+        return eigenvalues, angle
