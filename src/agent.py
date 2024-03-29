@@ -7,12 +7,11 @@ import numpy as np
 
 class Agent:
 
-    def __init__(self, environment, radius=3, step_size=5, noise=0.5):
-        self.real_position = (10, 10)
-        self.predicted_position = (10, 10)
-        self.bearing = np.random.randint(low=0, high=359)
+    def __init__(self, environment, radius=3, step_size=5, noise=0.5, init_pos=np.array([1, 1, 0])):
+        # self.real_position = (1, 1)
+        # self.bearing = np.random.randint(low=0, high=359)
+        self.set_state(init_pos)
         self.velocity = step_size
-        # self.EKF = EKF(0.1, 0.1, 0.1, 0.1)
         self.feature_detection = feature_dectection()
         self.radius = radius
         self.step_size = step_size
@@ -21,46 +20,74 @@ class Agent:
         self.n_state = 3
         self.n_landmarks = 1
         self.mu = np.zeros((self.n_state + 2 * self.n_landmarks, 1))
-        self.mu[0:3] = np.expand_dims([self.real_position[0], self.real_position[1], self.bearing], axis=1)
+        self.mu[:] = np.nan
+        self.mu[0:3] = np.expand_dims(init_pos, axis=1)
         self.sigma = np.zeros((self.n_state+2*self.n_landmarks,self.n_state+2*self.n_landmarks))
 
+    def set_state(self, state):
+        """
+        state = robot state
+            state[0] = x position (m)
+            state[1] = y position (m)
+            state[2] = bearing (deg)
+        """
+        self.state = state
+        self.state[2] = self.state[2] % 360
 
+    def get_state(self):
+        return self.state
 
-    def move(self):
+    def get_pos(self):
+        return self.state[0:2]
+
+    def update_u(self, u):
         # random walk algorithm
-        angle = np.random.randint(low=0, high=90)
-        new_bearing = self.bearing + angle - 45
-        self.bearing = new_bearing % 360
-        self.step(self.step_size, self.bearing)
+        # angle = np.random.randint(low=0, high=90)
+        # new_bearing = self.bearing + angle - 45
+        # self.bearing = new_bearing % 360
+        # self.step(self.step_size, self.bearing)
+        """
+        u = controls
+            u[0] = forward velocity (m/s)
+            u[1] = angular velocity (deg/s)
+        """
+        u[0] = 2
+        r = np.random.randint(low=0, high=3)
+        u[1] = (r-1) * 2
+        return u
 
-
-
-    def step(self, dist, angle):
-        # check to see if there are obstacles between (x1, y1) and (x2, y2)
-        for i in range(dist):
-            x, y = self.feature_detection.angle_dist_2_coord(i, angle, self.real_position)
-            x += np.random.normal(0, 0.5)
-            y += np.random.normal(0, 0.5)
-            pred_x, pred_y = self.feature_detection.angle_dist_2_coord(i, angle, self.predicted_position)
-            if self.env.get_cell_val(x, y) != 1:
-                self.real_position = (x, y)
-                self.predicted_position = (pred_x, pred_y)
-                self.velocity = self.step_size
-            else:
-                self.velocity = 0
-                break
-
-
-
+    def move(self, u, dt):
+        # old code
+        # dist, angle = u[0], u[1]
+        # # check to see if there are obstacles between (x1, y1) and (x2, y2)
+        # for i in range(dist):
+        #     x, y = self.feature_detection.angle_dist_2_coord(i, angle, self.real_position)
+        #     x += np.random.normal(0, 0.5)
+        #     y += np.random.normal(0, 0.5)
+        #     pred_x, pred_y = self.feature_detection.angle_dist_2_coord(i, angle, self.predicted_position)
+        #     if self.env.get_cell_val(x, y) != 1:
+        #         self.real_position = (x, y)
+        #         self.predicted_position = (pred_x, pred_y)
+        #         self.velocity = self.step_size
+        #     else:
+        #         self.velocity = 0
+        #         break
+        # new code
+        bearing_rad = np.deg2rad(self.state[2])
+        self.state[0] += u[0] * np.cos(bearing_rad) * dt
+        self.state[1] += u[0] * np.sin(bearing_rad) * dt
+        self.state[2] += u[1] * dt
+        self.state[2] = self.state[2] % 360
 
     def detect(self):
-        readings = self.lidar.detect(None, self.env, position=self.real_position)
+        pos = self.state[0:2]
+        readings = self.lidar.detect(None, self.env, position=pos)
         break_point_ind = 0
         endpoints = [0, 0]
         if readings is not False:
             self.feature_detection.set_laser_points(readings)
             while break_point_ind < (self.feature_detection.NP - self.feature_detection.PMIN):
-                seed_seg = self.feature_detection.seed_segment_detection(self.real_position, break_point_ind)
+                seed_seg = self.feature_detection.seed_segment_detection(pos, break_point_ind)
                 if seed_seg == False:
                     break
                 else:
@@ -84,16 +111,14 @@ class Agent:
                         landmark_association(self.feature_detection.FEATURES)
 
     def draw_agent(self, screen):
-        x, y = self.real_position
+        x = int(self.state[0] / 0.02)
+        y = int(self.state[1] / 0.02)
         pygame.draw.circle(screen, (255, 0, 0), (x, y), self.radius)
-        pygame.draw.circle(screen, (0, 255, 0), (int(self.predicted_position[0]), int(self.predicted_position[1])), self.radius - 1)
         return screen
 
     def show_agent_estimate(self, screen, mu, sigma):
-        # x, y = mu[0], mu[1]
-        x = mu[0] * 20
-        y = mu[1] * 20
-        print("x, y: ", x, y)
+        x = int(mu[0] / 0.02)
+        y = int(mu[1] / 0.02)
         width = (50, 50)
         angle = 0
         self.draw_agent_uncertainty(screen, (x, y), width, angle)
@@ -101,7 +126,7 @@ class Agent:
     def draw_agent_uncertainty(self, screen, center, width, angle):
         l = center[0] - int(width[0] / 2)
         t = center[1] - int(width[1] / 2)
-        target_rect = pygame.Rect(l[0], t[0], width[0], width[1])
+        target_rect = pygame.Rect(l, t, width[0], width[1])
         shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
         pygame.draw.ellipse(shape_surf, (255, 0, 0), (0, 0, *target_rect.size), 2)
         rotated_surf = pygame.transform.rotate(shape_surf, angle)

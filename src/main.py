@@ -100,12 +100,14 @@ def main():
     map = cv2.imread(map_path)
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment, map_path)
-    agent = Agent(environment, radius=10, step_size=10)
+    init_pos = np.array([1, 1, 90])
+    agent = Agent(environment, radius=10, step_size=10, init_pos=init_pos)
     clock = pygame.time.Clock()
     fps_limit = 60
     ekf = EKF()
 
-    dt = 0.01
+    dt = 0.1
+    u = [2, 0]
 
     running = True
     while running:
@@ -116,10 +118,13 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
                 
-        agent.move()
-
+        # agent.move()
+        u = agent.update_u(u)
+        agent.move(u, dt)
         # ekf logic
-        mu, sigma = ekf.prediction_update(agent.mu, agent.sigma, [agent.velocity, np.deg2rad(agent.bearing)], dt)
+        # u = [1115, np.deg2rad(agent.bearing)]
+        agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
+        print(f"pos: {agent.state[0:2]} | pred: {np.round(agent.mu[0], 2)[0], np.round(agent.mu[1], 2)[0]}")
 
 
         # agent.detect()
