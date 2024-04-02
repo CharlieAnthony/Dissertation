@@ -100,7 +100,7 @@ class LidarSensor:
                 u = j / self.detection_range
                 x = int(x2 * u + x1 * (1 - u))
                 y = int(y2 * u + y1 * (1 - u))
-                if e.get_cell_val(x, y) == 1:
+                if e.get_cell_val(x, y) == 1 or x < 0 or y < 0 or x >= e.width or y >= e.height:
                     output = []
                     output = add_noise(u * self.detection_range, i, 0.005)
                     printed_data.append(fd.angle_dist_2_coord(output[0], output[1], (x1, y1)))

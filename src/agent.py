@@ -1,3 +1,5 @@
+import math
+
 import scipy
 
 from features import *
@@ -16,7 +18,7 @@ class Agent:
         self.feature_detection = feature_dectection()
         self.radius = radius
         self.env = environment
-        self.lidar = LidarSensor(300, 180, self.env)
+        self.lidar = LidarSensor(150, 180, self.env)
         self.n_state = 3
         self.n_landmarks = 1
         self.mu = np.zeros((self.n_state + 2 * self.n_landmarks, 1))
@@ -59,13 +61,33 @@ class Agent:
         """
         x = int(self.state[0] / 0.02)
         y = int(self.state[1] / 0.02)
-        reading = self.lidar.detect(None, self.env, position=(x, y))
-        print(f"reading: {reading}")
-
-        u[0] = 2
-        r = np.random.randint(low=0, high=100)
-        u[1] = 1 #(r-1) * 2
+        reading = self.lidar.detect(None, self.env, position=(x, y)) # [[(dist, angle), ...], [], ...]
+        if reading is False:
+            u[0] = 0
+            u[1] = 0
+            return u
+        r = {int(v): k for k, v, (_, _) in reading}
+        agent_bearing = int(math.degrees(self.state[2])) + 90
+        print(f"agent_bearing = {agent_bearing}")
+        flag = None
+        for i in range(360 + agent_bearing - 25, 360 + agent_bearing + 25):
+            i %= 360
+            if i in r.keys() and r[i] < 40:
+                print("wall detected")
+                flag = i
+                break
+        if flag is not None:
+            u[0] = 0
+            u[1] = 2
+        else:
+            u[0] = 2
+            u[1] = 0
         return u
+        # old code
+        # u[0] = 2
+        # r = np.random.randint(low=0, high=100)
+        # u[1] = 1 #(r-1) * 2
+        # return u
 
     def move(self, u, dt):
         # new code
@@ -127,6 +149,10 @@ class Agent:
         x = int(self.state[0] / 0.02)
         y = int(self.state[1] / 0.02)
         pygame.draw.circle(screen, (255, 0, 0), (x, y), self.radius)
+        # direction indicator
+        x2 = x + 10 * np.cos(self.state[2])
+        y2 = y + 10 * np.sin(self.state[2])
+        pygame.draw.line(screen, (0, 255, 0), (x, y), (x2, y2), 2)
         return screen
 
     def show_agent_estimate(self, screen, mu, sigma):
