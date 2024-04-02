@@ -106,7 +106,10 @@ class EKF:
     def sigma2transform(self, sigma):
         # 2 x 2 matric, uncertainty in the x and y position
         # for robot uncertainty and landmark uncertainty
-        [eigenvalues, eigenvectors] = np.linalg.eig(sigma)
-        angle = np.arctan2(eigenvectors[1, 0], eigenvectors[0, 0])
-        angle = np.rad2deg(angle)
-        return eigenvalues, angle
+        # [eigenvalues, eigenvectors] = np.linalg.eig(sigma)
+        # angle = np.arctan2(eigenvectors[1, 0], eigenvectors[0, 0])
+        # angle = np.rad2deg(angle)
+        # return eigenvalues, angle
+        [eigenvals,eigenvecs] = np.linalg.eig(sigma)
+        angle = 180.*np.arctan2(eigenvecs[1][0],eigenvecs[0][0])/np.pi
+        return eigenvals, angle

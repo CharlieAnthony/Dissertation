@@ -9,14 +9,12 @@ import numpy as np
 
 class Agent:
 
-    def __init__(self, environment, radius=3, step_size=5, noise=0.5, init_pos=np.array([1, 1, 0])):
+    def __init__(self, environment, radius=3, noise=0.5, init_pos=np.array([1, 1, 0])):
         # self.real_position = (1, 1)
         # self.bearing = np.random.randint(low=0, high=359)
         self.set_state(init_pos)
-        self.velocity = step_size
         self.feature_detection = feature_dectection()
         self.radius = radius
-        self.step_size = step_size
         self.env = environment
         self.lidar = LidarSensor(300, 180, self.env)
         self.n_state = 3
@@ -55,33 +53,44 @@ class Agent:
         u = controls
             u[0] = forward velocity (m/s)
             u[1] = angular velocity (deg/s)
+        Random Walk Strategy
+            - continues to walk forward whilst no obstacles detected directly in front
+            - if obstacle detected, turn left or right
         """
+        x = int(self.state[0] / 0.02)
+        y = int(self.state[1] / 0.02)
+        reading = self.lidar.detect(None, self.env, position=(x, y))
+        print(f"reading: {reading}")
+
         u[0] = 2
-        r = np.random.randint(low=0, high=3)
-        u[1] = (r-1) * 10
+        r = np.random.randint(low=0, high=100)
+        u[1] = 1 #(r-1) * 2
         return u
 
     def move(self, u, dt):
-        # old code
-        # dist, angle = u[0], u[1]
-        # # check to see if there are obstacles between (x1, y1) and (x2, y2)
-        # for i in range(dist):
-        #     x, y = self.feature_detection.angle_dist_2_coord(i, angle, self.real_position)
-        #     x += np.random.normal(0, 0.5)
-        #     y += np.random.normal(0, 0.5)
-        #     pred_x, pred_y = self.feature_detection.angle_dist_2_coord(i, angle, self.predicted_position)
-        #     if self.env.get_cell_val(x, y) != 1:
-        #         self.real_position = (x, y)
-        #         self.predicted_position = (pred_x, pred_y)
-        #         self.velocity = self.step_size
-        #     else:
-        #         self.velocity = 0
-        #         break
         # new code
-        bearing_rad = self.state[2]
-        self.state[0] += u[0] * np.cos(bearing_rad) * dt
-        self.state[1] += u[0] * np.sin(bearing_rad) * dt
-        self.state[2] += u[1] * dt
+        # bearing_rad = self.state[2]
+        # self.state[0] += u[0] * np.cos(bearing_rad) * dt
+        # self.state[1] += u[0] * np.sin(bearing_rad) * dt
+        # self.state[2] += u[1] * dt
+        y = np.zeros(5)
+        y[:3] = self.state; y[3:] = u
+        result = scipy.integrate.solve_ivp(self.EOM,[0,dt],y)
+        self.state = result.y[:3,-1]
+        self.state[2] = np.arctan2(np.sin(self.state[2]),np.cos(self.state[2]))
+
+    def EOM(self,t,y):
+        self.max_v = 2.0
+        self.max_omega = 2.0
+        px = y[0]; py = y[1]; theta = y[2]
+        v = max(min(y[3],self.max_v),-self.max_v); omega = max(min(y[4],self.max_omega),-self.max_omega) # forward and angular velocity
+        ydot = np.zeros(5)
+        ydot[0] = v*np.cos(theta)
+        ydot[1] = v*np.sin(theta)
+        ydot[2] = omega
+        ydot[3] = 0
+        ydot[4] = 0
+        return ydot
 
     def detect(self):
         pos = self.state[0:2]

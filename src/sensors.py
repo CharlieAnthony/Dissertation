@@ -109,7 +109,7 @@ class LidarSensor:
                     data.append(output)
                     break
         if len(data) > 0:
-            print("printed_data =", printed_data)
+            # print("printed_data =", printed_data)
             return data
         else:
             return False

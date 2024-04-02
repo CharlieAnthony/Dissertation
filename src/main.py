@@ -101,7 +101,7 @@ def main():
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment, map_path)
     init_pos = np.array([7., 7., np.pi / 2])
-    agent = Agent(environment, radius=10, step_size=10, init_pos=init_pos)
+    agent = Agent(environment, radius=10, init_pos=init_pos)
     clock = pygame.time.Clock()
     fps_limit = 60
     ekf = EKF()
@@ -112,6 +112,8 @@ def main():
     running = True
     while running:
         clock.tick(fps_limit)
+        # wait for 50 ms
+        pygame.time.wait(50)
         interface.draw()
 
         for event in pygame.event.get():
@@ -125,7 +127,8 @@ def main():
         # u = [1115, np.deg2rad(agent.bearing)]
         agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
         print(f"pos: {np.round(agent.state[0], 3), np.round(agent.state[1], 3)} "
-              f"| mu: {np.round(agent.mu[0], 3)[0], np.round(agent.mu[1], 3)[0]}")
+              f"| mu: {np.round(agent.mu[0], 3)[0], np.round(agent.mu[1], 3)[0]} "
+              f"| u: {u[0], u[1]}")
 
         # agent.detect()
         agent.draw_agent(interface.get_screen())
