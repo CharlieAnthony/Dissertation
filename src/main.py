@@ -100,7 +100,7 @@ def main():
     map = cv2.imread(map_path)
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment, map_path)
-    init_pos = np.array([10., 10., np.pi / 2])
+    init_pos = np.array([7., 7., np.pi / 2])
     agent = Agent(environment, radius=10, step_size=10, init_pos=init_pos)
     clock = pygame.time.Clock()
     fps_limit = 60

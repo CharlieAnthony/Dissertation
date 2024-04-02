@@ -1,3 +1,5 @@
+import scipy
+
 from features import *
 from sensors import LidarSensor
 from ekf import EKF
@@ -77,11 +79,9 @@ class Agent:
         #         break
         # new code
         bearing_rad = self.state[2]
-        # print(f"u0: {u[0]} | state2: {self.state[2]} | dt: {dt}")
         self.state[0] += u[0] * np.cos(bearing_rad) * dt
         self.state[1] += u[0] * np.sin(bearing_rad) * dt
         self.state[2] += u[1] * dt
-
 
     def detect(self):
         pos = self.state[0:2]
