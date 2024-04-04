@@ -63,25 +63,38 @@ class Agent:
         y = int(self.state[1] / 0.02)
         reading = self.lidar.detect(None, self.env, position=(x, y)) # [[(dist, angle), ...], [], ...]
         if reading is False:
-            u[0] = 0
+            u[0] = 2
             u[1] = 0
             return u
         r = {int(v): k for k, v, (_, _) in reading}
-        agent_bearing = int(math.degrees(self.state[2])) + 90
-        print(f"agent_bearing = {agent_bearing}")
+        agent_bearing = int(np.rad2deg(self.state[2]))
         flag = None
-        for i in range(360 + agent_bearing - 25, 360 + agent_bearing + 25):
+        print(f"agent bearing: {agent_bearing} | rads: {self.state[2]}")
+        if 180 in r.keys():
+            print(f"r[180]: {r[180]}")
+        for i in range(360 + agent_bearing - 25, 360 + agent_bearing):
             i %= 360
             if i in r.keys() and r[i] < 40:
-                print("wall detected")
+                print("wall left detected")
                 flag = i
                 break
         if flag is not None:
             u[0] = 0
             u[1] = 2
         else:
-            u[0] = 2
-            u[1] = 0
+            for i in range(360 + agent_bearing, 360 + agent_bearing + 25):
+                i %= 360
+                if i in r.keys() and r[i] < 40:
+                    print("wall right detected")
+                    flag = i
+                    break
+            if flag is not None:
+                u[0] = 0
+                u[1] = -2
+            else:
+                u[0] = 2
+                u[1] = 0
+
         return u
         # old code
         # u[0] = 2
