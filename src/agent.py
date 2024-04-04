@@ -67,15 +67,14 @@ class Agent:
             u[1] = 0
             return u
         r = {int(v): k for k, v, (_, _) in reading}
-        agent_bearing = int(np.rad2deg(self.state[2]))
+        agent_bearing = self.state2deg(self.state[2])
         flag = None
-        print(f"agent bearing: {agent_bearing} | rads: {self.state[2]}")
-        if 180 in r.keys():
-            print(f"r[180]: {r[180]}")
+        print(f"agent bearing: {agent_bearing} | rads: {self.state[2]} | func: {self.state2deg(self.state[2])}")
+        if 90 in r.keys():
+            print(f"r[180]: {r[90]}")
         for i in range(360 + agent_bearing - 25, 360 + agent_bearing):
             i %= 360
             if i in r.keys() and r[i] < 40:
-                print("wall left detected")
                 flag = i
                 break
         if flag is not None:
@@ -85,7 +84,6 @@ class Agent:
             for i in range(360 + agent_bearing, 360 + agent_bearing + 25):
                 i %= 360
                 if i in r.keys() and r[i] < 40:
-                    print("wall right detected")
                     flag = i
                     break
             if flag is not None:
@@ -189,3 +187,10 @@ class Agent:
     def draw_landmarks(self, screen):
         for landmark in Landmarks:
             pygame.draw.line(screen, (0, 0, 255), landmark[1][0], landmark[1][1], 2)
+
+    def state2deg(self, angle):
+        angle = int(np.rad2deg(angle))
+        if angle < 0:
+            angle = 360 - abs(angle)
+        angle += 90
+        return angle % 360

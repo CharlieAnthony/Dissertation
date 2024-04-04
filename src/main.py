@@ -126,9 +126,9 @@ def main():
         # ekf logic
         # u = [1115, np.deg2rad(agent.bearing)]
         agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
-        print(f"pos: {np.round(agent.state[0], 3), np.round(agent.state[1], 3)} "
-              f"| mu: {np.round(agent.mu[0], 3)[0], np.round(agent.mu[1], 3)[0]} "
-              f"| u: {u[0], u[1]}")
+        # print(f"pos: {np.round(agent.state[0], 3), np.round(agent.state[1], 3)} "
+        #       f"| mu: {np.round(agent.mu[0], 3)[0], np.round(agent.mu[1], 3)[0]} "
+        #       f"| u: {u[0], u[1]}")
 
         # agent.detect()
         agent.draw_agent(interface.get_screen())
