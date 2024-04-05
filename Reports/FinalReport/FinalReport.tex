@@ -105,12 +105,11 @@ SLAM (Simultaneous localization and Mapping) is a technique used in robotics to 
 It is an important area of research in robotics as it is heavily used in autonomous vehicles, drones and vacuum cleaners;
 allowing agents to understand and navigate their environment effectively. Figure \ref{fig:SLAM_agent} shows an example of a
 robot scanning its environment, with the sensors visually added to the image.\\
-SLAM can be broken down into two sub-problems: localization and mapping. localization is the process of determining the
+SLAM can be broken down into two sub-problems: localization and mapping. Localization is the process of determining the
 location of a robot in its environment, whilst mapping is the process of constructing a map of the environment. The maps
 are constructed using data collected from sensors, such as cameras and laser scanners; Figure \ref{fig:SLAM_map} shows this.
 A lot of existing work in SLAM is based on single robot applications, however, there is a growing interest in multi-agent
-SLAM. One of the greatest challenges in SLAM is crossing the simulation to reality gap, as in the real world, sensor
-readings are noisy and environments are dynamic, which increases the complexity of the problem.\\
+SLAM.\\
 Code implementations of SLAM usually divide the problem into the Front-end and the Back-end \cite{SLAM_components}.
 The Front-end is where the agent interprets the environment; it will receive data, which could be in the form of images,
 LiDAR scans or other sensor data. The Front-end will then process this data, extracting features and identifying landmarks.
@@ -199,7 +198,8 @@ distance sensors, as the agent can use points detected by the sensor to detect f
 Finally, semantic maps are a more recent addition to SLAM, which work by allowing the agent to detect and classify objects in the environment.
 This is achieved using computer vision techniques, such as object detection and image segmentation. Figure \ref{fig:semantic_map} shows an example
 of a semantic map; you can see the image segmentation has identified various objects, such as the keyboard and the books. Semantic maps are used
-more frequently in research, as they are more computationally expensive and require more complex sensors, such as cameras.\\
+more frequently in research whilst less often in industry, as they are much more computationally expensive and require more complex sensors, such as
+cameras.\\
 
 \subsubsection{Localization techniques}
 Localization techniques are used to help the agent determine its position in a given environment. There are a number of popular techniques commonly
@@ -313,18 +313,21 @@ results. Overall, this technique is particularly useful in environments where wh
 or on slippery surfaces. \\
 
 \subsubsection{Software}
-There are a number of existing tools and packages that can be used to implement SLAM algorithms; including Robot
-Operating System (ROS), Enki and Gazebo. ROS is an open-source community which provides a number of tried and tested
-packages implementing SLAM algorithms. It was created using C++ and Python, and is now widely used in both research and
-industry. More recently, development of ROS2 has picked up pace, which is a more modern version of ROS, aiming to be more
-appropriate for modern applications. \\
-Enki is a robot simulator package, which contains a number of premade robots and environments. It is particularly useful
-for testing SLAM algorithms, as it allows the user to create custom environments and test the algorithms in a controlled
-and realistic setting. Enki is written in C++ and is open-source, which makes it easy to modify and extend. \\
-Gazebo is another robot simulator package, which implements an accurate physics engine to provide accurate simulations
-of robots in the real world. Gazebo is typically used alongside ROS, where ROS is used to control the robot and Gazebo
-handles the physics and environment. Gazebo can be used to create 3D experiments, including implementation of lighting
-and shadows, which means it can also be used for testing visual SLAM algorithms. \\
+There are a number of existing tools and packages that can be used to implement and simulate SLAM algorithms; including Robot Operating System (ROS),
+Mobile Robot Programming Toolkit (MRPT), Webots, Enki, Gazebo and CoppeliaSim (formally V-REP). The mentioned resources can be split into
+two distinct groups: algorithm implementations and simulation environments. Packages like ROS and MRPT fall under the former, providing tried
+and tested SLAM algorithms. ROS is an open-source package which was created using C++ and Python, and is now widely used in both research
+and industry. More recently, development of ROS2 has picked up pace, which is a more modern version of ROS, aiming to be more appropriate
+for modern applications. MRPT offers a number of SLAM algorithms which can be used in both 2D and 3D environments, and as the name suggests,
+is particularly useful for mobile robots.\\
+Enki, Gazebo and Webots are all robot simulator packages, which contain a number of premade robots and environments. They are particularly
+useful for testing SLAM algorithms, as it allows the user to create custom environments and test the algorithms in a controlled and realistic
+setting. Enki is written in C++ and is open-source, which makes it easy to modify and extend. Gazebo can be used to create 3D environments,
+which can be used to test visual SLAM algorithms. Webots also allows for modelling, programming and simulating robots in 3D environments;
+the package is widely used in research and education. All of these packages are typically used in conjunction with packages that implement
+SLAM algorithms, like ROS.\\
+
+
 
 \subsection{Real-world Applications and Case Studies} % 600 words - currently 196
 SLAM has a number of real-world applications, such as autonomous vehicles, drones, vacuum cleaners and search and rescue.
