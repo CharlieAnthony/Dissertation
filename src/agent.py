@@ -66,12 +66,14 @@ class Agent:
             u[0] = 2
             u[1] = 0
             return u
-        r = {int(v): k for k, v, (_, _) in reading}
+        r = {int(450 - v) % 360: k for k, v, (_, _) in reading}
+        print(f"r: {r}")
         agent_bearing = self.state2deg(self.state[2])
         flag = None
-        print(f"agent bearing: {agent_bearing} | rads: {self.state[2]} | func: {self.state2deg(self.state[2])}")
-        if 90 in r.keys():
-            print(f"r[180]: {r[90]}")
+        # print(f"agent bearing: {agent_bearing} | rads: {self.state[2]} | func: {self.state2deg(self.state[2])}")
+        if 180 in r.keys():
+            # print(f"r[180]: {r[180]}")
+            pass
         for i in range(360 + agent_bearing - 25, 360 + agent_bearing):
             i %= 360
             if i in r.keys() and r[i] < 40:
