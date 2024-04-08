@@ -46,11 +46,6 @@ class Agent:
         return self.state[0:2]
 
     def update_u(self, u):
-        # random walk algorithm
-        # angle = np.random.randint(low=0, high=90)
-        # new_bearing = self.bearing + angle - 45
-        # self.bearing = new_bearing % 360
-        # self.step(self.step_size, self.bearing)
         """
         u = controls
             u[0] = forward velocity (m/s)
@@ -66,12 +61,9 @@ class Agent:
             u[0] = 2
             u[1] = 0
             return u
-        r = {int(v): k for k, v, (_, _) in reading}
+        r = {int(450 - v) % 360: k for k, v, (_, _) in reading}
         agent_bearing = self.state2deg(self.state[2])
         flag = None
-        print(f"agent bearing: {agent_bearing} | rads: {self.state[2]} | func: {self.state2deg(self.state[2])}")
-        if 90 in r.keys():
-            print(f"r[180]: {r[90]}")
         for i in range(360 + agent_bearing - 25, 360 + agent_bearing):
             i %= 360
             if i in r.keys() and r[i] < 40:
@@ -94,11 +86,6 @@ class Agent:
                 u[1] = 0
 
         return u
-        # old code
-        # u[0] = 2
-        # r = np.random.randint(low=0, high=100)
-        # u[1] = 1 #(r-1) * 2
-        # return u
 
     def move(self, u, dt):
         # new code

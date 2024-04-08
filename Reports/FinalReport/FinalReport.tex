@@ -12,7 +12,10 @@
 \usepackage{lipsum}         % for generating filler text
 \usepackage{float}          % for better figure placement
 \usepackage{natbib}         % for better citations
-\usepackage{pdfpages}       % for including pdfs
+\usepackage{pdfpages}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}       % for including pdfs
 \bibliographystyle{unsrtnat}
 
 % Page geometry
@@ -503,6 +506,17 @@ of the profession. \\
 
 \section{Methods}
 
+\subsection{Random Walk Exploration}
+To be able to create a map of the environment, the agent must first explore the environment. One of the simplest exploration strategies
+is random walk exploration, where the agent moves in a random direction until it hits an obstacle. This is a common strategy used in
+SLAM, as it is easy to implement and computationally efficient; however it is by no means the best strategy for exploration. \\
+\begin{algorithm}
+    \caption{Random Walk Exploration Algorithm}\label{alg:random_walk}
+\begin{algorithmic}
+    \State $reading \gets get\_sensor\_reading()$
+\end{algorithmic}
+\end{algorithm}
+
 \subsection{Feature Extraction}
 Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
 are points of interest in the environment, such as corners, edges and lines. These features can then be used to create a map
@@ -530,7 +544,8 @@ This process is repeated until no more points can be added to the line segment.\
 
 
 
-\section{Appendices}
+
+    \section{Appendices}
 
 \subsection{Supervisor Meetings}    % 720 words
 
@@ -586,6 +601,13 @@ We met on zoom and discussed the rate of progress, how the report is coming alon
 discussed the presentation some more, as it has been an area troubling me. Chris talked me through the process - stating that it should
 just be a summary of my project, really focusing on the key points and results. This was the last meeting before the easter break, so
 progress should increase after this point.
+\subsubsection{Meeting 12 - 03/04/2024}
+We met during the easter break on zoom to catch up about on progress. Chris provided some general feedback on the earlier sections
+of my paper, suggesting how I could adjust it's content to create a more balanced report. We then talked about how the code was
+coming along; I talked through some of the troubles I've had with the EKF implementation and Chris made some suggestions about
+how I could approach it differently. We finished by talking through my plan for the final weeks of the project - I discussed a rough
+plan I had constructed and Chris confirmed that it seemed appropriate.
+
 
 \subsection{Project Proposal}
 \includepdf[pages=-]{ProjectProposal.pdf}

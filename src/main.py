@@ -96,7 +96,7 @@ def main():
     # Initialize environment
     env_width = 1280
     env_height = 720
-    map_path = "map1.png"
+    map_path = "map2.png"
     map = cv2.imread(map_path)
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment, map_path)
