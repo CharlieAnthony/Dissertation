@@ -12,7 +12,10 @@
 \usepackage{lipsum}         % for generating filler text
 \usepackage{float}          % for better figure placement
 \usepackage{natbib}         % for better citations
-\usepackage{pdfpages}       % for including pdfs
+\usepackage{pdfpages}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}       % for including pdfs
 \bibliographystyle{unsrtnat}
 
 % Page geometry
@@ -504,7 +507,12 @@ of the profession. \\
 To be able to create a map of the environment, the agent must first explore the environment. One of the simplest exploration strategies
 is random walk exploration, where the agent moves in a random direction until it hits an obstacle. This is a common strategy used in
 SLAM, as it is easy to implement and computationally efficient; however it is by no means the best strategy for exploration. \\
-%TODO
+\begin{algorithm}
+    \caption{Random Walk Exploration Algorithm}\label{alg:random_walk}
+\begin{algorithmic}
+    \State $reading \gets get\_sensor\_reading()$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Feature Extraction}
 Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
@@ -533,7 +541,8 @@ This process is repeated until no more points can be added to the line segment.\
 
 
 
-\section{Appendices}
+
+    \section{Appendices}
 
 \subsection{Supervisor Meetings}    % 720 words
 
