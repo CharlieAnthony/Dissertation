@@ -11,7 +11,7 @@ import numpy as np
 
 class Agent:
 
-    def __init__(self, environment, radius=3, noise=0.5, init_pos=np.array([1, 1, 0])):
+    def __init__(self, environment, landmarks, radius=3, noise=0.5, init_pos=np.array([1, 1, 0])):
         # self.real_position = (1, 1)
         # self.bearing = np.random.randint(low=0, high=359)
         self.set_state(init_pos)
@@ -20,13 +20,13 @@ class Agent:
         self.env = environment
         self.lidar = LidarSensor(150, 180, self.env)
         self.n_state = 3
-        self.n_landmarks = 1
+        self.n_landmarks = len(landmarks)
         self.mu = np.zeros((self.n_state + 2 * self.n_landmarks, 1))
         self.mu[:] = np.nan
         self.mu[0:3] = np.expand_dims(init_pos, axis=1)
         self.sigma = np.zeros((self.n_state+2*self.n_landmarks,self.n_state+2*self.n_landmarks))
         np.fill_diagonal(self.sigma, 100)
-        self.ekf = EKF()
+        self.ekf = EKF(landmarks=landmarks)
         self.sigma[0:3, 0:3] = 0.05 * np.eye(3)
 
     def set_state(self, state):
@@ -181,3 +181,20 @@ class Agent:
             angle = 360 - abs(angle)
         angle += 90
         return angle % 360
+
+    def sim_measurements(self, x, landmarks):
+        """
+        Simulate measurements from robot to landmarks
+        TODO: change to use LidarSensor
+        """
+        robot_fov = 3
+        rx, ry, theta = x[0], x[1], x[2]
+        measurements = []
+        for (n, l) in enumerate(landmarks):
+            lx, ly = l
+            dist = np.linalg.norm(np.array([lx - rx, ly - ry]))
+            phi = np.arctan2(ly - ry, lx - rx) - theta
+            phi = np.arctan(np.sin(phi), np.cos(phi))
+            if dist < robot_fov:
+                measurements.append([dist, phi, n])
+        return measurements

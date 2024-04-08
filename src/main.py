@@ -97,14 +97,16 @@ def main():
     env_width = 1280
     env_height = 720
     map_path = "map2.png"
+    landmarks = [(570, 360), (710, 360), (640, 290), (640, 430)]
+
     map = cv2.imread(map_path)
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment, map_path)
     init_pos = np.array([1., 1., np.pi/2])
-    agent = Agent(environment, radius=10, init_pos=init_pos)
+    agent = Agent(environment, landmarks, radius=10, init_pos=init_pos)
     clock = pygame.time.Clock()
     fps_limit = 60
-    ekf = EKF()
+    ekf = EKF(landmarks)
 
     dt = 0.1
     u = [0.25, 0.]
@@ -115,6 +117,7 @@ def main():
         # wait for 50 ms
         pygame.time.wait(50)
         interface.draw()
+        show_landmarks(interface.get_screen(), landmarks)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -123,21 +126,13 @@ def main():
         # agent.move()
         u = agent.update_u(u)
         agent.move(u, dt)
-        # ekf logic
-        # u = [1115, np.deg2rad(agent.bearing)]
-        agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
-        # print(f"pos: {np.round(agent.state[0], 3), np.round(agent.state[1], 3)} "
-        #       f"| mu: {np.round(agent.mu[0], 3)[0], np.round(agent.mu[1], 3)[0]} "
-        #       f"| u: {u[0], u[1]}")
 
-        # agent.detect()
+        zs = agent.sim_measurements(agent.get_state(), landmarks)
+        # ekf logic
+        agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
+
         agent.draw_agent(interface.get_screen())
         agent.show_agent_estimate(interface.get_screen(), agent.mu, agent.sigma)
-        # agent.draw_landmarks(interface.get_screen())
-
-        # pygame.time.wait(50)
-        # agent.draw_agent(interface.get_screen())
-
 
         pygame.display.update()
 
@@ -164,6 +159,11 @@ def show_pointcloud(screen):
     global pointcloud
     for pos in pointcloud:
         pygame.draw.circle(screen, (0, 255, 0), (int(pos[0]), int(pos[1])), 2)
+
+def show_landmarks(screen, landmarks):
+    for pos in landmarks:
+        pygame.draw.circle(screen, (0, 255, 0), (int(pos[0]), int(pos[1])), 2)
+
 
 
 if __name__ == "__main__":
