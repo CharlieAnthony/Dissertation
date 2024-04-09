@@ -97,12 +97,14 @@ def main():
     env_width = 1280
     env_height = 720
     map_path = "map2.png"
-    landmarks = [(570, 360), (710, 360), (640, 290), (640, 430)]
+
+    landmarks_pixels = [(570, 360), (710, 360), (640, 290), (640, 430)]
+    landmarks = [(l[0] * 0.02, l[1] * 0.02) for l in landmarks_pixels]
 
     map = cv2.imread(map_path)
     environment = Environment.img_to_env(map)
     interface = EnvironmentInterface(environment, map_path)
-    init_pos = np.array([1., 1., np.pi/2])
+    init_pos = np.array([14., 1., np.pi/2])
     agent = Agent(environment, landmarks, radius=10, init_pos=init_pos)
     clock = pygame.time.Clock()
     fps_limit = 60
@@ -117,7 +119,7 @@ def main():
         # wait for 50 ms
         pygame.time.wait(50)
         interface.draw()
-        show_landmarks(interface.get_screen(), landmarks)
+        show_landmarks(interface.get_screen(), landmarks_pixels)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -130,9 +132,11 @@ def main():
         zs = agent.sim_measurements(agent.get_state(), landmarks)
         # ekf logic
         agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
+        agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)
 
         agent.draw_agent(interface.get_screen())
         agent.show_agent_estimate(interface.get_screen(), agent.mu, agent.sigma)
+        agent.show_landmark_uncertainty(agent.mu, agent.sigma, interface.get_screen())
 
         pygame.display.update()
 
