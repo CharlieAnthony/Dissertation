@@ -23,7 +23,6 @@ class EKF:
 		# robot parameters
 		self.n_state = 3
 		self.landmarks = landmarks
-		print(self.landmarks)
 		self.n_landmarks = len(self.landmarks)
 
 		# ekf estimation variables.
@@ -36,7 +35,7 @@ class EKF:
 		self.Fx = np.block([[np.eye(3), np.zeros((self.n_state, 2 * self.n_landmarks))]])
 
 		# noise
-		self.R = np.diag([0.001, 0.001, 0.0005])
+		self.R = np.diag([0.01, 0.01, 0.00005])
 		self.Q = np.diag([0.003, 0.005])
 
 	def prediction_update(self, mu, sigma, u, dt):
@@ -61,6 +60,7 @@ class EKF:
 		return mu, sigma
 
 	def measurement_update(self, mu, sigma, zs):
+		# print(f"mu = {mu}")
 		rx, ry, theta = mu[0, 0], mu[1, 0], mu[2, 0]
 		delta_zs = [np.zeros((2,1)) for lidx in range(self.n_landmarks)]
 		Ks = [np.zeros((mu.shape[0], 2)) for lidx in range(self.n_landmarks)]
@@ -110,3 +110,5 @@ class EKF:
 		[eigenvals, eigenvecs] = np.linalg.eig(sigma)
 		angle = 180. * np.arctan2(eigenvecs[1][0], eigenvecs[0][0]) / np.pi
 		return eigenvals, angle
+
+

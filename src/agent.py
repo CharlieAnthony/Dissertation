@@ -6,6 +6,7 @@ from features import *
 from sensors import LidarSensor
 from ekf import EKF
 import pygame
+import pygame.gfxdraw
 import numpy as np
 
 
@@ -113,10 +114,11 @@ class Agent:
 		return ydot
 
 	def detect(self):
-		pos = self.state[0:2]
+		pos = (int(self.state[0] / 0.02), int(self.state[1] / 0.02))
 		readings = self.lidar.detect(None, self.env, position=pos)
 		break_point_ind = 0
 		endpoints = [0, 0]
+		results = None
 		if readings is not False:
 			self.feature_detection.set_laser_points(readings)
 			while break_point_ind < (self.feature_detection.NP - self.feature_detection.PMIN):
@@ -136,17 +138,19 @@ class Agent:
 						OUTMOST = results[2]
 						break_point_ind = results[3]
 
-						endpoints[0] = self.feature_detection.projection_point2line(OUTMOST[0], m, c)
-						endpoints[1] = self.feature_detection.projection_point2line(OUTMOST[1], m, c)
+						# endpoints[0] = self.feature_detection.projection_point2line(OUTMOST[0], m, c)
+						# endpoints[1] = self.feature_detection.projection_point2line(OUTMOST[1], m, c)
 
-						self.feature_detection.FEATURES.append([[m, c], endpoints])
-						self.feature_detection.FEATURES = self.feature_detection.lineFeats2point()
-						landmark_association(self.feature_detection.FEATURES)
+						# self.feature_detection.FEATURES.append([[m, c], endpoints])
+						# self.feature_detection.FEATURES = self.feature_detection.lineFeats2point()
+			return results
+		return False
 
 	def draw_agent(self, screen):
 		x = int(self.state[0] / 0.02)
 		y = int(self.state[1] / 0.02)
-		pygame.draw.circle(screen, (255, 0, 0), (x, y), self.radius)
+		# pygame.draw.circle(screen, (255, 0, 0), (x, y), self.radius) # agent, no aa
+		pygame.gfxdraw.filled_circle(screen, x, y, self.radius, (255, 0, 0)) # agent, aa
 		# direction indicator
 		x2 = x + 10 * np.cos(self.state[2])
 		y2 = y + 10 * np.sin(self.state[2])
@@ -178,7 +182,6 @@ class Agent:
 				p_pixel = (int(lx/0.02),int(ly/0.02))
 				eigenvals, angle = self.ekf.sigma2transform(lsigma)
 				if np.max(eigenvals) < 15:
-					print(f"landmark uncertainty: {eigenvals}")
 					sigma_pixel = (int(eigenvals[0]/0.02),int(eigenvals[1]/0.02))
 					self.draw_agent_uncertainty(screen,p_pixel,sigma_pixel,angle)
 
