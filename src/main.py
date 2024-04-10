@@ -104,18 +104,19 @@ def main():
     """
 
 	landmarks_pixels = [(570, 360), (710, 360), (640, 290), (640, 430)]
+	landmarks_lines = [[(570, 410), (570, 310)], [(710, 410), (710, 310)], [(690, 290), (590, 290)], [(690, 430), (590, 430)]]
 	landmarks = [(l[0] * 0.02, l[1] * 0.02) for l in landmarks_pixels]
 
 	map = cv2.imread(map_path)
 	environment = Environment.img_to_env(map)
 	interface = EnvironmentInterface(environment, map_path)
-	init_pos = np.array([1., 1., 0])
+	init_pos = np.array([1., 10., 0])
 	agent = Agent(environment, landmarks, radius=10, init_pos=init_pos)
 	clock = pygame.time.Clock()
 	fps_limit = 60
 	ekf = EKF(landmarks)
 	fd = feature_dectection()
-	endpoints = [0, 0]
+	endpoints = [0., 0.]
 
 	dt = 0.1
 	u = [0.25, 0.]
@@ -149,7 +150,15 @@ def main():
 			endpoints[1] = fd.projection_point2line(OUTMOST[1], m, c)
 			pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2)
 
-		zs = agent.sim_measurements(agent.get_state(), landmarks)
+		# zs = agent.sim_measurements(agent.get_state(), landmarks)
+		try:
+			endpoints_m = [[endpoints[0][0] * 0.02, endpoints[0][1] * 0.02], [endpoints[1][0] * 0.02, endpoints[1][1] * 0.02]]
+			zs = agent.sim_measurements(agent.get_state(), landmarks)
+			# zs = fd.landmark_association(endpoints_m[0], endpoints_m[1], landmarks_lines, agent.get_state())
+			# print(zs)
+		except:
+			zs = []
+
 		# ekf logic
 		agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
 		agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)

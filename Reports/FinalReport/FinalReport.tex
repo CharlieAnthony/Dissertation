@@ -206,7 +206,7 @@ cameras.\\
 
 \subsubsection{Localization techniques}
 Localization techniques are used to help the agent determine its position in a given environment. There are a number of popular techniques commonly
-used in SLAM, such as Extended Kalman Filters, Particle Filters and Visual Odometry. Extended Kalman Filters are a set of mathematical equations which are used to
+used in SLAM, such as Kalman Filters, Particle Filters and Visual Odometry. Kalman Filters are a set of mathematical equations which are used to
 estimate the position of the agent given a set of noisy sensor readings. The equations are split into two main functions, the prediction function and the
 update function \cite{intro_to_EKF}. The prediction function is used to predict the agents position based on the previous state, which incorporates uncertainty from the
 agents movement. The update function is then used to update the agents position based on new sensor readings and update the uncertainty. The prediction functions
@@ -241,7 +241,10 @@ defined as:
 \end{itemize}
 The Kalman Gain equation determines how impactful the new sensor reading \(z_k\) should be, based on the previous position uncertainty \(P_{k}\). \(H_k\) is the Jacobian of the
 measurement function \(h(\hat{x}_{k}, 0)\) with respect to the state, and \(V_k\) is the Jacobian of the measurement function with respect to the measurement noise. The state update
-equation then updates the agents position based on the Kalman Gain. Finally, the covariance update equation updates the uncertainty of the agents position based on the Kalman Gain.\\
+equation then updates the agents position based on the Kalman Gain. Finally, the covariance update equation updates the uncertainty of the agents position based on the Kalman Gain.
+One of the limitations of the Kalman Filter equations is that they are only valid for linear functions, which makes them less useful in practice. To adapt the Kalman Filter to
+non-linear functions, the Extended Kalman Filter (EKF) is used. The EKF works by linearising the state transition and measurement functions, which allows the Kalman Filter equations
+to be used. The specifics of the EKF equations will be discussed in the methods section, as I plan on using the EKF in my project.\\
 \begin{figure}[h]
     \centering
      \begin{minipage}{0.24\textwidth}
@@ -272,6 +275,7 @@ As the agent moves, the particles are updated based on sensor readings, which ar
 Where \(w_i\) is the weight of the particle, \(z_t\) is the observed measurement at time \(t\) and \(x_i^t\) is the state of the particle at time \(t\). As the agent discovers more about its
 environment, the particles will converge towards the true position of the agent - as shown in Figure \ref{fig:particle_filter}. Dellaert et al demonstrated the strengths of particle filters in their paper
 \cite{monte_carlo_slam}, where they showed that particle filters are able to localise the agent in complex environments, even when the environment is dynamic.\\
+
 Finally, Visual Odometry works by having the agent estimate its position based on visual data. This is achieved using the previously mentioned semantic maps, which are used to detect and classify
 objects in the environment. As the name suggests, visual odometry only uses visual data to estimate the agents position; benefits of this approach are that cameras are cheap and lightweight, however
 they are also computationally expensive. Furthermore, visual odometry is less effective in environments with poor lighting and textureless surfaces, making it less reliable than other techniques. \\
