@@ -546,24 +546,13 @@ measurement if it hits an object. Below is the pseudocode for the sensor impleme
                 \EndFor
             \EndFor
             \State \textbf{return} $data$
-        \EndProcedure}
+        \EndProcedure{}
     \end{algorithmic}
 \end{algorithm}
 The procedure \textit{lidar\_scan} takes three parameters: the environment, the agent's position and the number of rays to cast. It
 also has a hard-coded maximum distance, which is used to limit the sensor's range. The algorithm will execute in \(O(d * r)\) time,
 where d is the maximum distance and r is the number of rays. The algorithm's memory complexity is \(O(r)\), as it is bounded by the
 number of rays.\\
-
-\subsection{Random Walk Exploration}
-To be able to create a map of the environment, the agent must first explore the environment. One of the simplest exploration strategies
-is random walk exploration, where the agent moves in a random direction until it hits an obstacle. This is a common strategy used in
-SLAM, as it is easy to implement and computationally efficient; however it is by no means the best strategy for exploration. \\
-\begin{algorithm}
-    \caption{Random Walk Exploration Algorithm}\label{alg:random_walk}
-\begin{algorithmic}
-    \State $reading \gets get\_sensor\_reading()$
-\end{algorithmic}
-\end{algorithm}
 
 \subsection{Feature Extraction}
 Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
@@ -584,7 +573,18 @@ After, the algorithm applies region growing, which helps create line segments; w
 region growing works by examining neighbouring points and adding them to the line segment if they satisfy the same conditions.
 This process is repeated until no more points can be added to the line segment.\\
 
-\subsection{Identifying Landmarks}
+\subsection{Random Walk Exploration}
+To be able to create a map of the environment, the agent must first explore the environment. One of the simplest exploration strategies
+is random walk exploration, where the agent moves in a random direction until it hits an obstacle. This is a common strategy used in
+SLAM, as it is easy to implement and computationally efficient; however it is by no means the best strategy for exploration. \\
+\begin{algorithm}
+    \caption{Random Walk Exploration Algorithm}\label{alg:random_walk}
+\begin{algorithmic}
+    \State $reading \gets get\_sensor\_reading()$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Agent Movement}
 
 \subsection{Extended Kalman Filter}
 
