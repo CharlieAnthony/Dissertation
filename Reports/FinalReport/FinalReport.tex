@@ -266,7 +266,7 @@ to be used. The specifics of the EKF equations will be discussed in the methods 
     \caption[Short caption]{Example of Particle Filter in a 2D environment (reproduced from \cite{particle_filter})}
     \label{fig:particle_filter}
 \end{figure}
-Particle Filters, or Monte Carlo Localization, is another popular technique used in SLAM, which work by having a set of particles randomly positioned across the environment which represent the
+Particle Filters, or Monte Carlo Localization, is ano ther popular technique used in SLAM, which work by having a set of particles randomly positioned across the environment which represent the
 possible positions of the agent (posterior). Each particle is assigned a weight, which represents the probability that the particle's position is the true position of the agent.
 As the agent moves, the particles are updated based on sensor readings, which are used to adjust the weights of the particles. The problem can be represented as:
 \begin{equation}
@@ -509,6 +509,50 @@ of the profession. \\
 %Related Work
 
 \section{Methods}
+
+\subsection{Environment Development}
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\linewidth]{environment_example.png}}
+    \caption{Screenshot of the simulation environment}
+    \label{fig:environment_example}
+\end{figure}
+When constructing the graphical user interface (GUI), simplicity has always been the focus. To maintain this, the GUI clearly displays
+the agent (and its bearing) and it's environment in an intuitive manner; as seen in Figure \ref{fig:environment_example}. Upon
+initialisation, the environment accepts an image file,which it then uses to create an array representation of the environment. I chose
+to use images as input as it allows for quick and easy creation of environments, which can be easily modified. Arrays are used to
+represent the environment as they are efficient and easy to manipulate.\\
+
+\subsection{Sensor Development}
+A realistic sensor is crucial for the agent to be able to detect its environment. To achieve this, I have implemented a LiDAR sensor,
+which in a similar way to real-world LiDAR sensors; it rotates 360 degrees and takes measurements at regular intervals. My sensor
+implementation mimics real-world LiDAR sensors by expanding a ray from the agent into the environment, which then returns a distance
+measurement if it hits an object. Below is the pseudocode for the sensor implementation.\\
+\begin{algorithm}[H]
+    \caption{LiDAR Sensor Algorithm}\label{alg:lidar_sensor}
+    \begin{algorithmic}
+        \Procedure{lidar\_scan}{$environment$, $agent\_position$, $num\_rays$}
+            \State $data \gets []$
+            \For{$i \gets 0$ to $num\_rays$}
+                \State $angle \gets i * 360 / num\_rays$
+                \For{$j \gets 0$ to $max\_distance$}
+                    \State $new\_x \gets agent\_position.x + j * cos(angle)$
+                    \State $new\_y \gets agent\_position.y + j * sin(angle)$
+                    \If{$environment.is\_object($new\_x$ , $new\_y$)$}
+                        \State $sensor\_activation \gets $j / $max\_distance$
+                        \State $data.append(($angle , sensor\_activation$))$
+                        \State $break$
+                    \EndIf
+                \EndFor
+            \EndFor
+            \State \textbf{return} $data$
+        \EndProcedure}
+    \end{algorithmic}
+\end{algorithm}
+The procedure \textit{lidar\_scan} takes three parameters: the environment, the agent's position and the number of rays to cast. It
+also has a hard-coded maximum distance, which is used to limit the sensor's range. The algorithm will execute in \(O(d * r)\) time,
+where d is the maximum distance and r is the number of rays. The algorithm's memory complexity is \(O(r)\), as it is bounded by the
+number of rays.\\
 
 \subsection{Random Walk Exploration}
 To be able to create a map of the environment, the agent must first explore the environment. One of the simplest exploration strategies

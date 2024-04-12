@@ -35,7 +35,7 @@ class EKF:
 		self.Fx = np.block([[np.eye(3), np.zeros((self.n_state, 2 * self.n_landmarks))]])
 
 		# noise
-		self.R = np.diag([0.01, 0.01, 0.00005])
+		self.R = np.diag([0.001, 0.001, 0.0005])
 		self.Q = np.diag([0.003, 0.005])
 
 	def prediction_update(self, mu, sigma, u, dt):

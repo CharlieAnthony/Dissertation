@@ -90,14 +90,8 @@ class Agent:
         return u
 
     def move(self, u, dt):
-        # new code
-        # bearing_rad = self.state[2]
-        # self.state[0] += u[0] * np.cos(bearing_rad) * dt
-        # self.state[1] += u[0] * np.sin(bearing_rad) * dt
-        # self.state[2] += u[1] * dt
         y = np.zeros(5)
-        y[:3] = self.state;
-        y[3:] = u
+        y[:3] = self.state; y[3:] = u
         result = scipy.integrate.solve_ivp(self.EOM, [0, dt], y)
         self.state = result.y[:3, -1]
         self.state[2] = np.arctan2(np.sin(self.state[2]), np.cos(self.state[2]))
@@ -105,9 +99,7 @@ class Agent:
     def EOM(self, t, y):
         self.max_v = 2.0
         self.max_omega = 2.0
-        px = y[0];
-        py = y[1];
-        theta = y[2]
+        px = y[0]; py = y[1]; theta = y[2]
         v = max(min(y[3], self.max_v), -self.max_v);
         omega = max(min(y[4], self.max_omega), -self.max_omega)  # forward and angular velocity
         ydot = np.zeros(5)
@@ -161,13 +153,21 @@ class Agent:
         y = int(mu[1] / 0.02)
         eigenvals, angle = self.ekf.sigma2transform(sigma[0:2, 0:2])
         width = (int(eigenvals[0] / 0.02), int(eigenvals[1] / 0.02))
-        angle = 0
         self.draw_agent_uncertainty(screen, (x, y), width, angle)
+        """
+            rx,ry = mu[0],mu[1]
+            p_pixel = env.position2pixel((rx,ry))
+            eigenvals,angle = sigma2transform(sigma[0:2,0:2])
+            sigma_pixel = env.dist2pixellen(eigenvals[0]), env.dist2pixellen(eigenvals[1])
+            show_uncertainty_ellipse(env,p_pixel,sigma_pixel,angle)
+        """
+
+
 
     def draw_agent_uncertainty(self, screen, center, width, angle):
         l = center[0] - int(width[0] / 2)
         t = center[1] - int(width[1] / 2)
-        print(f"l = {l}, t = {t}, width = {width}")
+        # print(f"l = {l}, t = {t}, width = {width}")
         target_rect = pygame.Rect(l, t, width[0], width[1])
         shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
         pygame.draw.ellipse(shape_surf, (255, 0, 0), (0, 0, *target_rect.size), 2)
@@ -177,15 +177,14 @@ class Agent:
 
     def show_landmark_uncertainty(self, mu, sigma, screen):
         for lidx in range(self.n_landmarks):
-            lx, ly, lsigma = mu[self.n_state + lidx * 2], mu[self.n_state + lidx * 2 + 1], sigma[
-                                                                                           self.n_state + lidx * 2:self.n_state + lidx * 2 + 2,
-                                                                                           self.n_state + lidx * 2:self.n_state + lidx * 2 + 2]
+            lx, ly, lsigma = mu[self.n_state + lidx * 2], mu[self.n_state + lidx * 2 + 1], sigma[self.n_state + lidx * 2:self.n_state + lidx * 2 + 2, self.n_state + lidx * 2:self.n_state + lidx * 2 + 2]
             if ~np.isnan(lx):
                 p_pixel = (int(lx / 0.02), int(ly / 0.02))
                 eigenvals, angle = self.ekf.sigma2transform(lsigma)
                 if np.max(eigenvals) < 15:
                     sigma_pixel = (int(eigenvals[0] / 0.02), int(eigenvals[1] / 0.02))
                     self.draw_agent_uncertainty(screen, p_pixel, sigma_pixel, angle)
+                    print(p_pixel)
 
     def draw_landmarks(self, screen):
         for landmark in Landmarks:
@@ -200,17 +199,17 @@ class Agent:
 
     def sim_measurements(self, state, landmarks):
         """
-		Simulate measurements from robot to landmarks
-		TODO: change to use LidarSensor
-		"""
+        Simulate measurements from robot to landmarks
+        TODO: change to use LidarSensor
+        """
         robot_fov = 5
-        agent_x, agent_y, agent_bearing = state[0], state[1], state[2]
+        rx, ry, theta = state[0], state[1], state[2]
         measurements = []
         for (n, l) in enumerate(landmarks):
-            landmark_x, landmark_y = l
-            dist = np.linalg.norm(np.array([landmark_x - agent_x, landmark_y - agent_y]))
-            angle = np.arctan2(landmark_y - agent_y, landmark_x - agent_x) - agent_bearing
-            angle = np.arctan2(np.sin(angle), np.cos(angle))
+            lx, ly = l
+            dist = np.linalg.norm(np.array([lx - rx, ly - ry]))
+            phi = np.arctan2(ly - ry, lx - rx) - theta
+            phi = np.arctan2(np.sin(phi), np.cos(phi))
             if dist < robot_fov:
-                measurements.append([dist, angle, n])
+                measurements.append([dist, phi, n])
         return measurements

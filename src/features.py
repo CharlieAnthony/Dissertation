@@ -24,7 +24,7 @@ class feature_dectection:
         self.LR = 0  # real length of line segment
         self.PR = 0  # number of points in line segment
         self.FEATURES = []
-        self.association_thres = 10
+        self.association_thres = 1
 
     @staticmethod
     def euclidean_distance(point1, point2):
