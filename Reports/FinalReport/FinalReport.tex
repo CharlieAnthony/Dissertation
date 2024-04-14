@@ -15,7 +15,9 @@
 \usepackage{pdfpages}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{algorithmicx}       % for including pdfs
+\usepackage{algorithmicx}
+\usepackage{algorithms}
+%\usepackage{algc}       % package breaks my pseudocode
 \bibliographystyle{unsrtnat}
 
 % Page geometry
@@ -531,7 +533,7 @@ measurement if it hits an object. Below is the pseudocode for the sensor impleme
 \begin{algorithm}[H]
     \caption{LiDAR Sensor Algorithm}\label{alg:lidar_sensor}
     \begin{algorithmic}
-        \Procedure{lidar\_scan}{$environment$, $agent\_position$, $num\_rays$}
+        \Function{lidar\_scan}{$environment$, $agent\_position$, $num\_rays$, $max\_distance$}
             \State $data \gets []$
             \For{$i \gets 0$ to $num\_rays$}
                 \State $angle \gets i * 360 / num\_rays$
@@ -539,19 +541,18 @@ measurement if it hits an object. Below is the pseudocode for the sensor impleme
                     \State $new\_x \gets agent\_position.x + j * cos(angle)$
                     \State $new\_y \gets agent\_position.y + j * sin(angle)$
                     \If{$environment.is\_object($new\_x$ , $new\_y$)$}
-                        \State $sensor\_activation \gets $j / $max\_distance$
-                        \State $data.append(($angle , sensor\_activation$))$
+                        \State $data.append(($angle , $j / $max\_distance$))$
                         \State $break$
                     \EndIf
                 \EndFor
             \EndFor
             \State \textbf{return} $data$
-        \EndProcedure{}
+        \EndFunction{}
     \end{algorithmic}
 \end{algorithm}
-The procedure \textit{lidar\_scan} takes three parameters: the environment, the agent's position and the number of rays to cast. It
-also has a hard-coded maximum distance, which is used to limit the sensor's range. The algorithm will execute in \(O(d * r)\) time,
-where d is the maximum distance and r is the number of rays. The algorithm's memory complexity is \(O(r)\), as it is bounded by the
+The procedure \textit{lidar\_scan} takes four parameters: the environment, the agent's position, the number of rays to cast and the
+maximum distance (range) of the sensor. The algorithm will execute in \(O(d * r)\) time, where d is the maximum distance and r is
+the number of rays. The algorithm's memory complexity is \(O(r)\), as it is bounded by the
 number of rays.\\
 
 \subsection{Feature Extraction}
@@ -572,8 +573,63 @@ which only takes into account the vertical distances of each point.\\
 After, the algorithm applies region growing, which helps create line segments; which will then become our features. The
 region growing works by examining neighbouring points and adding them to the line segment if they satisfy the same conditions.
 This process is repeated until no more points can be added to the line segment.\\
+\begin{algorithm}[H]
+    \caption{Seed-Segment Detection Algorithm (reproduced from \cite{seeded_region_growing})}\label{alg:seeded_region_detection}
+    \begin{algorithmic}
+        \Function{seed\_segment\_detection}{$N_p$, $\epsilon$, $\delta$, $S_{num}$, $P_{min}$}
+            \State $flag \gets true$
+            \For{$i \gets 1$ to ($N_p$ - $P_{min}$)}
+                \State $j \gets i + $ $S_{num}$
+                \State \textit{fit\_line(i, j)}
+                \For{$k \gets i$ to $j$}
+                    \State $predicted\_point \gets predict\_point(k)$
+                    \State $distance \gets euclidean\_distance(k, predicted\_point)$
+                    \If{$d_1 > \delta$}
+                        \State $flag \gets false$
+                        \State \textbf{break}
+                    \EndIf
+                    \State $distance \gets euclidean\_distance(k, line)$
+                    \If{$distance > \epsilon$}
+                        \State $flag \gets false$
+                        \State \textbf{break}
+                    \EndIf
+                \EndFor
+                \If{$flag == true$}
+                    \State \textbf{return} \textit{fit\_line(i, j)}
+                \EndIf
+            \EndFor
+        \EndFunction{}
+    \end{algorithmic}
+\end{algorithm}
+Algorithm \ref{alg:seeded_region_detection} is the pseudocode for the seed segment detection algorithm. The function
+\textit{seed\_segment\_detection} takes five parameters: the number of points, the thresholds $\epsilon$ and $\delta$, the
+number of points in a segment $S_{num}$ and the minimum number of points $P_{min}$ required to form a segment. The algorithm
+works by iterating over groups of points and attempting to fit a line through them. It then first checks if the points conform to the
+predicted line by calculating the distance between the point and the predicted point (which is where the point should be if it
+conforms to the line), ensuring it is less than $\delta$. If this condition is met, the algorithm then checks if the point conforms to
+the line by calculating the distance between the point and the line, ensuring it is less than $\epsilon$. If both conditions are met,
+the algorithm returns the line segment. If no line segment is found, the algorithm will return null. The algorithm will execute in \(O(n)\)
+time, where n is the number of points. The algorithm's memory complexity is \(O(1)\), as it is bounded by the number of points.\\
+%TODO: check algorithm complexity properly
+\begin{algorithm}[H]
+    \caption{Seed-Segment Growing Algorithm (reproduced from \cite{seeded_region_growing})}\label{alg:seeded_region_growing}
+    \begin{algorithmic}
+        \Function{seed\_segment\_growing}{$line(i, j)$, $N_p$, $P_{min}$, $L_{min}$, $\epsilon$}
+            \State $P_f$ \gets j + 1
+            \State $P_b$ \gets i - 1
+            \While{euclidean\_distance($P_f$, $line(i, j)$) < $\epsilon$}
+                \If{P_f > $N_p$}
+                    \State \textbf{break}
+                \ELSE
+                    \State $line \gets \textit{fit\_line(P_b, P_f)}$
+                \EndIf
+            \EndWhile
+        \EndFunction{}
+    \end{algorithmic}
+\end{algorithm}
 
-\subsection{Random Walk Exploration}
+
+\subsection{Agent Movement}
 To be able to create a map of the environment, the agent must first explore the environment. One of the simplest exploration strategies
 is random walk exploration, where the agent moves in a random direction until it hits an obstacle. This is a common strategy used in
 SLAM, as it is easy to implement and computationally efficient; however it is by no means the best strategy for exploration. \\
@@ -584,8 +640,6 @@ SLAM, as it is easy to implement and computationally efficient; however it is by
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Agent Movement}
-
 \subsection{Extended Kalman Filter}
 
 \subsection{Data Association}
@@ -593,7 +647,7 @@ SLAM, as it is easy to implement and computationally efficient; however it is by
 
 
 
-    \section{Appendices}
+\section{Appendices}
 
 \subsection{Supervisor Meetings}    % 720 words
 
