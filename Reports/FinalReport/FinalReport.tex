@@ -16,9 +16,9 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{algorithmicx}
-\usepackage{algorithms}
+%\usepackage{algorithms}
 %\usepackage{algc}       % package breaks my pseudocode
-\bibliographystyle{unsrtnat}
+%\bibliographystyle{unsrtnat}
 
 % Page geometry
 \geometry{a4paper, margin=1in}
@@ -351,8 +351,6 @@ demonstrated this well in their paper, where they used ORB SLAM 2 to localise a 
 implementation involved using a VR headset to control a robot; they were able to demonstrate that the error rate of the SLAM
 algorithm was at least 0.5cm, which is accurate enough for most VR applications.\\
 
-\newpage
-
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
 create a simulation interface, where the user can see the agents and the environment. After, I will work towards implementing
@@ -615,15 +613,31 @@ time, where n is the number of points. The algorithm's memory complexity is \(O(
     \caption{Seed-Segment Growing Algorithm (reproduced from \cite{seeded_region_growing})}\label{alg:seeded_region_growing}
     \begin{algorithmic}
         \Function{seed\_segment\_growing}{$line(i, j)$, $N_p$, $P_{min}$, $L_{min}$, $\epsilon$}
-            \State $P_f$ \gets j + 1
-            \State $P_b$ \gets i - 1
+            \State $P_f \gets j + 1$
+            \State $P_b \gets i - 1$
             \While{euclidean\_distance($P_f$, $line(i, j)$) < $\epsilon$}
-                \If{P_f > $N_p$}
+                \If{$P_f > N_p$}
                     \State \textbf{break}
-                \ELSE
-                    \State $line \gets \textit{fit\_line(P_b, P_f)}$
+                \Else
+                    \State $line \gets \func{fit\_line(P_b, P_f)}$
                 \EndIf
+                \State $P_f \gets P_f + 1$
             \EndWhile
+            \State $P_f \gets P_f - 1$
+            \While{euclidean\_distance($P_b$, $line(i, j)$) < $\epsilon$}
+                \If{$P_b < 1$}
+                    \State \textbf{break}
+                \Else
+                    \State $line \gets \func{fit\_line(P_b, P_f)}$
+                \EndIf
+                \State $P_b \gets P_b - 1$
+            \EndWhile
+            \State $P_b \gets P_b + 1$
+            \State $L_l \gets \func{euclidean\_distance}(P_b, P_f)$
+            \State $P_l \gets P_f - P_b$
+            \If{$L_l \geq L_{min}$ and $P_l \geq P_{min}$}
+                \State \textbf{return} $line(P_b, P_f)$ with \textbf{Parameters}
+            \EndIf
         \EndFunction{}
     \end{algorithmic}
 \end{algorithm}
@@ -709,6 +723,11 @@ of my paper, suggesting how I could adjust it's content to create a more balance
 coming along; I talked through some of the troubles I've had with the EKF implementation and Chris made some suggestions about
 how I could approach it differently. We finished by talking through my plan for the final weeks of the project - I discussed a rough
 plan I had constructed and Chris confirmed that it seemed appropriate.
+\subsubsection{Meeting 13 - 12/04/2024}
+We met in person this week, as we both happened to be on campus. I showed Chris my progress on my EKF implementation and we discussed
+final changes I could make to the code. After we talked about the final report, and how I could send Chris my draft in parts for a more
+structured feedback process. After, we got slightly side-tracked - discussing life after uni and potential career paths, concluding
+the meeting.\\
 
 
 \subsection{Project Proposal}

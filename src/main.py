@@ -16,7 +16,7 @@ def main1():
 	# Initialize environment
 	env_width = 1280
 	env_height = 720
-	map_path = "map3.png"
+	map_path = "map2.png"
 	map = cv2.imread(map_path)
 	environment = Environment.img_to_env(map)
 	interface = EnvironmentInterface(environment)
@@ -96,7 +96,7 @@ def main():
 	# Initialize environment
 	env_width = 1280
 	env_height = 720
-	map_path = "map3.png"
+	map_path = "map2.png"
 
 	"""
     map2.png = [(570, 360), (710, 360), (640, 290), (640, 430)]
@@ -129,7 +129,7 @@ def main():
 		# wait for 50 ms
 		pygame.time.wait(50)
 		interface.draw()
-		# show_landmarks(interface.get_screen(), landmarks_pixels)
+		show_landmarks(interface.get_screen(), landmarks_pixels)
 
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -150,22 +150,22 @@ def main():
 		# 	endpoints[1] = fd.projection_point2line(OUTMOST[1], m, c)
 		# 	pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2)
 
-		# zs = agent.sim_measurements(agent.get_state(), landmarks)
-		try:
-			endpoints_m = [[endpoints[0][0] * 0.02, endpoints[0][1] * 0.02], [endpoints[1][0] * 0.02, endpoints[1][1] * 0.02]]
-			# zs = agent.sim_measurements(agent.get_state(), landmarks)
-			zs = fd.landmark_association(endpoints_m[0], endpoints_m[1], landmarks_lines, agent.get_state())
-			print(zs)
-		except:
-			zs = []
+		zs = agent.sim_measurements(agent.get_state(), landmarks)
+		# try:
+		# 	endpoints_m = [[endpoints[0][0] * 0.02, endpoints[0][1] * 0.02], [endpoints[1][0] * 0.02, endpoints[1][1] * 0.02]]
+		# 	zs = agent.sim_measurements(agent.get_state(), landmarks)
+		# 	zs = fd.landmark_association(endpoints_m[0], endpoints_m[1], landmarks_lines, agent.get_state())
+		# 	print(zs)
+		# except:
+		# 	zs = []
 
 		# ekf logic
 		agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
 		agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)
 
 		agent.draw_agent(interface.get_screen())
-		# agent.show_agent_estimate(interface.get_screen(), agent.mu, agent.sigma)
-		# agent.show_landmark_uncertainty(agent.mu, agent.sigma, interface.get_screen())
+		agent.show_agent_estimate(interface.get_screen(), agent.mu, agent.sigma)
+		agent.show_landmark_uncertainty(agent.mu, agent.sigma, interface.get_screen())
 
 		pygame.display.update()
 
