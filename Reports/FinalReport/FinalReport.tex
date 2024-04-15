@@ -602,12 +602,11 @@ This process is repeated until no more points can be added to the line segment.\
 Algorithm \ref{alg:seeded_region_detection} is the pseudocode for the seed segment detection algorithm. The function
 \textit{seed\_segment\_detection} takes five parameters: the number of points, the thresholds $\epsilon$ and $\delta$, the
 number of points in a segment $S_{num}$ and the minimum number of points $P_{min}$ required to form a segment. The algorithm
-works by iterating over groups of points and attempting to fit a line through them. It then first checks if the points conform to the
-predicted line by calculating the distance between the point and the predicted point (which is where the point should be if it
-conforms to the line), ensuring it is less than $\delta$. If this condition is met, the algorithm then checks if the point conforms to
-the line by calculating the distance between the point and the line, ensuring it is less than $\epsilon$. If both conditions are met,
-the algorithm returns the line segment. If no line segment is found, the algorithm will return null. The algorithm will execute in \(O(n)\)
-time, where n is the number of points. The algorithm's memory complexity is \(O(1)\), as it is bounded by the number of points.\\
+works by iterating over groups of points and attempting to fit a line through them. It then checks if the points conform to the
+line by calculating the distance between the point and it's predicted points position, ensuring it is less than $\delta$. If this condition
+is met, algorithm then checks the distance between the point and the line, ensuring it is less than $\epsilon$. If both conditions are
+met, the algorithm returns the line segment. If no line segment is found, the algorithm will return null. The algorithm will execute in
+\(O(n)\) time, where n is the number of points. The algorithm's memory complexity is \(O(1)\), as it is bounded by the number of points.\\
 %TODO: check algorithm complexity properly
 \begin{algorithm}[H]
     \caption{Seed-Segment Growing Algorithm (reproduced from \cite{seeded_region_growing})}\label{alg:seeded_region_growing}
@@ -641,18 +640,45 @@ time, where n is the number of points. The algorithm's memory complexity is \(O(
         \EndFunction{}
     \end{algorithmic}
 \end{algorithm}
-
+The seed segment (line) produced by Algorithm \ref{alg:seeded_region_detection} is then passed into Algorithm \ref{alg:seeded_region_growing},
+which is used to grow the line segment. The function \textit{seed\_segment\_growing} takes five parameters: the seed segment, the number of points,
+the minimum number of points required to form a segment, the minimum length of a segment and the threshold $\epsilon$. Generally speaking, the
+algorithm expands the line segment by adding points to either side of the existing line segment, essentially 'growing' the line. Seed segment growing
+starts by attempting to expand the line forwards, by adding points to the end of the line and fitting a new line through the points. It then checks
+if the new line is within the threshold $\epsilon$ of the original line by calculating the distance between the points and the line. If it is, it will continue
+to expand the line. It repeats this until either all the points have been used or the threshold is exceeded. After, the same series of steps is repeated in
+the opposite direction, attempting to grow the region backwards. Finally, the algorithm checks if the grown line segment is of sufficient length and
+contains enough points to be considered a feature, then returns the line segment. The algorithm will execute in \(O(n)\) time, where n is the number of
+points. The algorithm's memory complexity is \(O(1)\), as it is bounded by the number of points.\\
+%TODO: check algorithm complexity properly
 
 \subsection{Agent Movement}
+When implementing the agent's movement, I wanted it to accurately mimic a real-world agent moving in an environment. To achieve this,
+I have implemented a basic kinematic model, which uses the agent's current position and velocity to calculate the next position. For
+each time step, the agent passes the model it's control inputs, consisting of the agent's velocity and angular rate of change. The model
+then calculates the agent's new position and orientation. The model is important as it allows the agent to move around the environment
+in a predictable manner, which will help make the implementation of my project easier. Below is the equations used in my kinematic model. \\
+\begin{equation}
+    \begin{aligned}
+        p_x &= v \cos(\theta) \\
+        p_y &= v \sin(\theta) \\
+        \theta &= \omega \\
+    \end{aligned}
+\end{equation}
+In the equations above, \(p_x\) and \(p_y\) are the agent's x and y positions, \(\theta\) is the agent's bearing. \(v\) is the agent's velocity
+and \(\omega\) is the agent's angular rate of change. In my implementation, I have capped the agent's velocity and angular rate of change
+to ensure the agent moves in a realistic manner.\\
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\linewidth]{wallfollow.png}}
+    \caption{Flowchart of the wall tracking exploration strategy}
+    \label{fig:wall_tracking_flowchart}
+\end{figure}
 To be able to create a map of the environment, the agent must first explore the environment. One of the simplest exploration strategies
-is random walk exploration, where the agent moves in a random direction until it hits an obstacle. This is a common strategy used in
-SLAM, as it is easy to implement and computationally efficient; however it is by no means the best strategy for exploration. \\
-\begin{algorithm}
-    \caption{Random Walk Exploration Algorithm}\label{alg:random_walk}
-\begin{algorithmic}
-    \State $reading \gets get\_sensor\_reading()$
-\end{algorithmic}
-\end{algorithm}
+is wall tracking, where the agent moves in a single direction until it hits an obstacle, then it until no longer facing the obstacle and continues.
+This is a common strategy used in SLAM as it is easy to implement and computationally efficient; however it is by no means the best strategy
+for exploration. Figure \ref{fig:wall_tracking_flowchart} is a simple flowchart of my implementation of the wall tracking.\\
+
 
 \subsection{Extended Kalman Filter}
 
