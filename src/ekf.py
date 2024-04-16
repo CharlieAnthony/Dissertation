@@ -35,6 +35,7 @@ class EKF:
 		self.Fx = np.block([[np.eye(3), np.zeros((self.n_state, 2 * self.n_landmarks))]])
 
 		# noise
+		# m/s, m/s, rad/s
 		self.R = np.diag([0.001, 0.001, 0.0005])
 		self.Q = np.diag([0.003, 0.005])
 
@@ -55,6 +56,7 @@ class EKF:
 			w) > 0.01 else -v * dt * np.sin(theta)
 		state_jacobian[1, 2] = -(v / w) * np.sin(theta) + (v / w) * np.sin(theta + w * dt) if abs(
 			w) > 0.01 else v * dt * np.cos(theta)
+		# G has to be same size as sigma as they multiply together
 		G = np.eye(sigma.shape[0]) + np.transpose(self.Fx).dot(state_jacobian).dot(self.Fx)
 		sigma = G.dot(sigma).dot(np.transpose(G)) + np.transpose(self.Fx).dot(self.R).dot(self.Fx)
 		return mu, sigma

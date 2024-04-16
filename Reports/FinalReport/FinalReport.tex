@@ -686,9 +686,11 @@ original Kalman Filter equations. The EKF works by estimating the state of the a
 a combination of sensor measurements and control inputs. The EKF is particularly useful in SLAM as it can handle non-linearities in
 the system, which are common in real-world environments. In this context, linearity is referring to directly proportional variables,
 such as the agent driving in a straight line at a constant speed.\\
-
-\begin{algorithm}
-    \caption{EKF\_SLAM\_Known\_correspondences}
+Algorithm \ref{alg:ekf} shows the EKF algorithm, which is used to estimate the state of the agent and the landmarks in the
+environment. This algorithm is taken from the Probabilistic Robotics textbook by Thrun et al. \cite{EKF} - which is a widely used
+resource in the field of robotics. I have adapted the algorithm to work with my implementation of SLAM.\\
+\begin{algorithm}[H]
+    \caption{EKF SLAM Algorithm (reproduced from \cite{EKF}}\label{alg:ekf}
     \begin{algorithmic}[1]
 %        line 1
         \State $\mathbf{F}_x = \begin{bmatrix}
@@ -777,6 +779,23 @@ such as the agent driving in a straight line at a constant speed.\\
         \State \Return $\mu_t, \Sigma_t$
     \end{algorithmic}
 \end{algorithm}
+The EKF algorithm described in Algorithm \ref{alg:ekf} works in a similar way to the Kalman Filter equations described in the literature
+review, in the sense that they too can be split into two main steps: the prediction step and the update step. The prediction step starts
+by defining \(\mathbf{F}_x\), which consists of an identity matrix and zeros; which is used when calculating the predicted state. After,
+the algorithm calculates the predicted state \(\bar{\mu_t}\) by using the control inputs and the previous state; as \(\omega_t\) becomes
+zero when the agent is not turning, the code needs to handle this edge case. The algorithm then calculates the predicted covariance,
+which is used to estimate the uncertainty in the predicted state. The algorithm then creates an auxiliary matrix \(\mathbf{Q}_t\), which
+is calculated using the state jacobian and the previously defined \(\mathbf{F}_x\). We can then calculate the uncertainty in the predicted
+state, as shown in line 4; \(\mathbf{R_t}\) is the covariance of the random noise in the system.\\
+The update step is when the EKF uses the sensor measurements to update the state estimate. The algorithm iterates over all observed
+features from the sensor data, represented in the variable \(z^i_t\). For each iteration, the algorithm first checks if the landmark has been
+seen before, and if not, it will populate the landmarks uncertainty with the agent's positional uncertainty. The algorithm then calculates
+the difference between the predicted state and the landmark's position; this is represented by the variable \(\delta\). Then, the variable
+\(q\) is calculated, which is the squared distance between the predicted state and the landmark - which is used to calculate the expected
+sensor measurement \(\hat{z^i_t}\). After, the algorithm introduces three matrices \(\mathbf{F}_{x,j}\), \(\mathbf{H}_t^i\) and \(K_t^i\), which
+are then used to update the state estimate. Finally, the algorithm returns the updated state estimate and the updated covariance.\\
+
+
 
 \subsection{Data Association}
 I decided to create a simple algorithm for data association, which works by comparing the endpoints of detected features with known
