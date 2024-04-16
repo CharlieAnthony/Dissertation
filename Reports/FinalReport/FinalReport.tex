@@ -681,8 +681,108 @@ for exploration. Figure \ref{fig:wall_tracking_flowchart} is a simple flowchart 
 
 
 \subsection{Extended Kalman Filter}
+As mentioned in the literature review, the Extended Kalman Filter (EKF) is a popular choice for SLAM algorithms which builds upon the
+original Kalman Filter equations. The EKF works by estimating the state of the agent and the landmarks in the environment by using
+a combination of sensor measurements and control inputs. The EKF is particularly useful in SLAM as it can handle non-linearities in
+the system, which are common in real-world environments. In this context, linearity is referring to directly proportional variables,
+such as the agent driving in a straight line at a constant speed.\\
+
+\begin{algorithm}
+    \caption{EKF\_SLAM\_Known\_correspondences}
+    \begin{algorithmic}[1]
+%        line 1
+        \State $\mathbf{F}_x = \begin{bmatrix}
+            1 & 0 & 0 & & 0 & \cdots & 0 \\
+            0 & 1 & 0 & & 0 & \cdots & 0 \\
+            0 & 0 & 1 & & 0 & \cdots & 0 \\
+        \end{bmatrix}$
+%        line 2
+        \State $\bar{\mu_t} = \mu_{t-1} + \mathbf{F}_x^\top \begin{bmatrix}
+            - \frac{v_t}{w_t} \sin(\mu_{t-1, \theta}) + \frac{v_t}{w_t} \sin(\mu_{t-1, \theta} + w_t \Delta t)  \\
+            \frac{v_t}{w_t} \cos(\mu_{t-1, \theta}) - \frac{v_t}{w_t} \cos(\mu_{t-1, \theta} + w_t \Delta t) \\
+            w_t \Delta t \\
+        \end{bmatrix}$
+%       line 3
+        \State $\mathbf{G}_t = I + \mathbf{F}_x^\top \begin{bmatrix}
+            0 & 0 & \frac{v_t}{w_t} \cos(\mu_{t-1, \theta}) - \frac{v_t}{w_t} \cos(\mu_{t-1, \theta} + w_t \Delta t) \\
+            0 & 0 & \frac{v_t}{w_t} \sin(\mu_{t-1, \theta}) - \frac{v_t}{w_t} \sin(\mu_{t-1, \theta} + w_t \Delta t) \\
+            0 & 0 & 0 \\
+        \end{bmatrix} F_x$
+%       line 4
+        \State $\bar{\Sigma_t} = \mathbf{G}_t \Sigma_{t-1} \mathbf{G}_t^\top + \mathbf{F}_x^\top \mathbf{R}_t \mathbf{F}_x$
+%        line 5
+        \State $\mathbf{Q}_t = \begin{bmatrix}
+            \sigma_r & 0 & 0\\
+            0 & \sigma_\phi & 0 \\
+            0 & 0 & \sigma_s \\
+        \end{bmatrix}$
+%        line 6
+        \ForAll{observed features $z^i_t = (r^i_t  \phi^i_t  s^i_t) ^\top$}
+%            line 7
+            \State $j = c^i_t$
+            \If{landmark $j$ never seen before}
+%                line 8
+                \State $\begin{bmatrix}
+                    \mu_{j, x} \\
+                    \mu_{j, y} \\
+                    \mu_{j, s} \\
+                \end{bmatrix} = \begin{bmatrix}
+                    \bar{\mu_{t, x}} \\
+                    \bar{\mu_{t, y}} \\
+                    s^i_t \\
+                \end{bmatrix} + r^i_t \begin{bmatrix}
+                    \cos(\phi^i_t) + \bar{\mu_{t, \theta}}) \\
+                    \sin(\phi^i_t + \bar{\mu_{t, \theta}}) \\
+                    0 \\
+                \end{bmatrix}$
+%            line 9
+            \EndIf
+            \State $\delta = \begin{bmatrix}
+                \delta_x \\
+                \delta_y \\
+            \end{bmatrix} = \begin{bmatrix}
+                \bar{\mu_{j, x}} - \bar{\mu_{t, x}} \\
+                \bar{\mu_{j, y}} - \bar{\mu_{t, y}} \\
+            \end{bmatrix}$
+            \State $q = \delta^\top \delta$
+%            line 13
+            \State $\hat{z^i_t} = \begin{bmatrix}
+                \sqrt{q} \\
+                \text{atan2}(\delta_y, \delta_x) - \bar{\mu_{t, \theta}} \\
+                \bar{\mu_{j, s}} \\
+            \end{bmatrix}$
+%            line 14
+            \State $\mathbf{F}_{x,j} = \begin{bmatrix}
+                1 & 0 & 0 & 0 \cdots 0 & 0 & 0 & 0 & 0 \cdots 0 \\
+                0 & 1 & 0 & 0\cdots 0 & 0 & 0 & 0 & 0 \cdots 0 \\
+                0 & 0 & 1 & 0 \cdots 0 & 0 & 0 & 0 & 0 \cdots 0 \\ \\
+                0 & 0 & 0 & 0 \cdots 0 & 1 & 0 & 0 & 0 \cdots 0 \\
+                0 & 0 & 0 & 0 \cdots 0 & 0 & 1 & 0 & 0 \cdots 0 \\
+                0 & 0 & 0 & 0 \cdots 0 & 0 & 0 & 1 & 0 \cdots 0 \\
+            \end{bmatrix}$
+%            line 15
+            \State $\mathbf{H}_t^i = \frac{1}{q} \begin{bmatrix}
+                \sqrt{q}\delta_x & - \sqrt{q}\delta_y & 0 & - \sqrt{q}\delta_x & \sqrt{q}\delta_y & 0 \\
+                \delta_y & \delta_x & -1 & -\delta_y & -\delta_x & 0 \\
+                0 & 0 & 0 & 0 & 0 & 1 \\
+            \end{bmatrix} \mathbf{F}_{x,j}$
+%            line 16
+            \State $K_t^i = \bar{\Sigma_t} \left\mathbf{H}_t^i\right^\top \left(H^i_t \bar{\Sigma_t} \left\mathbf{H}_t^i\right^\top + Q_t)^{-1}$
+            \EndFor
+%            line 17
+        \State $\mu_t = \bar{\mu_t} + \Sigma_i K_t^i (z^i_t - \hat{z}^i_t)$
+%            line 18
+        \State $\Sigma_t = \left(I - \Sigma_i K_t^i \mathbf{H}_t^i\right) \bar{\Sigma_t}$
+
+        \State \Return $\mu_t, \Sigma_t$
+    \end{algorithmic}
+\end{algorithm}
 
 \subsection{Data Association}
+I decided to create a simple algorithm for data association, which works by comparing the endpoints of detected features with known
+landmarks. The algorithm calculates the distances between each endpoint of the detected feature and each landmark's set of endpoints,
+then determines whether the feature is a new landmark or an existing one using a pre-determined threshold. The algorithm is simple
+but effective; it's computational efficiency is bounded by the number of landmarks, which makes it appropriate for my project.\\
 
 
 
@@ -845,9 +945,13 @@ the meeting.\\
     \href{https://doi.org/10.1007/s10846-008-9257-y}{https://doi.org/10.1007/s10846-008-9257-y}
 
     \bibitem{seeded_region_growing}
-    Gao, H., Zhang, X., Fang, Y. and Yuan, J. (2018). A line segment extraction algorithm using laser data based on seeded region growing.
-    \textit{ International Journal of Advanced Robotic Systems}, p.172988141875524.
+    Gao, H., Zhang, X., Fang, Y. and Yuan, J. (2018). "A line segment extraction algorithm using laser data based on seeded region growing,"
+    \textit{International Journal of Advanced Robotic Systems}, p.172988141875524.
     \href{https://doi.org/10.1177/1729881418755245}{https://doi.org/10.1177/1729881418755245}
+
+    \bibitem{EKF}
+    Thrun, S., Burgard, W. and Fox, D. (2005). "Probabilistic Robotics".
+    \textit{MIT Press, Cambridge, MA, USA.}
 
 \end{thebibliography}
 
