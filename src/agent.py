@@ -118,7 +118,7 @@ class Agent:
         results = None
         if readings is not False:
             self.feature_detection.set_laser_points(readings)
-            while break_point_ind < (self.feature_detection.NP - self.feature_detection.PMIN):
+            while break_point_ind < (self.feature_detection.Np - self.feature_detection.Pmin):
                 seed_seg = self.feature_detection.seed_segment_detection(pos, break_point_ind)
                 if seed_seg == False:
                     break
@@ -184,11 +184,7 @@ class Agent:
                 if np.max(eigenvals) < 15:
                     sigma_pixel = (int(eigenvals[0] / 0.02), int(eigenvals[1] / 0.02))
                     self.draw_agent_uncertainty(screen, p_pixel, sigma_pixel, angle)
-                    print(p_pixel)
-
-    def draw_landmarks(self, screen):
-        for landmark in Landmarks:
-            pygame.draw.line(screen, (0, 0, 255), landmark[1][0], landmark[1][1], 2)
+                    # print(p_pixel)
 
     def state2deg(self, angle):
         angle = int(np.rad2deg(angle))

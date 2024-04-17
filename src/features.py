@@ -2,28 +2,26 @@ import numpy as np
 import math
 from fractions import Fraction
 from scipy.odr import *
-
-Landmarks = []
-
-
 class feature_dectection:
 
     def __init__(self):
         self.two_points = None
-        self.EPSILON = 10  # maximum distance from a point to a line
-        self.DELTA = 20  # maximum distance between two points
-        self.SNUM = 6  # number of points to fit a line
-        self.PMIN = 20  # minimum points seed segment should have
-        self.GMAX = 20  # maximum distance between two points in a line segment
-        self.SEED_SEGMENTS = []
-        self.LINE_SEGMENTS = []
-        self.LASERPOINTS = []
-        self.LINE_PARAMS = None
-        self.NP = len(self.LASERPOINTS) - 1
-        self.LMIN = 20  # minimum length of a line segment
-        self.LR = 0  # real length of line segment
-        self.PR = 0  # number of points in line segment
-        self.FEATURES = []
+
+        self.epsilon = 10  # maximum distance from a point to a line
+        self.delta = 20  # maximum distance between two points
+        self.Snum = 6  # number of points to fit a line
+        self.Pmin = 20  # minimum points seed segment should have
+        self.Gmax = 20  # maximum distance between two points in a line segment
+
+        self.seed_segs = []
+        self.line_segs = []
+        self.points = []
+        self.line_params = None
+        self.Np = len(self.points) - 1
+        self.Lmin = 20  # minimum length of a line segment
+        self.Lr = 0  # real length of line segment
+        self.Pr = 0  # number of points in line segment
+        self.feats = []
         self.association_thres = 1
 
     @staticmethod
@@ -34,11 +32,11 @@ class feature_dectection:
         :param point2:
         :return:
         """
-        px = (point1[0] - point2[0]) ** 2
-        py = (point1[1] - point2[1]) ** 2
-        return math.sqrt(px + py)
+        x = (point1[0] - point2[0]) ** 2
+        y = (point1[1] - point2[1]) ** 2
+        return math.sqrt(x + y)
 
-    def dist_point2line(self, params, point):
+    def dist_point_to_line(self, params, point):
         """
         Calculates the distance between a point and a line
         :param params:
@@ -49,7 +47,7 @@ class feature_dectection:
         distance = abs(a * point[0] + b * point[1] + c) / math.sqrt(a ** 2 + b ** 2)
         return distance
 
-    def line_2point(self, m, b):
+    def line_to_point(self, m, b):
         """
         Extract two points from a line given a line equation
         :param m: slope
@@ -62,7 +60,7 @@ class feature_dectection:
         y2 = m * x2 + b
         return [(x, y), (x2, y2)]
 
-    def lineForm_G2SI(self, a, b, c):
+    def line_form_to_slope_intercept(self, a, b, c):
         """
         Converts a general line equation to slope-intercept form
         :param a: x coefficient
@@ -74,7 +72,7 @@ class feature_dectection:
         n = -c / b
         return m, n
 
-    def lineForm_SI2G(self, m, n):
+    def slope_intercept_to_general(self, m, n):
         """
         Converts a slope-intercept line equation to general form
         :param m: slope
@@ -113,7 +111,7 @@ class feature_dectection:
         y = (a1 * c2 - a2 * c1) / denominator
         return x, y
 
-    def points_2line(self, point1, point2):
+    def points_to_line(self, point1, point2):
         """
         Extract the line parameters from two points
         :param point1:
@@ -128,7 +126,7 @@ class feature_dectection:
             b = point1[1] - m * point1[0]
         return m, b
 
-    def projection_point2line(self, point, m, b):
+    def projection_point_to_line(self, point, m, b):
         """
         Projects a point onto a line
         :param point:
@@ -143,7 +141,7 @@ class feature_dectection:
         y_intercept = m2 * x_intercept + c2
         return x_intercept, y_intercept
 
-    def angle_dist_2_coord(self, distance, angle, robot_pos):
+    def angle_dist_to_coord(self, distance, angle, robot_pos):
         """
         Converts a distance and angle to a position
         :param distance: distance from the robot
@@ -162,15 +160,15 @@ class feature_dectection:
         :param data: laser data
         :return:
         """
-        self.LASERPOINTS = []
+        self.points = []
         if not data:
             pass
         else:
             for p in data:
-                coord = self.angle_dist_2_coord(p[0], p[1], p[2])
+                coord = self.angle_dist_to_coord(p[0], p[1], p[2])
                 # coord = (int(p[0]), int(p[1]))
-                self.LASERPOINTS.append([coord, p[1]])
-        self.NP = len(self.LASERPOINTS) - 1
+                self.points.append([coord, p[1]])
+        self.Np = len(self.points) - 1
 
     def linear_func(self, p, x):
         """
@@ -182,7 +180,7 @@ class feature_dectection:
         m, b = p
         return m * x + b
 
-    def odr_fit(self, laser_points):
+    def fit_line(self, laser_points):
         """
         Fits a line to the laser points
         :param laser_points: laser points
@@ -197,7 +195,7 @@ class feature_dectection:
         m, b = out.beta
         return m, b
 
-    def predictPoint(self, line_params, sensed_points, robot_pos):
+    def predict_point(self, line_params, sensed_points, robot_pos):
         """
         Predicts the next point
         :param line_params: line parameters
@@ -205,8 +203,8 @@ class feature_dectection:
         :param robot_pos: robot position
         :return: predicted point
         """
-        m, b = self.points_2line(robot_pos, sensed_points)
-        params1 = self.lineForm_SI2G(m, b)
+        m, b = self.points_to_line(robot_pos, sensed_points)
+        params1 = self.slope_intercept_to_general(m, b)
         preds = self.line_intersect_general(params1, line_params)
         if preds:
             return preds[0], preds[1]
@@ -215,86 +213,88 @@ class feature_dectection:
 
     def seed_segment_detection(self, robot_pos, break_point_ind):
         flag = True
-        self.NP = max(0, self.NP)
-        self.SEED_SEGMENTS = []
-        for i in range(break_point_ind, (self.NP - self.PMIN)):
+        self.Np = max(0, self.Np)
+        self.seed_segs = []
+        for i in range(break_point_ind, (self.Np - self.Pmin)):
             predicted_points_to_draw = []
-            j = i + self.SNUM
-            m, c = self.odr_fit(self.LASERPOINTS[i:j])
+            j = i + self.Snum
+            m, c = self.fit_line(self.points[i:j])
 
-            params = self.lineForm_SI2G(m, c)
+            params = self.slope_intercept_to_general(m, c)
 
             for k in range(i, j):
-                predicted_point = self.predictPoint(params, self.LASERPOINTS[k][0], robot_pos)
+                predicted_point = self.predict_point(params, self.points[k][0], robot_pos)
                 if not predicted_point:
                     continue
                 predicted_points_to_draw.append(predicted_point)
-                d1 = self.euclidean_distance(predicted_point, self.LASERPOINTS[k][0])
+                d1 = self.euclidean_distance(predicted_point, self.points[k][0])
 
-                if d1 > self.DELTA:
+                if d1 > self.delta:
                     flag = False
                     break
 
-                d2 = self.dist_point2line(params, self.LASERPOINTS[k][0])
+                d2 = self.dist_point_to_line(params, self.points[k][0])
 
-                if d2 > self.EPSILON:
+                if d2 > self.epsilon:
                     flag = False
                     break
 
             if flag:
-                self.LINE_PARAMS = params
-                return [self.LASERPOINTS[i:j], predicted_points_to_draw, (i, j)]
+                self.line_params = params
+                return [self.points[i:j], predicted_points_to_draw, (i, j)]
         return False
 
     def seed_segment_growing(self, indices, break_point):
-        line_eq = self.LINE_PARAMS
+        line_eq = self.line_params
         i, j = indices
-        PB, PF = max(break_point, i - 1), min(j + 1, len(self.LASERPOINTS) - 1)
-        while self.dist_point2line(line_eq, self.LASERPOINTS[PF][0]) < self.EPSILON:
-            if PF > self.NP - 1:
+        PB, PF = max(break_point, i - 1), min(j + 1, len(self.points) - 1)
+        while self.dist_point_to_line(line_eq, self.points[PF][0]) < self.epsilon:
+            if PF > self.Np - 1:
                 break
             else:
-                m, b = self.odr_fit(self.LASERPOINTS[PB:PF])
-                line_eq = self.lineForm_SI2G(m, b)
-                POINT = self.LASERPOINTS[PF][0]
+                m, b = self.fit_line(self.points[PB:PF])
+                line_eq = self.slope_intercept_to_general(m, b)
+                POINT = self.points[PF][0]
 
             PF = PF + 1
-            NEXTPOINT = self.LASERPOINTS[PF][0]
-            if self.euclidean_distance(POINT, NEXTPOINT) > self.GMAX:
+            NEXTPOINT = self.points[PF][0]
+            if self.euclidean_distance(POINT, NEXTPOINT) > self.Gmax:
                 break
         PF = PF - 1
 
-        while self.dist_point2line(line_eq, self.LASERPOINTS[PB][0]):
+        while self.dist_point_to_line(line_eq, self.points[PB][0]):
             if PB < break_point:
                 break
             else:
-                m, b = self.odr_fit(self.LASERPOINTS[PB:PF])
-                line_eq = self.lineForm_SI2G(m, b)
-                POINT = self.LASERPOINTS[PB][0]
+                m, b = self.fit_line(self.points[PB:PF])
+                line_eq = self.slope_intercept_to_general(m, b)
+                POINT = self.points[PB][0]
             PB = PB - 1
-            NEXTPOINT = self.LASERPOINTS[PB][0]
-            if self.euclidean_distance(POINT, NEXTPOINT) > self.GMAX:
+            NEXTPOINT = self.points[PB][0]
+            if self.euclidean_distance(POINT, NEXTPOINT) > self.Gmax:
                 break
         PB = PB + 1
 
-        LR = self.euclidean_distance(self.LASERPOINTS[PB][0], self.LASERPOINTS[PF][0])
-        PR = len(self.LASERPOINTS[PB:PF])
+        LR = self.euclidean_distance(self.points[PB][0], self.points[PF][0])
+        # PR = len(self.LASERPOINTS[PB:PF])
+        PR = PF - PB
+        # print(f"PR: {PR}, PB: {PB}, PF: {PF}")
 
-        if (LR >= self.LMIN) and (PR >= self.PMIN):
-            self.LINE_PARAMS = line_eq
-            m, b = self.lineForm_G2SI(line_eq[0], line_eq[1], line_eq[2])
-            self.two_points = self.line_2point(m, b)
-            self.LINE_SEGMENTS.append((self.LASERPOINTS[PB + 1][0], self.LASERPOINTS[PF - 1][0]))
-            return [self.LASERPOINTS[PB:PF], self.two_points,
-                    (self.LASERPOINTS[PB + 1][0], self.LASERPOINTS[PF - 1][0]), PF, line_eq, (m, b)]
+        if (LR >= self.Lmin) and (PR >= self.Pmin):
+            self.line_params = line_eq
+            m, b = self.line_form_to_slope_intercept(line_eq[0], line_eq[1], line_eq[2])
+            self.two_points = self.line_to_point(m, b)
+            self.line_segs.append((self.points[PB + 1][0], self.points[PF - 1][0]))
+            return [self.points[PB:PF], self.two_points,
+                    (self.points[PB + 1][0], self.points[PF - 1][0]), PF, line_eq, (m, b)]
         else:
             return False
 
-    def lineFeats2point(self):
+    def line_feats_to_point(self):
         new_rep = []
 
-        for feature in self.FEATURES:
-            projection = self.projection_point2line((0, 0), feature[0][0], feature[0][1])
+        for feature in self.feats:
+            projection = self.projection_point_to_line((0, 0), feature[0][0], feature[0][1])
             new_rep.append([feature[0], feature[1], projection])
 
         return new_rep

@@ -508,6 +508,7 @@ of the profession. \\
 
 %Related Work
 
+\newpage
 \section{Methods}
 
 \subsection{Environment Development}
@@ -518,16 +519,17 @@ of the profession. \\
     \label{fig:environment_example}
 \end{figure}
 When constructing the graphical user interface (GUI), simplicity has always been the focus. To maintain this, the GUI clearly displays
-the agent (and its bearing) and it's environment in an intuitive manner; as seen in Figure \ref{fig:environment_example}. Upon
-initialisation, the environment accepts an image file,which it then uses to create an array representation of the environment. I chose
+the agent (and its bearing) and it's environment in an intuitive way; as seen in Figure \ref{fig:environment_example}. Upon
+initialisation, the environment accepts an image file, which it then uses to create an array representation of the environment. I chose
 to use images as input as it allows for quick and easy creation of environments, which can be easily modified. Arrays are used to
 represent the environment as they are efficient and easy to manipulate.\\
 
 \subsection{Sensor Development}
-A realistic sensor is crucial for the agent to be able to detect its environment. To achieve this, I have implemented a LiDAR sensor,
-which in a similar way to real-world LiDAR sensors; it rotates 360 degrees and takes measurements at regular intervals. My sensor
+A realistic sensor is crucial for the agent to be able to detect its environment. To achieve this, I have implemented a LiDAR sensor
+that works in a similar way to real-world LiDAR sensors; it rotates 360 degrees and takes measurements at regular intervals. My sensor
 implementation mimics real-world LiDAR sensors by expanding a ray from the agent into the environment, which then returns a distance
-measurement if it hits an object. Below is the pseudocode for the sensor implementation.\\
+measurement if it hits an object. When using this in my project, I also add a small amount of noise to the measurements received from
+this function, to help make the sensor more realistic. Below is the pseudocode for the sensor implementation.\\
 \begin{algorithm}[H]
     \caption{LiDAR Sensor Algorithm}\label{alg:lidar_sensor}
     \begin{algorithmic}
@@ -549,9 +551,8 @@ measurement if it hits an object. Below is the pseudocode for the sensor impleme
     \end{algorithmic}
 \end{algorithm}
 The procedure \textit{lidar\_scan} takes four parameters: the environment, the agent's position, the number of rays to cast and the
-maximum distance (range) of the sensor. The algorithm will execute in \(O(d * r)\) time, where d is the maximum distance and r is
-the number of rays. The algorithm's memory complexity is \(O(r)\), as it is bounded by the
-number of rays.\\
+maximum distance (range) of the sensor. The algorithm will execute in \(O(d * r)\) time, where \(d\) is the maximum distance and \(r\) is
+the number of rays. The algorithm's memory complexity is \(O(r)\), as it is bounded by the number of rays.\\
 
 \subsection{Feature Extraction}
 Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
@@ -606,8 +607,8 @@ works by iterating over groups of points and attempting to fit a line through th
 line by calculating the distance between the point and it's predicted points position, ensuring it is less than $\delta$. If this condition
 is met, algorithm then checks the distance between the point and the line, ensuring it is less than $\epsilon$. If both conditions are
 met, the algorithm returns the line segment. If no line segment is found, the algorithm will return null. The algorithm will execute in
-\(O(n)\) time, where n is the number of points. The algorithm's memory complexity is \(O(1)\), as it is bounded by the number of points.\\
-%TODO: check algorithm complexity properly
+\(O(N_p * S_{num})\) time and the algorithm's memory complexity is \(O(S_{num})\), as it is bounded by the number of points in a
+section.\\
 \begin{algorithm}[H]
     \caption{Seed-Segment Growing Algorithm (reproduced from \cite{seeded_region_growing})}\label{alg:seeded_region_growing}
     \begin{algorithmic}
@@ -642,22 +643,20 @@ met, the algorithm returns the line segment. If no line segment is found, the al
 \end{algorithm}
 The seed segment (line) produced by Algorithm \ref{alg:seeded_region_detection} is then passed into Algorithm \ref{alg:seeded_region_growing},
 which is used to grow the line segment. The function \textit{seed\_segment\_growing} takes five parameters: the seed segment, the number of points,
-the minimum number of points required to form a segment, the minimum length of a segment and the threshold $\epsilon$. Generally speaking, the
-algorithm expands the line segment by adding points to either side of the existing line segment, essentially 'growing' the line. Seed segment growing
+the minimum number of points required to form a segment, the minimum length of a segment and a threshold $\epsilon$.  Seed segment growing
 starts by attempting to expand the line forwards, by adding points to the end of the line and fitting a new line through the points. It then checks
 if the new line is within the threshold $\epsilon$ of the original line by calculating the distance between the points and the line. If it is, it will continue
 to expand the line. It repeats this until either all the points have been used or the threshold is exceeded. After, the same series of steps is repeated in
 the opposite direction, attempting to grow the region backwards. Finally, the algorithm checks if the grown line segment is of sufficient length and
-contains enough points to be considered a feature, then returns the line segment. The algorithm will execute in \(O(n)\) time, where n is the number of
-points. The algorithm's memory complexity is \(O(1)\), as it is bounded by the number of points.\\
-%TODO: check algorithm complexity properly
+contains enough points to be considered a feature, then returns the line segment. The algorithm will execute in \(O(N_p)\) time and \(O(N_p)\) space,
+as both are bounded by the number of points.\\
 
 \subsection{Agent Movement}
 When implementing the agent's movement, I wanted it to accurately mimic a real-world agent moving in an environment. To achieve this,
 I have implemented a basic kinematic model, which uses the agent's current position and velocity to calculate the next position. For
 each time step, the agent passes the model it's control inputs, consisting of the agent's velocity and angular rate of change. The model
 then calculates the agent's new position and orientation. The model is important as it allows the agent to move around the environment
-in a predictable manner, which will help make the implementation of my project easier. Below is the equations used in my kinematic model. \\
+in a predictable manner, which will help make the implementation of my project easier. Below are the equations used in my kinematic model. \\
 \begin{equation}
     \begin{aligned}
         p_x &= v \cos(\theta) \\
@@ -679,10 +678,9 @@ is wall tracking, where the agent moves in a single direction until it hits an o
 This is a common strategy used in SLAM as it is easy to implement and computationally efficient; however it is by no means the best strategy
 for exploration. Figure \ref{fig:wall_tracking_flowchart} is a simple flowchart of my implementation of the wall tracking.\\
 
-
 \subsection{Extended Kalman Filter}
 As mentioned in the literature review, the Extended Kalman Filter (EKF) is a popular choice for SLAM algorithms which builds upon the
-original Kalman Filter equations. The EKF works by estimating the state of the agent and the landmarks in the environment by using
+original Kalman Filter equations. The EKF works by estimatiang the state of the agent and the landmarks in the environment by using
 a combination of sensor measurements and control inputs. The EKF is particularly useful in SLAM as it can handle non-linearities in
 the system, which are common in real-world environments. In this context, linearity is referring to directly proportional variables,
 such as the agent driving in a straight line at a constant speed.\\
@@ -795,14 +793,12 @@ the difference between the predicted state and the landmark's position; this is 
 sensor measurement \(\hat{z^i_t}\). After, the algorithm introduces three matrices \(\mathbf{F}_{x,j}\), \(\mathbf{H}_t^i\) and \(K_t^i\), which
 are then used to update the state estimate. Finally, the algorithm returns the updated state estimate and the updated covariance.\\
 
-
-
 \subsection{Data Association}
 I decided to create a simple algorithm for data association, which works by comparing the endpoints of detected features with known
 landmarks. The algorithm calculates the distances between each endpoint of the detected feature and each landmark's set of endpoints,
 then determines whether the feature is a new landmark or an existing one using a pre-determined threshold. The algorithm is simple
 but effective; it's computational efficiency is bounded by the number of landmarks, which makes it appropriate for my project.\\
-
+\newpage
 
 
 

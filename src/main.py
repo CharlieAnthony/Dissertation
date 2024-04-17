@@ -45,7 +45,7 @@ def main1():
 			d = lidar.detect(None, environment, position=pos)
 			if d is not False:
 				feature_map.set_laser_points(d)
-				while break_point_ind < (feature_map.NP - feature_map.PMIN):
+				while break_point_ind < (feature_map.Np - feature_map.Pmin):
 					seed_seg = feature_map.seed_segment_detection(pos, break_point_ind)
 					if seed_seg == False:
 						break
@@ -64,13 +64,13 @@ def main1():
 							OUTMOST = results[2]
 							break_point_ind = results[3]
 
-							endpoints[0] = feature_map.projection_point2line(OUTMOST[0], m, c)
-							endpoints[1] = feature_map.projection_point2line(OUTMOST[1], m, c)
+							endpoints[0] = feature_map.projection_point_to_line(OUTMOST[0], m, c)
+							endpoints[1] = feature_map.projection_point_to_line(OUTMOST[1], m, c)
 
-							feature_map.FEATURES.append([[m, c], endpoints])
-							print(f"line =[{m}, {c}, {endpoints}]")
-							feature_map.FEATURES = feature_map.lineFeats2point()
-							landmark_association(feature_map.FEATURES)
+							feature_map.feats.append([[m, c], endpoints])
+							# print(f"line =[{m}, {c}, {endpoints}]")
+							feature_map.feats = feature_map.line_feats_to_point()
+							landmark_association(feature_map.feats)
 
 							color = (255, 0, 0)
 							for point in line_seg:
@@ -82,7 +82,7 @@ def main1():
 
 				points = []
 				for reading in d:
-					points.append(feature_map.angle_dist_2_coord(reading[0], reading[1], reading[2]))
+					points.append(feature_map.angle_dist_to_coord(reading[0], reading[1], reading[2]))
 				data_to_pointcloud(points)
 			# show_pointcloud(interface.get_screen())
 			for landmark in Landmarks:
@@ -138,17 +138,17 @@ def main():
 		u = agent.update_u(u)
 		agent.move(u, dt)
 
-		# res = agent.detect()
-		# if res is not False and res is not None:
-		# 	line_eq = res[1]
-		# 	m, c = res[5]
-		# 	line_seg = res[0]
-		# 	OUTMOST = res[2]
-		# 	break_point_ind = res[3]
-		#
-		# 	endpoints[0] = fd.projection_point2line(OUTMOST[0], m, c)
-		# 	endpoints[1] = fd.projection_point2line(OUTMOST[1], m, c)
-		# 	pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2)
+		res = agent.detect()
+		if res is not False and res is not None:
+			line_eq = res[1]
+			m, c = res[5]
+			line_seg = res[0]
+			OUTMOST = res[2]
+			break_point_ind = res[3]
+
+			endpoints[0] = fd.projection_point_to_line(OUTMOST[0], m, c)
+			endpoints[1] = fd.projection_point_to_line(OUTMOST[1], m, c)
+			pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2)
 
 		zs = agent.sim_measurements(agent.get_state(), landmarks)
 		# try:
