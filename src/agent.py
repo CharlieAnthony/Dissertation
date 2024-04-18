@@ -66,18 +66,19 @@ class Agent:
         r = {int(450 - v) % 360: k for k, v, (_, _) in reading}
         agent_bearing = self.state2deg(self.state[2])
         flag = None
-        for i in range(360 + agent_bearing - 25, 360 + agent_bearing):
+        print(r)
+        for i in range(360 + agent_bearing - 5, 360 + agent_bearing):
             i %= 360
-            if i in r.keys() and r[i] < 40:
+            if i in r.keys() and r[i] < 30:
                 flag = i
                 break
         if flag is not None:
             u[0] = 0
             u[1] = 2
         else:
-            for i in range(360 + agent_bearing, 360 + agent_bearing + 25):
+            for i in range(360 + agent_bearing, 360 + agent_bearing + 5):
                 i %= 360
-                if i in r.keys() and r[i] < 40:
+                if i in r.keys() and r[i] < 30:
                     flag = i
                     break
             if flag is not None:

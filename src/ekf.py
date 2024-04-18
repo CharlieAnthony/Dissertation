@@ -28,7 +28,6 @@ class EKF:
 		# ekf estimation variables.
 		self.mu = np.zeros((self.n_state + 2 * self.n_landmarks, 1))
 		self.sigma = np.zeros((self.n_state + 2 * self.n_landmarks, self.n_state + 2 * self.n_landmarks))
-
 		self.mu = np.nan
 
 		# helpful matrices
@@ -37,7 +36,7 @@ class EKF:
 		# noise
 		# m/s, m/s, rad/s
 		self.R = np.diag([0.001, 0.001, 0.0005])
-		self.Q = np.diag([0.003, 0.005])
+
 
 	def prediction_update(self, mu, sigma, u, dt):
 		rx, ry, theta = mu[0], mu[1], mu[2]
@@ -62,11 +61,11 @@ class EKF:
 		return mu, sigma
 
 	def measurement_update(self, mu, sigma, zs):
-		# print(f"mu = {mu}")
 		rx, ry, theta = mu[0, 0], mu[1, 0], mu[2, 0]
 		delta_zs = [np.zeros((2,1)) for lidx in range(self.n_landmarks)]
 		Ks = [np.zeros((mu.shape[0], 2)) for lidx in range(self.n_landmarks)]
 		Hs = [np.zeros((2, mu.shape[0])) for lidx in range(self.n_landmarks)]
+		Q = np.diag([0.003, 0.005])
 		for z in zs:
 			(dist, phi, lidx) = z
 			mu_landmark = mu[self.n_state + 2 * lidx : self.n_state + 2 * lidx + 2]
@@ -92,7 +91,7 @@ class EKF:
 			H = H.dot(Fxj)
 			Hs[lidx] = H  # Added to list of matrices
 			Ks[lidx] = sigma.dot(np.transpose(H)).dot(
-				np.linalg.inv(H.dot(sigma).dot(np.transpose(H)) + self.Q))  # Add to list of matrices
+				np.linalg.inv(H.dot(sigma).dot(np.transpose(H)) + Q))  # Add to list of matrices
 		mu_offset = np.zeros(mu.shape) # Offset to be added to state estimate
 		sigma_factor = np.eye(sigma.shape[0]) # Factor to multiply state uncertainty
 		for lidx in range(self.n_landmarks):
