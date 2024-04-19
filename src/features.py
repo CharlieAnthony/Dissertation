@@ -43,17 +43,17 @@ class feature_dectection:
         """
         return abs(params[0] * point[0] + params[1] * point[1] + params[2]) / math.sqrt(params[0] ** 2 + params[1] ** 2)
 
-    def line_to_point(self, m, b):
+    def line_to_point(self, m, c):
         """
         Extract two points from a line given a line equation
         :param m: slope
-        :param b: y-intercept
+        :param c: y-intercept
         :return: line parameters
         """
         x = 5
-        y = m * x + b
+        y = m * x + c
         x2 = 2000
-        y2 = m * x2 + b
+        y2 = m * x2 + c
         return [(x, y), (x2, y2)]
 
     def line_form_to_slope_intercept(self, x, y, c):
@@ -84,8 +84,8 @@ class feature_dectection:
         den_c = Fraction(c).limit_denominator(1000).as_integer_ratio()[1]
         gcd = np.gcd(den_a, den_c)
         lcm = den_a * den_c / gcd
-
         return a * lcm, b * lcm, c * lcm
+
 
     def line_intersect_general(self, line1, line2):
         """
@@ -99,9 +99,10 @@ class feature_dectection:
         d = (y1 * x2 - x1 * y2)
         if d == 0:
             return None
-        x = (c1 * y2 - y1 * c2) / d
-        y = (x1 * c2 - x2 * c1) / d
-        return x, y
+        else:
+            x = (c1 * y2 - y1 * c2) / d
+            y = (x1 * c2 - x2 * c1) / d
+            return x, y
 
     def points_to_line(self, p1, p2):
         """
@@ -114,8 +115,8 @@ class feature_dectection:
             return 0, 0
         else:
             m = (p2[1] - p1[1]) / (p2[0] - p1[0])
-            b = p1[1] - m * p1[0]
-            return m, b
+            c = p1[1] - m * p1[0]
+            return m, c
 
     def projection_point_to_line(self, point, m, b):
         """
