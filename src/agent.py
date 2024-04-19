@@ -32,41 +32,54 @@ class Agent:
 
     def set_state(self, state):
         """
-		state = robot state
-			state[0] = x position (m)
-			state[1] = y position (m)
-			state[2] = bearing (rad)
-		"""
+        Set the state of the agent
+        """
+        # state[0] = x position (m)
+        # state[1] = y position (m)
+        # state[2] = bearing (rad)
+
         self.state = state
-        # self.state[2] = self.state[2] % (2 * np.pi)
-        self.state[2] = np.arctan2(np.sin(state[2]), np.cos(state[2]))
+        self.state[2] = self.state[2] % (2 * np.pi)
+        # TODO: delete if nothing else breaks
+        # self.state[2] = np.arctan2(np.sin(state[2]), np.cos(state[2]))
 
     def get_state(self):
+        """
+        Get the state of the agent
+        """
         return self.state
 
     def get_pos(self):
+        """
+        Get the position of the agent
+        """
         return self.state[0:2]
 
     def update_u(self, u):
         """
-		u = controls
-			u[0] = forward velocity (m/s)
-			u[1] = angular velocity (deg/s)
-		Random Walk Strategy
-			- continues to walk forward whilst no obstacles detected directly in front
-			- if obstacle detected, turn left or right
-		"""
+        Update the control input of the agent
+        :param u: control input
+        :return: None
+        """
+        # u = controls
+        #     u[0] = forward velocity (m/s)
+        #     u[1] = angular velocity (deg/s)
+        # Exploration strat: wall follow
+        #     - continues to walk forward whilst no obstacles detected directly in front
+        #     - if obstacle detected, turn left or right
+        # convert pos from meters into pixels
         x = int(self.state[0] / 0.02)
         y = int(self.state[1] / 0.02)
         reading = self.lidar.detect(None, self.env, position=(x, y))  # [[(dist, angle), ...], [], ...]
+        # if no points detected, move forward
         if reading is False:
             u[0] = 2
             u[1] = 0
             return u
         r = {int(450 - v) % 360: k for k, v, (_, _) in reading}
-        agent_bearing = self.state2deg(self.state[2])
+        agent_bearing = self.state_to_deg(self.state[2])
         flag = None
-        print(r)
+        # if points ahead, turn
         for i in range(360 + agent_bearing - 5, 360 + agent_bearing):
             i %= 360
             if i in r.keys() and r[i] < 30:
@@ -87,126 +100,173 @@ class Agent:
             else:
                 u[0] = 2
                 u[1] = 0
-
         return u
 
     def move(self, u, dt):
+        """
+        Move the agent according to the control input
+        :param u: control input
+        :param dt: time step
+        :return: None
+        """
         y = np.zeros(5)
-        y[:3] = self.state; y[3:] = u
-        result = scipy.integrate.solve_ivp(self.EOM, [0, dt], y)
+        y[:3] = self.state
+        y[3:] = u
+        result = scipy.integrate.solve_ivp(self.motion_eqs, [0, dt], y)
         self.state = result.y[:3, -1]
-        self.state[2] = np.arctan2(np.sin(self.state[2]), np.cos(self.state[2]))
+        #TODO: delete - self.state[2] = np.arctan2(np.sin(self.state[2]), np.cos(self.state[2]))
+        self.state[2] = self.state[2] % (2 * np.pi)
 
-    def EOM(self, t, y):
-        self.max_v = 2.0
-        self.max_omega = 2.0
-        px = y[0]; py = y[1]; theta = y[2]
-        v = max(min(y[3], self.max_v), -self.max_v);
-        omega = max(min(y[4], self.max_omega), -self.max_omega)  # forward and angular velocity
+    def motion_eqs(self, t, y):
+        """
+        Differential equations for the motion of the agent
+        :param t: time
+        :param y: state
+        :return: derivative of the state
+        """
+        max_v = 2.0
+        max_omega = 2.0
+        theta = y[2]
+        v = max(min(y[3], max_v), -max_v)  # forward velocity
+        omega = max(min(y[4], max_omega), -max_omega)  # forward and angular velocity
         ydot = np.zeros(5)
         ydot[0] = v * np.cos(theta)
         ydot[1] = v * np.sin(theta)
         ydot[2] = omega
-        ydot[3] = 0
-        ydot[4] = 0
+        # TODO: delete stuff
+        # ydot[3] = 0
+        # ydot[4] = 0
         return ydot
 
     def detect(self):
+        """
+        Detect features in the environment applying seeded region growing
+        :return: detected features
+        """
         pos = (int(self.state[0] / 0.02), int(self.state[1] / 0.02))
         readings = self.lidar.detect(None, self.env, position=pos)
-        break_point_ind = 0
-        endpoints = [0, 0]
+        break_point_index = 0
         results = None
         if readings is not False:
             self.feature_detection.set_laser_points(readings)
-            while break_point_ind < (self.feature_detection.Np - self.feature_detection.Pmin):
-                seed_seg = self.feature_detection.seed_segment_detection(pos, break_point_ind)
+            # iterate through all the points
+            while break_point_index < (self.feature_detection.Np - self.feature_detection.Pmin):
+                # seed segment detection
+                seed_seg = self.feature_detection.seed_segment_detection(pos, break_point_index)
                 if seed_seg == False:
                     break
                 else:
-                    seed_segment = seed_seg[0]
-                    INDICES = seed_seg[2]
-                    results = self.feature_detection.seed_segment_growing(INDICES, break_point_ind)
+                    indices = seed_seg[2]
+                    # seed segment growing
+                    results = self.feature_detection.seed_segment_growing(indices, break_point_index)
+                    # if no features detected, continue
                     if results == False:
-                        break_point_ind = INDICES[1]
+                        break_point_index = indices[1]
                         continue
                     else:
-                        line_eq = results[1]
-                        m, c = results[5]
-                        OUTMOST = results[2]
-                        break_point_ind = results[3]
+                        break_point_index = results[3]
             return results
         return False
 
     def draw_agent(self, screen):
+        """
+        Draw the agent on the screen
+        :param screen: pygame screen
+        :return: None
+        """
         x = int(self.state[0] / 0.02)
         y = int(self.state[1] / 0.02)
-        # pygame.draw.circle(screen, (255, 0, 0), (x, y), self.radius) # agent, no aa
-        pygame.gfxdraw.filled_circle(screen, x, y, self.radius, (255, 0, 0))  # agent, aa
+        circle = pygame.draw.circle(screen, (255, 0, 0), (x, y), self.radius)  # agent, no aa
+        # pygame.gfxdraw.filled_circle(screen, x, y, self.radius, (255, 0, 0))  # agent, aa
         # direction indicator
         x2 = x + 10 * np.cos(self.state[2])
         y2 = y + 10 * np.sin(self.state[2])
-        pygame.draw.line(screen, (0, 255, 0), (x, y), (x2, y2), 2)
-        return screen
+        line = pygame.draw.line(screen, (0, 255, 0), (x, y), (x2, y2), 2)
+        return [circle, line]
 
     def show_agent_estimate(self, screen, mu, sigma):
+        """
+        Show the estimated position of the agent
+        :param screen: pygame screen
+        :param mu: mean
+        :param sigma: covariance
+        :return: list of objects
+        """
         x = int(mu[0] / 0.02)
         y = int(mu[1] / 0.02)
+        # extract the eigenvalues and eigenvectors
         eigenvals, angle = self.ekf.sigma2transform(sigma[0:2, 0:2])
+        # convert the eigenvalues from meters to pixels
         width = (int(eigenvals[0] / 0.02), int(eigenvals[1] / 0.02))
-        self.draw_agent_uncertainty(screen, (x, y), width, angle)
-        """
-            rx,ry = mu[0],mu[1]
-            p_pixel = env.position2pixel((rx,ry))
-            eigenvals,angle = sigma2transform(sigma[0:2,0:2])
-            sigma_pixel = env.dist2pixellen(eigenvals[0]), env.dist2pixellen(eigenvals[1])
-            show_uncertainty_ellipse(env,p_pixel,sigma_pixel,angle)
-        """
-
-
+        return self.draw_agent_uncertainty(screen, (x, y), width, angle)
 
     def draw_agent_uncertainty(self, screen, center, width, angle):
-        l = center[0] - int(width[0] / 2)
-        t = center[1] - int(width[1] / 2)
-        # print(f"l = {l}, t = {t}, width = {width}")
-        target_rect = pygame.Rect(l, t, width[0], width[1])
+        """
+        Draw the uncertainty of the agent on the screen
+        :param screen: pygame screen
+        :param center: center of the ellipse
+        :param width: width of the ellipse
+        :param angle: angle of the ellipse
+        :return: list of objects
+        """
+        x = center[0] - int(width[0] / 2)
+        y = center[1] - int(width[1] / 2)
+        target_rect = pygame.Rect(x, y, width[0], width[1])
         shape_surf = pygame.Surface(target_rect.size, pygame.SRCALPHA)
-        pygame.draw.ellipse(shape_surf, (255, 0, 0), (0, 0, *target_rect.size), 2)
+        ellipse = pygame.draw.ellipse(shape_surf, (255, 0, 0), (0, 0, *target_rect.size), 2)
         rotated_surf = pygame.transform.rotate(shape_surf, angle)
         screen.blit(rotated_surf, rotated_surf.get_rect(center=target_rect.center))
-        return screen
+        return [ellipse]
 
     def show_landmark_uncertainty(self, mu, sigma, screen):
-        for lidx in range(self.n_landmarks):
-            lx, ly, lsigma = mu[self.n_state + lidx * 2], mu[self.n_state + lidx * 2 + 1], sigma[self.n_state + lidx * 2:self.n_state + lidx * 2 + 2, self.n_state + lidx * 2:self.n_state + lidx * 2 + 2]
-            if ~np.isnan(lx):
-                p_pixel = (int(lx / 0.02), int(ly / 0.02))
-                eigenvals, angle = self.ekf.sigma2transform(lsigma)
+        """
+        Show the uncertainty of the landmarks
+        :param mu: mean
+        :param sigma: covariance
+        :param screen: pygame screen
+        :return: list of objects
+        """
+        objects = []
+        # iterate through all the landmarks
+        for i in range(self.n_landmarks):
+            x = mu[self.n_state + i * 2]
+            y = mu[self.n_state + i * 2 + 1]
+            sig = sigma[self.n_state + i * 2:self.n_state + i * 2 + 2, self.n_state + i * 2:self.n_state + i * 2 + 2]
+            # if landmark has been discovered
+            if ~np.isnan(x):
+                pixel_pos = (int(x / 0.02), int(y / 0.02))
+                eigenvals, angle = self.ekf.sigma2transform(sig)
+                # if the uncertainty is small enough, draw the ellipse
                 if np.max(eigenvals) < 15:
                     sigma_pixel = (int(eigenvals[0] / 0.02), int(eigenvals[1] / 0.02))
-                    self.draw_agent_uncertainty(screen, p_pixel, sigma_pixel, angle)
-                    # print(p_pixel)
+                    objects.append(self.draw_agent_uncertainty(screen, pixel_pos, sigma_pixel, angle)[0])
+        return objects
 
-    def state2deg(self, angle):
+    def state_to_deg(self, angle):
+        """
+        Convert bearing from radians to degrees
+        """
         angle = int(np.rad2deg(angle))
         if angle < 0:
             angle = 360 - abs(angle)
         angle += 90
         return angle % 360
 
-    def sim_measurements(self, state, landmarks):
+    def simple_detect(self, state, landmarks):
         """
-        Simulate measurements from robot to landmarks
-        TODO: change to use LidarSensor
+        Detects landmarks and returns the measurements
+        :param state: state of the robot
+        :param landmarks: landmark positions
+        :return: measurements
         """
         robot_fov = 5
-        rx, ry, theta = state[0], state[1], state[2]
-        measurements = []
+        pos_x, pos_y, bearing = state[0], state[1], state[2]
+        res = []
         for (n, l) in enumerate(landmarks):
-            lx, ly = l
-            dist = np.linalg.norm(np.array([lx - rx, ly - ry]))
-            phi = np.arctan2(ly - ry, lx - rx) - theta
+            landmark_x, landmark_y = l
+            dist = np.linalg.norm(np.array([landmark_x - pos_x, landmark_y - pos_y]))
+            phi = np.arctan2(landmark_y - pos_y, landmark_x - pos_x) - bearing
             phi = np.arctan2(np.sin(phi), np.cos(phi))
             if dist < robot_fov:
-                measurements.append([dist, phi, n])
-        return measurements
+                res.append([dist, phi, n])
+        return res

@@ -14,7 +14,7 @@ class EnvironmentInterface:
         # ui stuff
         pygame.init()
         pygame.display.set_caption("SLAM simulation")
-        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+        self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.DOUBLEBUF)
         if map is not None:
             self.externalMap = pygame.image.load(map)
             self.screen.blit(self.externalMap, (0, 0))
