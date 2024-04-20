@@ -1,5 +1,5 @@
 import math
-
+import time
 import numpy as np
 from features import feature_dectection
 
@@ -82,6 +82,7 @@ class LidarSensor:
         :param environment:
         :return:
         """
+        # start_time = time.time()
         fd = feature_dectection()
         if environment is None:
             e = self.env
@@ -108,8 +109,11 @@ class LidarSensor:
                     output.append((x1, y1))
                     data.append(output)
                     break
+        # end_time = time.time()
+        # exe_time = end_time - start_time
+        # print("Lidar execution time: {:.3f} seconds".format(exe_time))
         if len(data) > 0:
-            # print("printed_data =", printed_data)
+            print("printed_data =", printed_data)
             return data
         else:
             return False

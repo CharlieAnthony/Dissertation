@@ -8,7 +8,7 @@ class feature_dectection:
         self.two_points = None
 
         self.epsilon = 10  # maximum distance from a point to a line
-        self.delta = 20  # maximum distance between two points
+        self.delta = 501  # maximum distance between two points
         self.Snum = 6  # number of points to fit a line
         self.Pmin = 20  # minimum points seed segment should have
         self.Gmax = 20  # maximum distance between two points in a line segment

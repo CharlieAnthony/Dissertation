@@ -15,22 +15,22 @@ def main():
 	# Initialize environment
 	env_width = 1280
 	env_height = 720
-	map_path = "map4.png"
+	map_path = "map2.png"
 
 	"""
     map2.png = [(570, 360), (710, 360), (640, 290), (640, 430)]
     map3.png = [(370, 360), (910, 360), (640, 90), (640, 630)]
-    map4.png = [(645, 335), (365, 635), (365, 795), (645, 515), (325, 75), (965, 645), (965, 75), (325, 645), (75, 365), (1205, 365)]
+    map4.png = [(640, 280), (560, 360), (720, 360), (640, 440), (320, 75), (960, 645), (960, 75), (320, 645), (75, 360), (1205, 360)]
     """
 
-	landmarks_pixels = [(640, 280), (560, 360), (720, 360), (640, 440), (320, 75), (960, 645), (960, 75), (320, 645), (75, 360), (1205, 360)]
+	landmarks_pixels = [(570, 360), (710, 360), (640, 290), (640, 430)]
 	landmarks_lines = [[(570, 410), (570, 310)], [(710, 410), (710, 310)], [(690, 290), (590, 290)], [(690, 430), (590, 430)]]
 	landmarks = [(l[0] * 0.02, l[1] * 0.02) for l in landmarks_pixels]
 
 	map = cv2.imread(map_path)
 	environment = Environment.img_to_env(map)
 	interface = EnvironmentInterface(environment, map_path)
-	init_pos = np.array([1., 1., -1 * np.pi / 4.])
+	init_pos = np.array([1., 7.5, 0])
 	agent = Agent(environment, landmarks, radius=10, init_pos=init_pos)
 	clock = pygame.time.Clock()
 	fps_limit = 30
@@ -57,19 +57,22 @@ def main():
 		u = agent.update_u(u)
 		agent.move(u, dt)
 
-		# res = agent.detect()
-		# if res is not False and res is not None:
-		# 	line_eq = res[1]
-		# 	m, c = res[5]
-		# 	line_seg = res[0]
-		# 	OUTMOST = res[2]
-		# 	break_point_ind = res[3]
-		#
-		# 	endpoints[0] = fd.projection_point_to_line(OUTMOST[0], m, c)
-		# 	endpoints[1] = fd.projection_point_to_line(OUTMOST[1], m, c)
-		# 	pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2)
+		display_objects = []
 
-		zs = agent.simple_detect(agent.get_state(), landmarks)
+		res = agent.detect()
+		if res is not False and res is not None:
+			line_eq = res[1]
+			m, c = res[5]
+			line_seg = res[0]
+			OUTMOST = res[2]
+			break_point_ind = res[3]
+
+			endpoints[0] = fd.projection_point_to_line(OUTMOST[0], m, c)
+			endpoints[1] = fd.projection_point_to_line(OUTMOST[1], m, c)
+			print(f"line =[{m}, {c}, {endpoints}]")
+			display_objects.append(pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2))
+
+		# zs = agent.simple_detect(agent.get_state(), landmarks)
 		# try:
 		# 	endpoints_m = [[endpoints[0][0] * 0.02, endpoints[0][1] * 0.02], [endpoints[1][0] * 0.02, endpoints[1][1] * 0.02]]
 		# 	zs = agent.sim_measurements(agent.get_state(), landmarks)
@@ -79,13 +82,13 @@ def main():
 		# 	zs = []
 
 		# ekf logic
-		agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
-		agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)
+		# agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
+		# agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)
 
 		interface.get_screen().fill((255, 255, 255))
 		interface.draw()
 
-		display_objects = []
+
 
 		display_objects += agent.draw_agent(interface.get_screen())
 		display_objects += agent.show_agent_estimate(interface.get_screen(), agent.mu, agent.sigma)
