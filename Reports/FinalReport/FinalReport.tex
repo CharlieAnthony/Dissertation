@@ -85,7 +85,6 @@ potentially implement physical robots, given time permits.\\
 
 %insert new page
 
-
 \section{Literature Review} % 3000 words - currently 2800
 
 \subsection{Introduction to SLAM} % 300 words - currently 331
@@ -207,12 +206,13 @@ more frequently in research whilst less often in industry, as they are much more
 cameras.\\
 
 \subsubsection{Localization techniques}
-Localization techniques are used to help the agent determine its position in a given environment. There are a number of popular techniques commonly
-used in SLAM, such as Kalman Filters, Particle Filters and Visual Odometry. Kalman Filters are a set of mathematical equations which are used to
-estimate the position of the agent given a set of noisy sensor readings. The equations are split into two main functions, the prediction function and the
-update function \cite{intro_to_EKF}. The prediction function is used to predict the agents position based on the previous state, which incorporates uncertainty from the
-agents movement. The update function is then used to update the agents position based on new sensor readings and update the uncertainty. The prediction functions
-are defined as:
+Localization techniques are used to help the agent determine its position in a given environment. There are a number of
+popular techniques commonly used in SLAM, such as Kalman Filters and Particle Filters. Kalman Filters are a set of
+mathematical equations which are used to estimate the position of the agent given a set of noisy sensor readings. The
+equations are split into two main functions, the prediction function and the update function \cite{intro_to_EKF}. The
+prediction function is used to predict the agents position based on the previous state, which incorporates uncertainty
+from the agents movement. The update function is then used to update the agents position based on new sensor readings and
+update the uncertainty. The prediction functions are defined as:
 \begin{itemize}
     \item State Prediction Equation:
     \begin{equation}
@@ -223,10 +223,11 @@ are defined as:
         P_{k+1} = A_{k} P_{k} A_{k}^T + W_{k} Q_{k} W_{k}^T
     \end{equation}
 \end{itemize}
-The state prediction equation predicts the next state \(\hat{x}_{k+1}\) based on the previous state \(\hat{x}_{k}\), the control input (the agents desired movement) \(u_{k}\)
-and the process noise (which is assumed to be zero here). The covariance prediction equation then updates the uncertainty of the agents position based on the state
-transition matrix \(A_{k}\), the previous position uncertainty \(P_{k}\), the control input matrix \(W_{k}\) and the process noise covariance matrix \(Q_{k}\). The update functions are
-defined as:
+The state prediction equation predicts the next state \(\hat{x}_{k+1}\) based on the previous state \(\hat{x}_{k}\), the
+control input (the agents desired movement) \(u_{k}\) and the process noise (which is assumed to be zero here). The
+covariance prediction equation then updates the uncertainty of the agents position based on the state transition matrix
+\(A_{k}\), the previous position uncertainty \(P_{k}\), the control input matrix \(W_{k}\) and the process noise covariance
+matrix \(Q_{k}\). The update functions are defined as:
 \begin{itemize}
     \item Kalman Gain Equation:
     \begin{equation}
@@ -241,8 +242,8 @@ defined as:
         P_{k} = (I - K_k H_k) P_k
     \end{equation}
 \end{itemize}
-The Kalman Gain equation determines how impactful the new sensor reading \(z_k\) should be, based on the previous position uncertainty \(P_{k}\). \(H_k\) is the Jacobian of the
-measurement function \(h(\hat{x}_{k}, 0)\) with respect to the state, and \(V_k\) is the Jacobian of the measurement function with respect to the measurement noise. The state update
+The Kalman Gain equation determines how impactful the new sensor reading \(z_k\) should be, based on the previous position
+uncertainty \(P_{k}\). \(H_k\) is the Jacobian of the measurement function \(h(\hat{x}_{k}, 0)\) with respect to the state, and \(V_k\) is the Jacobian of the measurement function with respect to the measurement noise. The state update
 equation then updates the agents position based on the Kalman Gain. Finally, the covariance update equation updates the uncertainty of the agents position based on the Kalman Gain.
 One of the limitations of the Kalman Filter equations is that they are only valid for linear functions, which makes them less useful in practice. To adapt the Kalman Filter to
 non-linear functions, the Extended Kalman Filter (EKF) is used. The EKF works by linearising the state transition and measurement functions, which allows the Kalman Filter equations
@@ -268,19 +269,35 @@ to be used. The specifics of the EKF equations will be discussed in the methods 
     \caption[Short caption]{Example of Particle Filter in a 2D environment (reproduced from \cite{particle_filter})}
     \label{fig:particle_filter}
 \end{figure}
-Particle Filters, or Monte Carlo Localization, is ano ther popular technique used in SLAM, which work by having a set of particles randomly positioned across the environment which represent the
-possible positions of the agent (posterior). Each particle is assigned a weight, which represents the probability that the particle's position is the true position of the agent.
-As the agent moves, the particles are updated based on sensor readings, which are used to adjust the weights of the particles. The problem can be represented as:
+Particle Filters, or Monte Carlo Localization, is another popular technique used in SLAM, which works by having a set of
+particles randomly positioned across the environment which represent the possible positions of the agent (posterior).
+Upon initialisation, we start by generating a set of particles, \( \left{ x_0^{(i)} \right}^N_{i=1}\), which are randomly
+distributed across the environment. Each particle is assigned a weight, \(w_0^{(i)})\), which is used to represent the
+probability that the particle's position is the true position of the agent. As the agent moves, the particle filter first
+predicts the new position of each particle. The predict function could be shown as:
 \begin{equation}
-    w_i \propto p(z_t | x_i^t)
+    x_{k+1}^{(i)} = f\left(x_k^{(i)}, u_k, \epsilon_k^{(i)}\right)
 \end{equation}
-Where \(w_i\) is the weight of the particle, \(z_t\) is the observed measurement at time \(t\) and \(x_i^t\) is the state of the particle at time \(t\). As the agent discovers more about its
-environment, the particles will converge towards the true position of the agent - as shown in Figure \ref{fig:particle_filter}. Dellaert et al demonstrated the strengths of particle filters in their paper
-\cite{monte_carlo_slam}, where they showed that particle filters are able to localise the agent in complex environments, even when the environment is dynamic.\\
-
-Finally, Visual Odometry works by having the agent estimate its position based on visual data. This is achieved using the previously mentioned semantic maps, which are used to detect and classify
-objects in the environment. As the name suggests, visual odometry only uses visual data to estimate the agents position; benefits of this approach are that cameras are cheap and lightweight, however
-they are also computationally expensive. Furthermore, visual odometry is less effective in environments with poor lighting and textureless surfaces, making it less reliable than other techniques. \\
+In this equation, \(x_{k+1}^{(i)}\) is the new state of particle \(i\) at time \(k+1\), \(f\) is the state transition
+function, which requires the previous state of the particle, the control input and the process noise. The system may then
+incorporate the sensor readings, which are used to update the weights of the particles; each weight is adjusted based on
+how well the particle's position matches the sensor readings. The update function could be shown as:
+\begin{equation}
+    w_{k+1}^{(i)} = w_k^{(i)} \cdot p(z_{k+1} | x_{k+1}^{(i)})
+\end{equation}
+Finally, an estimate of the agents position is made by taking the average of the particles, with respect to their weights.
+As the agent discovers more about its environment, the particles will converge towards the true position of the agent -
+as shown in Figure \ref{fig:particle_filter}. During the update phase, particles may need to be re-generated if they drift
+too far from the true position of the agent; particles with higher weights are more likely to be re-generated whilst particles
+with lower weights are more likely to be kept. Dellaert et al demonstrated the strengths of particle filters in their
+paper \cite{monte_carlo_slam}, where they showed that particle filters are able to localise the agent in complex
+environments, even when the environment is dynamic.\\
+%NOTE: I think I should probably just bin off this section tbh
+%Finally, Visual Odometry works by having the agent estimate its position based on visual data. This is achieved using the
+%previously mentioned semantic maps, which are used to detect and classify objects in the environment. As the name suggests,
+%visual odometry only uses visual data to estimate the agents position; benefits of this approach are that cameras are
+%cheap and lightweight, however they are also computationally expensive. Furthermore, visual odometry is less effective in
+%environments with poor lighting and textureless surfaces, making it less reliable than other techniques.\\
 
 \subsubsection{Sensor technologies}
 There are many different types of sensor technologies used throughout SLAM research, such as LiDAR, cameras and Inertial Measurement
@@ -335,8 +352,6 @@ setting. Enki is written in C++ and is open-source, which makes it easy to modif
 which can be used to test visual SLAM algorithms. Webots also allows for modelling, programming and simulating robots in 3D environments;
 the package is widely used in research and education. All of these packages are typically used in conjunction with packages that implement
 SLAM algorithms, like ROS.\\
-
-
 
 \subsection{Real-world Applications and Case Studies} % 600 words - currently 196
 SLAM has a number of real-world applications, such as autonomous vehicles, drones, vacuum cleaners and search and rescue.
@@ -504,7 +519,6 @@ Finally, I accept my duty to uphold the reputation of the profession. I will wor
 is complete to the highest possible standard. As mentioned previously, I will seek to improve professional standards through
 communication with my supervisor. This dissertation will be written with integrity and respect towards all members of BCS and colleagues
 of the profession. \\
-
 
 \section{Methods}
 
@@ -796,8 +810,11 @@ landmarks. The algorithm calculates the distances between each endpoint of the d
 then determines whether the feature is a new landmark or an existing one using a pre-determined threshold. The algorithm is simple
 but effective; it's computational efficiency is bounded by the number of landmarks, which makes it appropriate for my project.\\
 
+\section{Results}
+here will be my results
 
-
+\section{Discussion}
+here will be my discussion
 
 \section{Appendices}
 
