@@ -59,20 +59,20 @@ def main():
 
 		display_objects = []
 
-		res = agent.detect()
-		if res is not False and res is not None:
-			line_eq = res[1]
-			m, c = res[5]
-			line_seg = res[0]
-			OUTMOST = res[2]
-			break_point_ind = res[3]
+		# res = agent.detect()
+		# if res is not False and res is not None:
+		# 	line_eq = res[1]
+		# 	m, c = res[5]
+		# 	line_seg = res[0]
+		# 	OUTMOST = res[2]
+		# 	break_point_ind = res[3]
+		#
+		# 	endpoints[0] = fd.projection_point_to_line(OUTMOST[0], m, c)
+		# 	endpoints[1] = fd.projection_point_to_line(OUTMOST[1], m, c)
+		# 	print(f"line =[{m}, {c}, {endpoints}]")
+		# 	display_objects.append(pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2))
 
-			endpoints[0] = fd.projection_point_to_line(OUTMOST[0], m, c)
-			endpoints[1] = fd.projection_point_to_line(OUTMOST[1], m, c)
-			print(f"line =[{m}, {c}, {endpoints}]")
-			display_objects.append(pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2))
-
-		# zs = agent.simple_detect(agent.get_state(), landmarks)
+		zs = agent.simple_detect(agent.get_state(), landmarks)
 		# try:
 		# 	endpoints_m = [[endpoints[0][0] * 0.02, endpoints[0][1] * 0.02], [endpoints[1][0] * 0.02, endpoints[1][1] * 0.02]]
 		# 	zs = agent.sim_measurements(agent.get_state(), landmarks)
@@ -82,8 +82,11 @@ def main():
 		# 	zs = []
 
 		# ekf logic
-		# agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
-		# agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)
+		agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
+		agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)
+
+		if pygame.time.get_ticks() % 100 == 0:
+			print(f"pos = {agent.get_state()} | mu = {agent.mu} | sigma = {agent.sigma} | zs = {zs} time = {pygame.time.get_ticks()}")
 
 		interface.get_screen().fill((255, 255, 255))
 		interface.draw()

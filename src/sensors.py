@@ -113,7 +113,7 @@ class LidarSensor:
         # exe_time = end_time - start_time
         # print("Lidar execution time: {:.3f} seconds".format(exe_time))
         if len(data) > 0:
-            print("printed_data =", printed_data)
+            # print("printed_data =", printed_data)
             return data
         else:
             return False
