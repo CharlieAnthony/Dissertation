@@ -15,7 +15,7 @@ def main():
 	# Initialize environment
 	env_width = 1280
 	env_height = 720
-	map_path = "map2.png"
+	map_path = "map4.png"
 
 	"""
     map2.png = [(570, 360), (710, 360), (640, 290), (640, 430)]
@@ -23,14 +23,14 @@ def main():
     map4.png = [(640, 280), (560, 360), (720, 360), (640, 440), (320, 75), (960, 645), (960, 75), (320, 645), (75, 360), (1205, 360)]
     """
 
-	landmarks_pixels = [(570, 360), (710, 360), (640, 290), (640, 430)]
+	landmarks_pixels = [(640, 280), (560, 360), (720, 360), (640, 440), (320, 75), (960, 645), (960, 75), (320, 645), (75, 360), (1205, 360)]
 	landmarks_lines = [[(570, 410), (570, 310)], [(710, 410), (710, 310)], [(690, 290), (590, 290)], [(690, 430), (590, 430)]]
 	landmarks = [(l[0] * 0.02, l[1] * 0.02) for l in landmarks_pixels]
 
 	map = cv2.imread(map_path)
 	environment = Environment.img_to_env(map)
 	interface = EnvironmentInterface(environment, map_path)
-	init_pos = np.array([1., 7.5, 0])
+	init_pos = np.array([8., 1.5, 0])
 	agent = Agent(environment, landmarks, radius=10, init_pos=init_pos)
 	clock = pygame.time.Clock()
 	fps_limit = 30
@@ -85,8 +85,12 @@ def main():
 		agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
 		agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)
 
-		if pygame.time.get_ticks() % 100 == 0:
-			print(f"pos = {agent.get_state()} | mu = {agent.mu} | sigma = {agent.sigma} | zs = {zs} time = {pygame.time.get_ticks()}")
+		if pygame.time.get_ticks() % 10 == 0:
+			eigenvals, angle = agent.ekf.sigma2transform(agent.sigma[0:2, 0:2])
+			uncertainty = (eigenvals[0] + eigenvals[1]) / 2
+			state = agent.get_state()
+			pos = (state[0] // 0.02, state[1] // 0.02)
+			print(f"pos = {pos} | mu = {agent.mu[0]} | sigma = {uncertainty} | time = {pygame.time.get_ticks()}")
 
 		interface.get_screen().fill((255, 255, 255))
 		interface.draw()

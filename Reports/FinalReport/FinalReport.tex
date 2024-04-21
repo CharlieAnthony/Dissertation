@@ -812,7 +812,29 @@ then determines whether the feature is a new landmark or an existing one using a
 but effective; it's computational efficiency is bounded by the number of landmarks, which makes it appropriate for my project.\\
 
 \section{Results}
-here will be my results
+%stuff about lidar
+ahahahah
+%stuff about feature extraction
+iasdfj;lkajsf;klsad
+%stuff about ekf and exploration strategy
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{EKFgraph1}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{EKFgraph2}
+    \end{minipage}
+    \caption[Short caption]{}
+    \label{fig:ekf_graphs}
+\end{figure}
+Figure \ref{fig:ekf_graphs} shows the results of the EKF algorithm. The left graph shows the agent's path through the environment
+with the route coloured with a gradient. The right graph shows the agent's uncertainty, sigma, which has the same colour gradient
+to help provide context; the sigma values were calculated by taking the average of the x and y uncertainties of the agent. These
+graphs help represent the 'loop closure' phenomenon, where the agent returns to a previously visited location and becomes more
+certain of its position - shown by the sigma value's rapid decrease.\\
 
 \section{Discussion}
 here will be my discussion
