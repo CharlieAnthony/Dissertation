@@ -17,7 +17,6 @@
 \usepackage{algpseudocode}
 \usepackage{algorithmicx}
 \usepackage{hhline}
-\usepackage{amstex}
 %\usepackage{algorithms}
 %\usepackage{algc}       % package breaks my pseudocode
 %\bibliographystyle{unsrtnat}
@@ -813,87 +812,56 @@ but effective; it's computational efficiency is bounded by the number of landmar
 
 \section{Results}
 %stuff about lidar
-%\begin{table}
-%    \centering
-%    \begin{tabular}{|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|}
-%        \hline
-%        &
-%        \textbf{90\deg} &
-%        \textbf{180\deg} &
-%        \textbf{270\deg} &
-%        \textbf{360\deg} \\
-%        \hline
-%        \textbf{50px} &
-%        0.003 &
-%        0.0062 &
-%        0.0089 &
-%        0.0118 \\
-%        \hline
-%        \textbf{100px} &
-%        0.0063 &
-%        0.0124 &
-%        0.0183 &
-%        0.0248 \\
-%        \hline
-%        \textbf{150px} &
-%        0.008 &
-%        0.0155 &
-%        0.0232 &
-%        0.0309 \\
-%        \hline
-%        \textbf{200px} &
-%        0.0093 &
-%        0.0179 &
-%        0.0266 &
-%        0.0349 \\
-%        \hline
-%    \end{tabular}
-%    \caption{Table of results}
-%    \label{results_tab}
-%\end{table}
-
-%\begin{table}[H]
-%    \centering
-%    \begin{tabular}{|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|}
-%        \hline
-%        &
-%        \textbf{90  }&
-%        \textbf{180  } &
-%        \textbf{270  } &
-%        \textbf{360  } \\
-%        \hline
-%        \textbf{50px} &
-%        0.003 &
-%        0.0062 &
-%        0.0089 &
-%        0.0118 \\
-%        \hline
-%        \textbf{100px} &
-%        0.0063 &
-%        0.0124 &
-%        0.0183 &
-%        0.0248 \\
-%        \hline
-%        \textbf{150px} &
-%        0.008 &
-%        0.0155 &
-%        0.0232 &
-%        0.0309 \\
-%        \hline
-%        \textbf{200px} &
-%        0.0093 &
-%        0.0179 &
-%        0.0266 &
-%        0.0349 \\
-%        \hline
-%    \end{tabular}
-%    \caption{Table of results}
-%    \label{results_tab}
-%\end{table}
-
+To achieve a successful implementation of SLAM, I needed to ensure that the agent could accurately map the environment; which
+required a good sensor to be created. My implementation of the LiDAR sensor was successful, as it was able to replicate the
+behaviour of a real-world LiDAR sensor, whilst also being computationally reasonable. Table \ref{results_tab} shows various
+results of the sensor, showing how it's performance changes with the number of beams and the range of the sensor. \\
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|r|c|c|c|c|}
+        \hline
+        \textbf{Sensor Range \textbackslash Number of Beams} &
+        \textbf{90}&
+        \textbf{180} &
+        \textbf{270} &
+        \textbf{360} \\
+        \hline
+        \textbf{50px} &
+        0.003 &
+        0.0062 &
+        0.0089 &
+        0.0118 \\
+        \hline
+        \textbf{100px} &
+        0.0063 &
+        0.0124 &
+        0.0183 &
+        0.0248 \\
+        \hline
+        \textbf{150px} &
+        0.008 &
+        0.0155 &
+        0.0232 &
+        0.0309 \\
+        \hline
+        \textbf{200px} &
+        0.0093 &
+        0.0179 &
+        0.0266 &
+        0.0349 \\
+        \hline
+    \end{tabular}
+    \caption{Table of sensor performance with varying range and number of beams. The values are the average time taken
+    to complete a scan in seconds.}
+    \label{results_tab}
+\end{table}
+One of the challenges I faced when implementing the sensor was the trade-off between resolution of the sensor and the
+time taken to complete a scan; as having more data points would allow the feature extraction algorithm to detect more
+accurate features, but significantly increase the time taken to complete a scan. For my implementation, I decided to use
+a sensor with 360 beams and a range of 150px, as it provided the best resolution before making the scan time too long.\\
 
 %stuff about feature extraction
-iasdfj;lkajsf;klsad
+
 %stuff about ekf and exploration strategy
 \begin{figure}[h]
     \centering
