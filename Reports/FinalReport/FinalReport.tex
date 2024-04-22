@@ -16,6 +16,8 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{algorithmicx}
+\usepackage{hhline}
+\usepackage{amstex}
 %\usepackage{algorithms}
 %\usepackage{algc}       % package breaks my pseudocode
 %\bibliographystyle{unsrtnat}
@@ -350,8 +352,6 @@ setting. Enki is written in C++ and is open-source, which makes it easy to modif
 which can be used to test visual SLAM algorithms. Webots also allows for modelling, programming and simulating robots in 3D environments;
 the package is widely used in research and education. All of these packages are typically used in conjunction with packages that implement
 SLAM algorithms, like ROS.\\
-
-
 
 \subsection{Real-world Applications and Case Studies} % 600 words - currently 196
 SLAM has a number of real-world applications, such as autonomous vehicles, drones, vacuum cleaners and search and rescue.
@@ -813,11 +813,89 @@ but effective; it's computational efficiency is bounded by the number of landmar
 
 \section{Results}
 %stuff about lidar
-ahahahah
+%\begin{table}
+%    \centering
+%    \begin{tabular}{|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|}
+%        \hline
+%        &
+%        \textbf{90\deg} &
+%        \textbf{180\deg} &
+%        \textbf{270\deg} &
+%        \textbf{360\deg} \\
+%        \hline
+%        \textbf{50px} &
+%        0.003 &
+%        0.0062 &
+%        0.0089 &
+%        0.0118 \\
+%        \hline
+%        \textbf{100px} &
+%        0.0063 &
+%        0.0124 &
+%        0.0183 &
+%        0.0248 \\
+%        \hline
+%        \textbf{150px} &
+%        0.008 &
+%        0.0155 &
+%        0.0232 &
+%        0.0309 \\
+%        \hline
+%        \textbf{200px} &
+%        0.0093 &
+%        0.0179 &
+%        0.0266 &
+%        0.0349 \\
+%        \hline
+%    \end{tabular}
+%    \caption{Table of results}
+%    \label{results_tab}
+%\end{table}
+
+%\begin{table}[H]
+%    \centering
+%    \begin{tabular}{|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|p{0.15\linewidth}|}
+%        \hline
+%        &
+%        \textbf{90  }&
+%        \textbf{180  } &
+%        \textbf{270  } &
+%        \textbf{360  } \\
+%        \hline
+%        \textbf{50px} &
+%        0.003 &
+%        0.0062 &
+%        0.0089 &
+%        0.0118 \\
+%        \hline
+%        \textbf{100px} &
+%        0.0063 &
+%        0.0124 &
+%        0.0183 &
+%        0.0248 \\
+%        \hline
+%        \textbf{150px} &
+%        0.008 &
+%        0.0155 &
+%        0.0232 &
+%        0.0309 \\
+%        \hline
+%        \textbf{200px} &
+%        0.0093 &
+%        0.0179 &
+%        0.0266 &
+%        0.0349 \\
+%        \hline
+%    \end{tabular}
+%    \caption{Table of results}
+%    \label{results_tab}
+%\end{table}
+
+
 %stuff about feature extraction
 iasdfj;lkajsf;klsad
 %stuff about ekf and exploration strategy
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \begin{minipage}{0.45\textwidth}
         \centering
@@ -827,7 +905,7 @@ iasdfj;lkajsf;klsad
         \centering
         \includegraphics[width=\linewidth]{EKFgraph2}
     \end{minipage}
-    \caption[Short caption]{}
+    \caption[Short caption]{Left: Agent path through the environment. Right: Agent uncertainty through the environment.}
     \label{fig:ekf_graphs}
 \end{figure}
 Figure \ref{fig:ekf_graphs} shows the results of the EKF algorithm. The left graph shows the agent's path through the environment
@@ -835,6 +913,17 @@ with the route coloured with a gradient. The right graph shows the agent's uncer
 to help provide context; the sigma values were calculated by taking the average of the x and y uncertainties of the agent. These
 graphs help represent the 'loop closure' phenomenon, where the agent returns to a previously visited location and becomes more
 certain of its position - shown by the sigma value's rapid decrease.\\
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.7\linewidth]{heatmap}
+    \caption[Short caption]{Robot exploration heatmap of the environment.}
+    \label{fig:heatmap}
+\end{figure}
+My exploration strategy was successful in helping map the environment, as it was able to prevent the agent from colliding with
+obstacles. The wall tracking strategy worked well as it was able to give a good overview of the environment, however it was
+not the most efficient strategy, as it sometimes got stuck in parts of the environment, leaving some areas unexplored. This is
+shown in Figure \ref{fig:heatmap}, which shows a heatmap of the agent's exploration of the environment. The heatmap shows the
+agent doing a good job of exploring the centre of the environment, but struggles to explore the top left and bottom right corners.\\
 
 \section{Discussion}
 here will be my discussion

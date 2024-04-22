@@ -30,7 +30,7 @@ def main():
 	map = cv2.imread(map_path)
 	environment = Environment.img_to_env(map)
 	interface = EnvironmentInterface(environment, map_path)
-	init_pos = np.array([8., 1.5, 0])
+	init_pos = np.array([1., 1., 0.])
 	agent = Agent(environment, landmarks, radius=10, init_pos=init_pos)
 	clock = pygame.time.Clock()
 	fps_limit = 30
@@ -40,6 +40,8 @@ def main():
 
 	dt = 0.1
 	u = [0.25, 0.]
+
+	positions = ""
 
 	show_landmarks(interface.get_screen(), landmarks_pixels)
 
@@ -90,8 +92,9 @@ def main():
 			uncertainty = (eigenvals[0] + eigenvals[1]) / 2
 			state = agent.get_state()
 			pos = (state[0] // 0.02, state[1] // 0.02)
-			print(f"pos = {pos} | mu = {agent.mu[0]} | sigma = {uncertainty} | time = {pygame.time.get_ticks()}")
-
+			# print(f"pos = {pos} | mu = {agent.mu[0]} | sigma = {uncertainty} | time = {pygame.time.get_ticks()}")
+			# print(f"pos = {pos}")
+			positions += f"{pos}, "
 		interface.get_screen().fill((255, 255, 255))
 		interface.draw()
 
@@ -104,6 +107,7 @@ def main():
 		# pygame.display.update(display_objects)
 		pygame.display.flip()
 
+	print(positions)
 	pygame.quit()
 
 
