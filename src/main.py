@@ -21,16 +21,19 @@ def main():
     map2.png = [(570, 360), (710, 360), (640, 290), (640, 430)]
     map3.png = [(370, 360), (910, 360), (640, 90), (640, 630)]
     map4.png = [(640, 280), (560, 360), (720, 360), (640, 440), (320, 75), (960, 645), (960, 75), (320, 645), (75, 360), (1205, 360)]
+    
+    map2 lines = [[(570, 410), (570, 310)], [(710, 410), (710, 310)], [(690, 290), (590, 290)], [(690, 430), (590, 430)]]
+    
     """
 
 	landmarks_pixels = [(640, 280), (560, 360), (720, 360), (640, 440), (320, 75), (960, 645), (960, 75), (320, 645), (75, 360), (1205, 360)]
-	landmarks_lines = [[(570, 410), (570, 310)], [(710, 410), (710, 310)], [(690, 290), (590, 290)], [(690, 430), (590, 430)]]
+	landmarks_lines = [[(640, 205), (640, 355)], [(485, 360), (575, 360)], [(645, 360), (795, 360)], [(640, 365), (640, 515)], [(320, 0), (320, 150)], [(960, 570), (960, 720)], [(960, 0), (960, 150)], [(320, 570), (320, 720)], [(0, 360), (150, 360)], [(1130, 360), (1280, 360)]]
 	landmarks = [(l[0] * 0.02, l[1] * 0.02) for l in landmarks_pixels]
 
 	map = cv2.imread(map_path)
 	environment = Environment.img_to_env(map)
 	interface = EnvironmentInterface(environment, map_path)
-	init_pos = np.array([1., 1., 0.])
+	init_pos = np.array([1., 8., 0.])
 	agent = Agent(environment, landmarks, radius=10, init_pos=init_pos)
 	clock = pygame.time.Clock()
 	fps_limit = 30
@@ -71,15 +74,15 @@ def main():
 		#
 		# 	endpoints[0] = fd.projection_point_to_line(OUTMOST[0], m, c)
 		# 	endpoints[1] = fd.projection_point_to_line(OUTMOST[1], m, c)
-		# 	print(f"line =[{m}, {c}, {endpoints}]")
+		# 	# print(f"line =[{m}, {c}, {endpoints}]")
 		# 	display_objects.append(pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2))
 
 		zs = agent.simple_detect(agent.get_state(), landmarks)
 		# try:
 		# 	endpoints_m = [[endpoints[0][0] * 0.02, endpoints[0][1] * 0.02], [endpoints[1][0] * 0.02, endpoints[1][1] * 0.02]]
-		# 	zs = agent.sim_measurements(agent.get_state(), landmarks)
+		# 	# zs = agent.sim_measurements(agent.get_state(), landmarks)
 		# 	zs = fd.landmark_association(endpoints_m[0], endpoints_m[1], landmarks_lines, agent.get_state())
-		# 	print(zs)
+		# 	# print(zs)
 		# except:
 		# 	zs = []
 
@@ -92,9 +95,9 @@ def main():
 			uncertainty = (eigenvals[0] + eigenvals[1]) / 2
 			state = agent.get_state()
 			pos = (state[0] // 0.02, state[1] // 0.02)
-			# print(f"pos = {pos} | mu = {agent.mu[0]} | sigma = {uncertainty} | time = {pygame.time.get_ticks()}")
+			print(f"pos = {pos} | mu = {agent.mu[0]} | sigma = {uncertainty} | time = {pygame.time.get_ticks()}")
 			# print(f"pos = {pos}")
-			positions += f"{pos}, "
+			# positions += f"{pos}, "
 		interface.get_screen().fill((255, 255, 255))
 		interface.draw()
 

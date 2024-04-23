@@ -806,7 +806,8 @@ then determines whether the feature is a new landmark or an existing one using a
 but effective; it's computational efficiency is bounded by the number of landmarks, which makes it appropriate for my project.\\
 
 \section{Results}
-%stuff about lidar
+
+\subsection{LiDAR Sensor}
 To achieve a successful implementation of SLAM, I needed to ensure that the agent could accurately map the environment; which
 required a good sensor to be created. My implementation of the LiDAR sensor was successful, as it was able to replicate the
 behaviour of a real-world LiDAR sensor, whilst also being computationally reasonable. Table \ref{results_tab} shows various
@@ -853,9 +854,10 @@ results of the sensor, showing how it's performance changes with the number of b
 One of the challenges I faced when implementing the sensor was the trade-off between resolution of the sensor and the
 time taken to complete a scan; as having more data points would allow the feature extraction algorithm to detect more
 accurate features, but significantly increase the time taken to complete a scan. For my implementation, I decided to use
-a sensor with 360 beams and a range of 150px, as it provided the best resolution before making the scan time too long.\\
+a sensor with 360 beams and a range of 150px, as it provided the best resolution without making the scan time too long.\\
 
-%stuff about feature extraction
+\subsection{Feature Extraction}
+
 \begin{figure}[H]
     \centering
     \begin{minipage}{0.45\textwidth}
@@ -879,7 +881,8 @@ algorithm detecting a wall.\\
 \textbf{Note: I need to add another performance metric showing the accuracy, or something similar, of the seeded region
 growing algorithm.}\\
 
-%stuff about ekf and exploration strategy
+\subsection{Extended Kalman Filter Algorithm}
+
 \begin{figure}[h]
     \centering
     \begin{minipage}{0.45\textwidth}
@@ -890,14 +893,40 @@ growing algorithm.}\\
         \centering
         \includegraphics[width=\linewidth]{EKFgraph2}
     \end{minipage}
-    \caption[Short caption]{Left: Agent path through the environment. Right: Agent uncertainty through the environment.}
+    \caption[Short caption]{Left: Agent path through the environment. Right: Agent uncertainty through the environment. In both figures
+    the agent isn't using the feature extraction algorithm}
     \label{fig:ekf_graphs}
 \end{figure}
-Figure \ref{fig:ekf_graphs} shows the results of the EKF algorithm. The left graph shows the agent's path through the environment
-with the route coloured with a gradient. The right graph shows the agent's uncertainty, sigma, which has the same colour gradient
-to help provide context; the sigma values were calculated by taking the average of the x and y positional uncertainties of the agent. These
-graphs help represent the 'loop closure' phenomenon, where the agent returns to a previously visited location and becomes more
-certain of its position - shown by the sigma value's rapid decrease.\\
+Figure \ref{fig:ekf_graphs} shows the results of the EKF algorithm without using the Feature Extraction algorithm; instead, it simply takes
+the distance from the agent to each landmark and for every landmark, if the distance is less than a threshold, the measurement is used.
+The left graph shows the agent's path through the environment with the route coloured with a gradient. The right graph shows the agent's
+uncertainty, sigma, which has the same colour gradient to help provide context; the sigma values were calculated by taking the average of
+the x and y positional uncertainties of the agent. These graphs help represent the 'loop closure' phenomenon, where the agent returns to a
+previously visited location and becomes more certain of its position - shown by the sigma value's rapid decrease. Testing without using the
+Feature Extraction algorithm was important as it allowed me to ensure the EKF algorithm was working.\\
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{FE_EKF1}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{FE_EKF2}
+    \end{minipage}
+    \caption[Short caption]{Left: Agent path through the environment. Right: Agent uncertainty through the environment, where the coloured line
+    is the agent using the Feature Extraction algorithm and the black line is the agent not using the Feature Extraction Algorithm.}
+    \label{fig:FE_EKF_graphs}
+\end{figure}
+
+Figure \ref{fig:FE_EKF_graphs} shows the results of the EKF algorithm when using the Feature Extraction algorithm. The plot on the right demonstrates
+the impact of the Feature Extraction algorithm on the agent's path through the environment. The agent is able to better localise itself in the environment
+without the Feature Extraction algorithm as it can identify landmarks from a greater range of positions. Whilst highlighting the impact of using the Feature
+Extraction algorithm, this experiment does indicate that all the Feature Extraction algorithm, the Data Association algorithm and the EKF algorithm are all
+working as intended.\\
+
+\subsection{Exploration Strategy}
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\linewidth]{heatmap}
@@ -911,14 +940,16 @@ shown in Figure \ref{fig:heatmap}, which shows a heatmap of the agent's explorat
 agent doing a good job of exploring the centre of the environment, but struggles to explore the top left and bottom right corners.\\
 
 \section{Discussion}
+\subsection{Overview}
 The results of my project show that I have achieved my aim of creating a basic SLAM implementation, entirely from scratch. I have
 successfully implemented a LiDAR sensor, a feature extraction algorithm, an exploration strategy and an EKF algorithm. With regards
 to the original requirements of the project, I believe I have met all of them. My findings show that my LiDAR sensor is appropriate for
 the simulation environment, as provides a solid foundation for the feature extraction algorithm. The feature extraction algorithm was
 good at detecting features in the environment, allowing the agent to interpret it's surroundings. The EKF algorithm was able to localise
 itself in the environment, providing a good estimate of the agent's position and the landmarks. Overall, I am happy with the results of
-my project, as I have been able to create a basic SLAM implementation, which is a complex and challenging task.\\
+my project, as I have been able to create a basic SLAM implementation which was a complex and challenging task.\\
 
+\subsection{Algorithm Limitations}
 When discussing the performance of the seeded region growing algorithm, it is clear that my implementation is not perfect. One of the
 main issues with my implementation is that it can only detect one feature at a time, which is not ideal for real-world applications. For
 example, in situtations where there are multiple features close together, the algorithm may struggle to detect them all. This is because
@@ -927,12 +958,12 @@ when the feature extraction algorithm is called, it will always detect the same 
 This is a significant limitation of my implementation, as it means that the agent may not be able to accurately map the environment.\\
 
 Furthermore, this issue then had a knock-on effect on the EKF algorithm, as it relies on the feature extraction algorithm to provide
-accurate landmarks. This meant that the EKF algorithm was not able to localise the agent as accurately as it could have been, as the
-feature extraction algorithm did not always detect present features. This meant that the EKF algorithm didn't have enough information
-to accurately estimate the agent's position, making it less reliable. In order to combat this issue in the future, I would need to improve
+accurate landmarks. This meant that the EKF algorithm was not able to localise the agent as accurately as effectively, as the feature
+extraction algorithm did not always detect present features. This meant that the EKF algorithm didn't have enough information to
+accurately estimate the agent's position, making it less reliable. In order to combat this issue in the future, I would need to improve
 the seeded region growing algorithm to be able to detect multiple features at once, which would mean multiple feature measurements
-could be passed to the EKF algorithm.\\
-
+could be passed to the EKF algorithm. \\
+\subsection{Future Work}
 In future work, I would also like to attempt to implement a different variant of the EKF algorithm, as one of the limitations of my implementation
 is that it needed the locations of the landmarks to be known beforehand. This is not always possible in real-world applications, as the agent
 may not have any prior knowledge of the environment. To achieve this, I would need to implement a variant of the EKF algorithm that is able
@@ -945,6 +976,12 @@ drive around the same area, rather than exploring new areas. One way this could 
 such as frontier-based exploration, which would encourage the agent to explore new areas of the environment. This would help the agent to build
 a more accurate map of the environment, as it would be able to explore more of it.\\
 
+Finally, as mentioned in the limitations section, the seeded region growing algorithm could be improved to detect multiple features at once.
+I would approach this by using the existing algorithm, but once a feature has been detected, I would remove the points that make up the feature
+and then re-run the algorithm on the remaining points. This would allow the algorithm to detect multiple features in the environment, which would
+help improve the accuracy of the EKF Algorithm.\\
+
+\subsection{Conclusion}
 Overall, I am happy with the results of my project, as I have been able to create a basic SLAM implementation, which is a complex and challenging
 task. This project has taught me a lot about the field of robotics and exploration, whilst also helping me develop my project management skills.
 Initially, when approaching my dissertation, I wanted to implement a swarm-based SLAM algorithm, but as I progressed through the project, I realised
