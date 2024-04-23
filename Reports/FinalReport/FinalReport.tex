@@ -21,7 +21,6 @@
 %\usepackage{algc}       % package breaks my pseudocode
 %\bibliographystyle{unsrtnat}
 
-% Page geometry
 \geometry{a4paper, margin=1in}
 
 \begin{document}
@@ -32,14 +31,12 @@
     \vspace*{5cm}
 
     \Large
-    \textbf{Multi-Agent SLAM: Exploration and Mapping in Simulated testing Environments}
+    \textbf{SLAM: Exploration and Mapping in Simulated testing Environments}
 
     \vspace{1cm}
 
     Charlie Anthony [CandNo: 246537]\\
     Supervisor: Dr Chris Johnson
-
-
 
     \vfill
 
@@ -50,7 +47,6 @@
     Computer Science and Artificial Intelligence BSc
 
     \includegraphics[width=0.3\linewidth]{sussex_logo.jpg}
-
 
     \small
     Department of Informatics and Engineering\\
@@ -519,7 +515,6 @@ is complete to the highest possible standard. As mentioned previously, I will se
 communication with my supervisor. This dissertation will be written with integrity and respect towards all members of BCS and colleagues
 of the profession. \\
 
-
 \section{Methods}
 
 \subsection{Environment Development}
@@ -861,6 +856,28 @@ accurate features, but significantly increase the time taken to complete a scan.
 a sensor with 360 beams and a range of 150px, as it provided the best resolution before making the scan time too long.\\
 
 %stuff about feature extraction
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{FE1}
+    \end{minipage}
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{FE2}
+    \end{minipage}
+    \caption[Short caption]{Examples of the seeded region growing algorithm detecting features in the environment. The LiDAR
+    points are shown in blue, the detected features are shown in red.}
+    \label{fig:feature_extraction}
+\end{figure}
+The seeded region growing algorithm was successful in detecting features in the environment, whilst avoiding false positives.
+The algorithm was able to detect features such as corners and edges, which are important when attempting to localise the agent.
+We can see in Figure \ref{fig:feature_extraction} that the algorithm can understand the structure of the environment; the left scan
+shows the algorithm detecting a wall, whilst also detecting a corner and a gap in the wall. The right scan similarly shows the
+algorithm detecting a wall.\\
+
+\textbf{Note: I need to add another performance metric showing the accuracy, or something similar, of the seeded region
+growing algorithm.}\\
 
 %stuff about ekf and exploration strategy
 \begin{figure}[h]
@@ -878,7 +895,7 @@ a sensor with 360 beams and a range of 150px, as it provided the best resolution
 \end{figure}
 Figure \ref{fig:ekf_graphs} shows the results of the EKF algorithm. The left graph shows the agent's path through the environment
 with the route coloured with a gradient. The right graph shows the agent's uncertainty, sigma, which has the same colour gradient
-to help provide context; the sigma values were calculated by taking the average of the x and y uncertainties of the agent. These
+to help provide context; the sigma values were calculated by taking the average of the x and y positional uncertainties of the agent. These
 graphs help represent the 'loop closure' phenomenon, where the agent returns to a previously visited location and becomes more
 certain of its position - shown by the sigma value's rapid decrease.\\
 \begin{figure}[h]
@@ -894,7 +911,46 @@ shown in Figure \ref{fig:heatmap}, which shows a heatmap of the agent's explorat
 agent doing a good job of exploring the centre of the environment, but struggles to explore the top left and bottom right corners.\\
 
 \section{Discussion}
-here will be my discussion
+The results of my project show that I have achieved my aim of creating a basic SLAM implementation, entirely from scratch. I have
+successfully implemented a LiDAR sensor, a feature extraction algorithm, an exploration strategy and an EKF algorithm. With regards
+to the original requirements of the project, I believe I have met all of them. My findings show that my LiDAR sensor is appropriate for
+the simulation environment, as provides a solid foundation for the feature extraction algorithm. The feature extraction algorithm was
+good at detecting features in the environment, allowing the agent to interpret it's surroundings. The EKF algorithm was able to localise
+itself in the environment, providing a good estimate of the agent's position and the landmarks. Overall, I am happy with the results of
+my project, as I have been able to create a basic SLAM implementation, which is a complex and challenging task.\\
+
+When discussing the performance of the seeded region growing algorithm, it is clear that my implementation is not perfect. One of the
+main issues with my implementation is that it can only detect one feature at a time, which is not ideal for real-world applications. For
+example, in situtations where there are multiple features close together, the algorithm may struggle to detect them all. This is because
+the LiDAR points passed to the algorithm are always passed in the same order, regardless of the agent's orientation. This means that
+when the feature extraction algorithm is called, it will always detect the same feature first, and will often miss other features consistently.
+This is a significant limitation of my implementation, as it means that the agent may not be able to accurately map the environment.\\
+
+Furthermore, this issue then had a knock-on effect on the EKF algorithm, as it relies on the feature extraction algorithm to provide
+accurate landmarks. This meant that the EKF algorithm was not able to localise the agent as accurately as it could have been, as the
+feature extraction algorithm did not always detect present features. This meant that the EKF algorithm didn't have enough information
+to accurately estimate the agent's position, making it less reliable. In order to combat this issue in the future, I would need to improve
+the seeded region growing algorithm to be able to detect multiple features at once, which would mean multiple feature measurements
+could be passed to the EKF algorithm.\\
+
+In future work, I would also like to attempt to implement a different variant of the EKF algorithm, as one of the limitations of my implementation
+is that it needed the locations of the landmarks to be known beforehand. This is not always possible in real-world applications, as the agent
+may not have any prior knowledge of the environment. To achieve this, I would need to implement a variant of the EKF algorithm that is able
+to dynamically add new landmarks to the map, and therefore increase or decrease the size of the state vector. This would be a significant
+improvement to my project, as it would make it more applicable to real-world scenarios.\\
+
+The exploration strategy was another area of my project that could be improved. The wall tracking strategy was quick and easy to implement,
+but it was not the most efficient strategy for mapping the environment. This is because it would often get caught in loops, where it would simply
+drive around the same area, rather than exploring new areas. One way this could be improved is by implementing a more sophisticated exploration
+such as frontier-based exploration, which would encourage the agent to explore new areas of the environment. This would help the agent to build
+a more accurate map of the environment, as it would be able to explore more of it.\\
+
+Overall, I am happy with the results of my project, as I have been able to create a basic SLAM implementation, which is a complex and challenging
+task. This project has taught me a lot about the field of robotics and exploration, whilst also helping me develop my project management skills.
+Initially, when approaching my dissertation, I wanted to implement a swarm-based SLAM algorithm, but as I progressed through the project, I realised
+the complexity of SWARM algorithms and decided to focus on the single-agent components of SLAM. This was a good decision, as it allowed me to
+focus on the fundamentals of SLAM, rather than getting bogged down in the complexities of swarm algorithms. I am happy with the progress I have
+made and am proud of what I have achieved.\\
 
 \section{Appendices}
 
