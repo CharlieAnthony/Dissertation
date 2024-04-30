@@ -54,29 +54,60 @@
     May 2024
 \end{titlepage}
 
+\section*{Statement of Originality}
+This report is submitted as part requirement for the degree of Computer Science and Artificial Intelligence at
+the University of Sussex. It is the product of my own labour except where indicated in the text. The report may
+be freely copied and distributed provided the source is acknowledged. I hereby give  permission for a copy of
+this report to be loaned out to students in future years.\\ \\
+\textbf{Signed}: Charlie Anthony \\
+\textbf{Date}: 30/04/2024\\
+
+
+\section*{Acknowledgements}
+I would like to thank my project supervisor, Dr Chris Johnson, for his valuable advice and guidance throughout this project.
+Additionally, I would like to thank my family and girlfriend for their continued support and encouragement. Finally,
+I would like to thank the University of Sussex, particularly the Informatics and Engineering department, for providing
+24/7 access to the labs which was used extensively towards the end of the project.
+
+\newpage
+
+\section*{Summary}
+This project aims to explore the concept of Simultaneous Localization and Mapping (SLAM) in simulated testing environments.
+SLAM has become a popular area of research in robotics, as it allows agents to create a map of their environment whilst also
+localising themselves within it. This dicepline is particularly useful in autonomous vehicles, drones and robotic vacuum cleaners,
+where navigation is critical. This project is split into two main parts: feature detection and localisation, with the aim of creating
+a fully functioning SLAM algorithm.\\
+Feature detection was achieved by implementing the Seeded Region Growing algorithm, which detected features in the environment.
+These features could then be passed to a data association algorithm, which determines whether the feature is new or has been seen before.
+Localisation was achieved by implementing the Extended Kalman Filter (EKF) algorithm, which took measurements from the Seeded Region
+Growing algorithm and used them to estimate the agents position.\\
+Utilising python and various scientific libraries, I was able to create a simulation environment where the agents could explore and
+update it's update it's positional estimate. My implementation was able to successfully localise the agent in the environment, however
+struggled to integrate the feature detection algorithm to it's full potential. This project has shown that it is possible to create a basic SLAM
+algorithm in a simulated environment, and has provided a solid foundation for future work in this area.
+
+\newpage
 %Table of Contents
 \tableofcontents
 \newpage
 
 \section{Introduction}
-Swarms exist everywhere in life. Nearly all organisms exhibit some form of swarming behaviours within their
-communities. Starlings display impressive organisational behaviour, positioning themselves with respect to the
-movement of their neighbours. Humans show swarm behaviours when moving in crowds, for example, moving around sports
-venues or exiting buildings in emergencies. No matter how hard you look, regardless if the context, swarms are
-typically present.\\
-These behaviours can also be artificially created in robotics. Within the realm of computing, parallelising
-processes is breaking barrier after barrier - swarm robotics brings the same benefits. Being able to divide and
-conquer a problem has the ability to massively increase the rate of work by employing multiple robots. Therefore, it
-would be wasteful not to properly dedicate the time which this discipline deserves.\\
-For my project, I am going to try and reproduce some of these behaviours artificially. I will start by simulating robotic
-agents in a 2D environment. The agents will be placed within close proximity inside a simulated environment and then allowed
-to explore and combine their findings; ultimately creating a visualization map of its environment. The agents will need to
-both navigate the environment and avoid collisions, whilst creating an internal representation of its surroundings. The
-best-case scenario for the agents within the swarm is to be fully independent; creating a decentralized system.\\
-I will initially explore this problem by creating SLAM simulations, and then attempting to apply similar techniques
-to a centralised system. These initial simulations will employ techniques such as graph-based SLAM, random walks and other elements of
-swarm behaviours in order to create a base-line representation of the environment. This project will also have the flexibility to
-potentially implement physical robots, given time permits.\\
+Simultaneous Localization and Mapping (SLAM) is a technique used in robotics to help agents navigate their environment. SLAM is
+by no means a new concept, with fundamental papers being published in the 1980s. However, it has become increasingly popular
+in recent years, with the rise of automation in everyday life. Over time, numerous SLAM algorithms have been developed; each
+attempting to tackle the problem in a different way. As the name suggests, SLAM's main goals are to create a map of the environment,
+and to localise the agent within that environment.\\
+In order for SLAM algorithms to work, the agent must first interpret data from its environment, using sensors such as cameras and LiDAR.
+The agent will then perform some pre-processing on this data, such as feature extraction and data association, before passing it to the
+localisation algorithm. The localisation algorithm will then use this information
+to help create a prediction of the agents position.\\
+The main aim of this project is to implement a SLAM algorithm in a simulated environment. This will involve creating a simulation
+interface, where the user can see the agents and the environment. I will then implement core parts of the SLAM algorithm, such as
+feature extraction and data association. I will then attempt to implement an Extended Kalman Filter (EKF), which the agent will use
+to localise itself in the environment. Finally, should time permit, I would like to attempt to implement a more complex SLAM algorithm,
+such as FastSLAM.\\
+
+
 
 %Professional and Ethical Considerations
 
