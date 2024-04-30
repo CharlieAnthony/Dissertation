@@ -6,21 +6,21 @@ class feature_dectection:
 
     def __init__(self):
         self.two_points = None
-
+        # SRG parameters
         self.epsilon = 10  # maximum distance from a point to a line
         self.delta = 501  # maximum distance between two points
         self.Snum = 6  # number of points to fit a line
         self.Pmin = 20  # minimum points seed segment should have
         self.Gmax = 20  # maximum distance between two points in a line segment
-
+        self.Lmin = 20  # minimum length of a line segment
+        self.Lr = 0  # real length of line segment
+        self.Pr = 0  # number of points in line segment
+        # helper variables
         self.seed_segs = []
         self.line_segs = []
         self.points = []
         self.line_params = None
         self.Np = len(self.points) - 1
-        self.Lmin = 20  # minimum length of a line segment
-        self.Lr = 0  # real length of line segment
-        self.Pr = 0  # number of points in line segment
         self.feats = []
         self.association_thres = 1
 
@@ -37,19 +37,22 @@ class feature_dectection:
     def dist_point_to_line(self, params, point):
         """
         Calculates the distance between a point and a line
-        :param params:
-        :param point:
+        :param params: in form ax + by + c = 0
+        :param point: point
         :return:
         """
-        return abs(params[0] * point[0] + params[1] * point[1] + params[2]) / math.sqrt(params[0] ** 2 + params[1] ** 2)
+        x, y = point
+        a, b, c = params
+        return abs(a * x + b * y + c) / math.sqrt(a ** 2 + b ** 2)
 
     def line_to_point(self, m, c):
         """
-        Extract two points from a line given a line equation
+        Extract two points on a line given a line equation
         :param m: slope
         :param c: y-intercept
         :return: line parameters
         """
+        # calculates points on line where x = 5 and x = 2000
         x = 5
         y = m * x + c
         x2 = 2000
@@ -62,7 +65,7 @@ class feature_dectection:
         :param x: x coefficient
         :param y: y coefficient
         :param c: constant
-        :return: slope and y-intercept
+        :return: slope and y-intercept (m, c)
         """
         return (-x / y), (-c / y)
 
@@ -71,7 +74,7 @@ class feature_dectection:
         Converts a slope-intercept line equation to general form
         :param m: slope
         :param n: y-intercept
-        :return: general form parameters
+        :return: general form parameters ax + by + c = 0
         """
         a = -m
         b = 1
@@ -89,7 +92,7 @@ class feature_dectection:
 
     def line_intersect_general(self, line1, line2):
         """
-        Calculates the intersection between two lines
+        Calculates the intersection between two lines in general form
         :param line1: 1st line parameters
         :param line2: 2nd line parameters
         :return: intersection point
@@ -97,26 +100,24 @@ class feature_dectection:
         x1, y1, c1 = line1
         x2, y2, c2 = line2
         d = (y1 * x2 - x1 * y2)
-        if d == 0:
-            return None
-        else:
+        if d != 0:
             x = (c1 * y2 - y1 * c2) / d
             y = (x1 * c2 - x2 * c1) / d
             return x, y
+        return None
 
     def points_to_line(self, p1, p2):
         """
-        Extract the line parameters from two points
-        :param p1:
-        :param p2:
+        Extract the line parameters from two points in the form y = mx + c
+        :param p1: first point
+        :param p2: second point
         :return: line parameters
         """
-        if p2[0] == p1[0]:
-            return 0, 0
-        else:
+        if p2[0] != p1[0]:
             m = (p2[1] - p1[1]) / (p2[0] - p1[0])
             c = p1[1] - m * p1[0]
             return m, c
+        return 0, 0
 
     def projection_point_to_line(self, point, m, b):
         """
@@ -127,8 +128,8 @@ class feature_dectection:
         :return: projected point
         """
         x, y = point
-        m2 = -1 / m
-        c2 = y - m2 * x
+        m2 = -1 / m # perpendicular slope
+        c2 = y - m2 * x # perpendicular y-intercept
         x_intercept = - (b - c2) / (m - m2)
         y_intercept = m2 * x_intercept + c2
         return x_intercept, y_intercept
@@ -164,13 +165,13 @@ class feature_dectection:
 
     def linear_func(self, p, x):
         """
-        Linear function
-        :param p: parameters
+        Applies a Linear function
+        :param p: line parameters
         :param x: x value
         :return: y value
         """
-        m, b = p
-        return m * x + b
+        m, c = p
+        return m * x + c
 
     def fit_line(self, laser_points):
         """
@@ -195,42 +196,40 @@ class feature_dectection:
         :param robot_pos: robot position
         :return: predicted point
         """
-        m, b = self.points_to_line(robot_pos, sensed_points)
-        params1 = self.slope_intercept_to_general(m, b)
+        m, c = self.points_to_line(robot_pos, sensed_points)
+        params1 = self.slope_intercept_to_general(m, c)
         preds = self.line_intersect_general(params1, line_params)
         if preds:
             return preds[0], preds[1]
-        else:
-            return None
+        return None
 
     def seed_segment_detection(self, robot_pos, break_point_ind):
         flag = True
         self.Np = max(0, self.Np)
         self.seed_segs = []
+        # first for loop
         for i in range(break_point_ind, (self.Np - self.Pmin)):
             predicted_points_to_draw = []
             j = i + self.Snum
             m, c = self.fit_line(self.points[i:j])
 
             params = self.slope_intercept_to_general(m, c)
-
+            # second for loop
             for k in range(i, j):
                 predicted_point = self.predict_point(params, self.points[k][0], robot_pos)
                 if not predicted_point:
                     continue
                 predicted_points_to_draw.append(predicted_point)
-                d1 = self.euclidean_distance(predicted_point, self.points[k][0])
 
-                if d1 > self.delta:
+                d1 = self.dist_point_to_line(params, self.points[k][0])
+                if d1 > self.epsilon:
                     flag = False
                     break
-
-                d2 = self.dist_point_to_line(params, self.points[k][0])
-
-                if d2 > self.epsilon:
+                d2 = self.euclidean_distance(predicted_point, self.points[k][0])
+                if d2 > self.delta:
                     flag = False
                     break
-
+            # if line meets criteria, seed segment is found
             if flag:
                 self.line_params = params
                 return [self.points[i:j], predicted_points_to_draw, (i, j)]
@@ -239,11 +238,14 @@ class feature_dectection:
     def seed_segment_growing(self, indices, break_point):
         line_eq = self.line_params
         i, j = indices
-        Pb, Pf = max(break_point, i - 1), min(j + 1, len(self.points) - 1)
+        Pb = max(break_point, i - 1),
+        Pf = min(j + 1, len(self.points) - 1)
+        # while distance < epsilon
         while self.dist_point_to_line(line_eq, self.points[Pf][0]) < self.epsilon:
             if Pf > self.Np - 1:
                 break
             else:
+                # fit line
                 m, b = self.fit_line(self.points[Pb:Pf])
                 line_eq = self.slope_intercept_to_general(m, b)
                 p = self.points[Pf][0]
@@ -252,10 +254,12 @@ class feature_dectection:
             if self.euclidean_distance(p, next_p) > self.Gmax:
                 break
         Pf = Pf - 1
+        # while distance < epsilon
         while self.dist_point_to_line(line_eq, self.points[Pb][0]):
             if Pb < break_point:
                 break
             else:
+                # fit line
                 m, b = self.fit_line(self.points[Pb:Pf])
                 line_eq = self.slope_intercept_to_general(m, b)
                 p = self.points[Pb][0]
