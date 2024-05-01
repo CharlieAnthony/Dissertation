@@ -1,13 +1,10 @@
 import numpy as np
-from scipy.linalg import block_diag
-from filterpy.kalman import ExtendedKalmanFilter
-
 
 class EKF:
 
     def __init__(self, landmarks):
         # robot parameters
-        self.n_state = 3
+        self.n_state = 3 # x, y, theta
         self.landmarks = landmarks
         self.n_landmarks = len(self.landmarks)
 
@@ -62,43 +59,49 @@ class EKF:
         """
         rx, ry, theta = mu[0, 0], mu[1, 0], mu[2, 0]
         delta_zs = [np.zeros((2, 1)) for _ in range(self.n_landmarks)]
+        # helper matrices
         Ks = [np.zeros((mu.shape[0], 2)) for _ in range(self.n_landmarks)]
         Hs = [np.zeros((2, mu.shape[0])) for _ in range(self.n_landmarks)]
         Q = np.diag([0.003, 0.005])
+        # iterate over measurements, update estimates with them
+        # ignored the landmark signature (s in their equation)
         for z in measurements:
-            (dist, phi, lidx) = z
-            mu_landmark = mu[self.n_state + 2 * lidx: self.n_state + 2 * lidx + 2]
+            (dist, phi, l_idx) = z
+            mu_landmark = mu[self.n_state + 2 * l_idx: self.n_state + 2 * l_idx + 2]
+            # if this is the first time seeing the landmark, initialize it
             if np.isnan(mu_landmark[0]):
                 mu_landmark[0] = rx + dist * np.cos(phi + theta)
                 mu_landmark[1] = ry + dist * np.sin(phi + theta)
-                mu[self.n_state + 2 * lidx: self.n_state + 2 * lidx + 2] = mu_landmark
-            delta = mu_landmark - np.array([[rx], [ry]])
+                mu[self.n_state + 2 * l_idx: self.n_state + 2 * l_idx + 2] = mu_landmark
+            delta = mu_landmark - np.array([[rx], [ry]]) # contains delta x and delta y
             q = np.linalg.norm(delta) ** 2
 
             dist_est = np.sqrt(q)
-            phi_est = np.arctan2(delta[1, 0], delta[0, 0]) - theta;
-            phi_est = np.arctan2(np.sin(phi_est), np.cos(phi_est))
+            phi_est = np.arctan2(delta[1, 0], delta[0, 0]) - theta
+            phi_est = np.arctan2(np.sin(phi_est), np.cos(phi_est)) # limits phi to -pi to pi
             z_est_arr = np.array([[dist_est], [phi_est]])
             z_act_arr = np.array([[dist], [phi]])
-            delta_zs[lidx] = z_act_arr - z_est_arr
+            delta_zs[l_idx] = z_act_arr - z_est_arr
 
             Fxj = np.block([[self.Fx], [np.zeros((2, self.Fx.shape[1]))]])
-            Fxj[self.n_state:self.n_state + 2, self.n_state + 2 * lidx:self.n_state + 2 * lidx + 2] = np.eye(2)
+            # splicing for bottom row, third section of Fxj
+            Fxj[self.n_state:self.n_state + 2, self.n_state + 2 * l_idx:self.n_state + 2 * l_idx + 2] = np.eye(2)
+            # put 1/q into matrix for simplicity, book equation is funky
             H = np.array([[-delta[0, 0] / np.sqrt(q), -delta[1, 0] / np.sqrt(q), 0, delta[0, 0] / np.sqrt(q),
                            delta[1, 0] / np.sqrt(q)], \
                           [delta[1, 0] / q, -delta[0, 0] / q, -1, -delta[1, 0] / q, +delta[0, 0] / q]])
 
             H = H.dot(Fxj)
-            Hs[lidx] = H  # Added to list of matrices
-            Ks[lidx] = sigma.dot(np.transpose(H)).dot(
+            Hs[l_idx] = H
+            Ks[l_idx] = sigma.dot(np.transpose(H)).dot(
                 np.linalg.inv(H.dot(sigma).dot(np.transpose(H)) + Q))  # Add to list of matrices
         mu_offset = np.zeros(mu.shape)  # Offset to be added to state estimate
         sigma_factor = np.eye(sigma.shape[0])  # Factor to multiply state uncertainty
-        for lidx in range(self.n_landmarks):
-            mu_offset += Ks[lidx].dot(delta_zs[lidx])  # Compute full mu offset
-            sigma_factor -= Ks[lidx].dot(Hs[lidx])  # Compute full sigma factor
-        mu = mu + mu_offset  # Update state estimate
-        sigma = sigma_factor.dot(sigma)  # Update state uncertainty
+        for l_idx in range(self.n_landmarks):
+            mu_offset += Ks[l_idx].dot(delta_zs[l_idx])  # Compute full mu offset
+            sigma_factor -= Ks[l_idx].dot(Hs[l_idx])  # Compute full sigma factor
+        mu = mu + mu_offset
+        sigma = sigma_factor.dot(sigma)
         return mu, sigma
 
     def sigma2transform(self, sigma):

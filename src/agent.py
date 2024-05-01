@@ -40,8 +40,6 @@ class Agent:
 
         self.state = state
         self.state[2] = self.state[2] % (2 * np.pi)
-        # TODO: delete if nothing else breaks
-        # self.state[2] = np.arctan2(np.sin(state[2]), np.cos(state[2]))
 
     def get_state(self):
         """
@@ -114,7 +112,6 @@ class Agent:
         y[3:] = u
         result = scipy.integrate.solve_ivp(self.motion_eqs, [0, dt], y)
         self.state = result.y[:3, -1]
-        #TODO: delete - self.state[2] = np.arctan2(np.sin(self.state[2]), np.cos(self.state[2]))
         self.state[2] = self.state[2] % (2 * np.pi)
 
     def motion_eqs(self, t, y):
@@ -133,9 +130,6 @@ class Agent:
         ydot[0] = v * np.cos(theta)
         ydot[1] = v * np.sin(theta)
         ydot[2] = omega
-        # TODO: delete stuff
-        # ydot[3] = 0
-        # ydot[4] = 0
         return ydot
 
     def detect(self):
