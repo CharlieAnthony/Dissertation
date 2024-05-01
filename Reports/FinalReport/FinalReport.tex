@@ -315,7 +315,6 @@ The predict function could be shown as:
 \begin{equation}
     x_{k+1}^{(i)} = f\left(x_k^{(i)}, u_k, \epsilon_k^{(i)}\right)
 \end{equation}
-%TODO: Here
 In this equation, \(x_{k+1}^{(i)}\) is the new state of particle \(i\) at time \(k+1\), \(f\) is the state transition
 function, which requires the previous state of the particle, the control input and the process noise. The system may then
 incorporate the sensor readings, which are used to update the weights of the particles; each weight is adjusted based on
@@ -323,19 +322,13 @@ how well the particle's position matches the sensor readings. The update functio
 \begin{equation}
     w_{k+1}^{(i)} = w_k^{(i)} \cdot p(z_{k+1} | x_{k+1}^{(i)})
 \end{equation}
-Finally, an estimate of the agents position is made by taking the average of the particles, with respect to their weights.
-As the agent discovers more about its environment, the particles will converge towards the true position of the agent -
+Finally, an estimate of the agent's position is made by taking the average of the particles, with respect to their weights.
+As the agent discovers more about it's environment, the particles will converge towards the true position of the agent -
 as shown in Figure \ref{fig:particle_filter}. During the update phase, particles may need to be re-generated if they drift
 too far from the true position of the agent; particles with higher weights are more likely to be re-generated whilst particles
 with lower weights are more likely to be kept. Dellaert et al demonstrated the strengths of particle filters in their
 paper \cite{monte_carlo_slam}, where they showed that particle filters are able to localise the agent in complex
 environments, even when the environment is dynamic.\\
-%NOTE: I think I should probably just bin off this section tbh
-%Finally, Visual Odometry works by having the agent estimate its position based on visual data. This is achieved using the
-%previously mentioned semantic maps, which are used to detect and classify objects in the environment. As the name suggests,
-%visual odometry only uses visual data to estimate the agents position; benefits of this approach are that cameras are
-%cheap and lightweight, however they are also computationally expensive. Furthermore, visual odometry is less effective in
-%environments with poor lighting and textureless surfaces, making it less reliable than other techniques.\\
 
 \subsubsection{Sensor technologies}
 There are many different types of sensor technologies used throughout SLAM research, such as LiDAR, cameras and Inertial Measurement
@@ -352,8 +345,8 @@ the agents movement. They are normally used alongside other sensors to help impr
 \subsection{Algorithms and Implementations} % 700 words - currently 450
 \subsubsection{Algorithms}
 Graph-based SLAM is a technique used to create a map of an environment, by using a graph to represent the environment. It
-works by having a robot move around its environment, whilst taking measurements of its surroundings. These measurements
-are usually received by a sensor, such as a camera or laser scanner. The robot then uses these measurements to create a
+works by having an agent move around an environment, whilst taking measurements of its surroundings. These measurements
+are usually received by a sensor, such as a camera or laser scanner. The agent then uses these measurements to create a
 plot of where objects may be, by combining the measurements from sensors with its memory of the route it has taken. This
 technique is used in many applications, both in research and in the real world.\\
 One limitation of graph-based SLAM is that it is computationally expensive, as it requires a lot of memory to store the
@@ -393,7 +386,7 @@ SLAM algorithms, like ROS.\\
 
 \subsection{Real-world Applications and Case Studies} % 600 words - currently 196
 SLAM has a number of real-world applications, such as autonomous vehicles, drones, vacuum cleaners and search and rescue.
-In the context of drones, UAV (Unmanned Aerial Vehicles) SLAM is used to help drones navigate their environment. This is
+In the context of drones, Unmanned Aerial Vehicles (UAV) SLAM is used to help drones navigate their environment. This is
 particularly challenging as drones are often used in dynamic environments. Furthermore, drones often operate at fast speeds,
 which means the SLAM algorithm needs to be able to process data quickly. UAV SLAM can be implemented using similar techniques
 to ground-based SLAM, using LiDAR and cameras for feature detection; Caballero et al demonstrated how visual SLAM can be used
@@ -407,9 +400,9 @@ algorithm was at least 0.5cm, which is accurate enough for most VR applications.
 \section{Requirements Analysis}
 Table~\ref{tab:requirements_table} shows the requirements for my project, along with their justification. Initially, I will
 create a simulation interface, where the user can see the agents and the environment. After, I will work towards implementing
-core parts of the SLAM algorithm, such as feature extraction and landmark detection. I will then attempt to implement a Kalman
+the 'front-end' of the SLAM algorithm; including the feature extraction algorithm. I will then attempt to implement an Extended Kalman
 Filter, which the agent will use to localise itself in the environment. Finally, I will work towards adding data association, which will
-hopefully complete the SLAM algorithm. The latter stages of the project will be spent on evaluating the performance of the algorithm
+hopefully complete the SLAM algorithm. The latter stages of the project will be spent on evaluating the performance of the system
 and documenting my findings. I have also added a couple optional requirements, which can be carried out should time permit but are
 not critical towards the success of the project.\\
 When creating the simulation interface, I will be using the Python programming language, along with the PyGame library. This
@@ -418,7 +411,7 @@ I have chosen to use Python in my project as it is a language I am familiar with
 should I run into issues. I will also use various other scientific python libraries throughout my project, such as NumPy, SciPy and
 Matplotlib.\\
  I have chosen to create my own simulation environment, instead of using an existing package, as I believe this will give me more
-control over the project. I enjoy knowing how each component of my project works, and by creating my own environment, I will be able
+control over the project. I enjoy understanding how each component of my project works, and by creating my own environment, I will be able
 to create a more tailored solution.\\
 \begin{table}[H]
     \centering
@@ -432,7 +425,7 @@ to create a more tailored solution.\\
         \textbf{1} &
         Funcitonal &
         Simulation Interface &
-        A graphical user interface will be critical for demonstrating the agents behaviours, and will also aid de-bugging. Pygame
+        A graphical user interface will be critical for demonstrating the agents behaviours and will also aid de-bugging. Pygame
         will make it easy to watch the algorithm in real-time and visualise the mapping process.\\
         \hline
         \textbf{2} &
@@ -494,13 +487,13 @@ phase.\\
 
 \subsection{Phase 1 - Research and Planning}
 The first phase of my project involves researching and planning. During this period I will create a project proposal,
-research single and multi-agent SLAM algorithms, and write my interim report. This phase will be completed by week 7. It is
+research single and multi-agent SLAM algorithms and write my interim report. This phase will be completed by week 7. It is
 important to carry out this phase as it provides structure for the whole project, which will help ensure that the project is
 completed on time.
 
 \subsection{Phase 2 - Project Setup}
 The second phase of my project will be to develop the simulation environment and sensors for the agent. This will involve
-creating a graphical user interface, using the PyGame library, where the user can see the agent, the environment and a
+creating a graphical user interface using the PyGame library, where the user can see the agent, the environment and a
 representation of the agents internal map. I will then create a sensor which can detect the presence of walls and objects
 in the environment. I plan on implementing a LiDAR sensor, as this will provide my feature detection system with the information
 it should require. This phase will be completed by week 11 - putting me in a good place to work on implementing SLAM algorithm
@@ -514,8 +507,8 @@ writing up my methods in my report, ensuring that I have a clear understanding o
 should be completed by week 4 of the Spring semester.
 
 \subsection{Phase 4 - Algorithm Implementation}
-The fourth phase of my project will be to implement the core parts of the SLAM algorithm. I will start by implementing a Extended
-Kalman Filter, which will be used to estimate the agents position and the position of landmarks in the environment. I will then
+The fourth phase of my project will be to implement the core parts of the SLAM algorithm. I will start by implementing an Extended
+Kalman Filter, which will be used to estimate the agent's position and the position of landmarks in the environment. I will then
 implement a data association algorithm, which will be used to compare new features to existing landmarks. After completing this
 work, I should have fully implemented the SLAM algorithm. I expect this stage of the implementation to take the longest, so I have
 allocated a significant amount of time to complete it. This phase should be completed by week 8 of the Spring semester.
@@ -564,11 +557,11 @@ of the profession. \\
 \begin{figure}[H]
     \centering
     \fbox{\includegraphics[width=0.7\linewidth]{environment_example.png}}
-    \caption{Screenshot of the simulation environment}
+    \caption{Screenshot of the simulation environment - shows the agent as a red circle, with a small direction indicator in green. The black lines represent objects in the environment.}
     \label{fig:environment_example}
 \end{figure}
 When constructing the graphical user interface (GUI), simplicity has always been the focus. To maintain this, the GUI clearly displays
-the agent (and its bearing) and it's environment in an intuitive way; as seen in Figure \ref{fig:environment_example}. Upon
+the agent and it's environment in an intuitive way; as seen in Figure \ref{fig:environment_example}. Upon
 initialisation, the environment accepts an image file, which it then uses to create an array representation of the environment. I chose
 to use images as input as it allows for quick and easy creation of environments, which can be easily modified. Arrays are used to
 represent the environment as they are efficient and easy to manipulate.\\
@@ -601,7 +594,11 @@ this function, to help make the sensor more realistic. Below is the pseudocode f
 \end{algorithm}
 The procedure \textit{lidar\_scan} takes four parameters: the environment, the agent's position, the number of rays to cast and the
 maximum distance (range) of the sensor. The algorithm will execute in \(O(d * r)\) time, where \(d\) is the maximum distance and \(r\) is
-the number of rays. The algorithm's memory complexity is \(O(r)\), as it is bounded by the number of rays.\\
+the number of rays. The algorithm's memory complexity is \(O(r)\), as it is bounded by the number of rays. One of the main challenges when
+tackling the LiDAR sensor was to avoid detecting walls behind other walls, which could lead to inaccurate measurements. My solution avoids
+this by breaking the loop when a wall is detected, which ensures that the sensor only detects the closest wall.\\
+In order to make my simulation more realistic, I have also added a small amount of noise to the sensor measurements. This is achieved by
+adding a small amount of gaussian noise to the distance measurements, which helps mimic the noise present in real-world sensors.\\
 
 \subsection{Feature Extraction}
 Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
@@ -705,16 +702,21 @@ When implementing the agent's movement, I wanted it to accurately mimic a real-w
 I have implemented a basic kinematic model, which uses the agent's current position and velocity to calculate the next position. For
 each time step, the agent passes the model it's control inputs, consisting of the agent's velocity and angular rate of change. The model
 then calculates the agent's new position and orientation. The model is important as it allows the agent to move around the environment
-in a predictable manner, which will help make the implementation of my project easier. Below are the equations used in my kinematic model. \\
+in a predictable manner, which will help make the implementation of my project easier. Below are the equations used in my kinematic model: \\
 \begin{equation}
-    \begin{aligned}
-        p_x &= v \cos(\theta) \\
-        p_y &= v \sin(\theta) \\
-        \theta &= \omega \\
-    \end{aligned}
+    \theta &= \theta + \omega \\
 \end{equation}
-In the equations above, \(p_x\) and \(p_y\) are the agent's x and y positions, \(\theta\) is the agent's bearing. \(v\) is the agent's velocity
-and \(\omega\) is the agent's angular rate of change. In my implementation, I have capped the agent's velocity and angular rate of change
+\begin{equation}
+    v &= v + \alpha \\
+\end{equation}
+\begin{equation}
+    p_x &= v \cos(\theta) \\
+\end{equation}
+\begin{equation}
+    p_y &= v \sin(\theta) \\
+\end{equation}
+In the equations above, \(p_x\) and \(p_y\) are the agent's x and y positions, \(\theta\) is the agent's bearing and \(v\) is the agent's velocity.
+\(\alpha\) and \(\omega\) are the the control inputs, denoting the acceleration and rate of bearing change; both of which have been capped
 to ensure the agent moves in a realistic manner.\\
 \begin{figure}[H]
     \centering
@@ -848,6 +850,8 @@ landmarks. The algorithm calculates the distances between each endpoint of the d
 then determines whether the feature is a new landmark or an existing one using a pre-determined threshold. The algorithm is simple
 but effective; it's computational efficiency is bounded by the number of landmarks, which makes it appropriate for my project.\\
 
+\newpage
+
 \section{Results}
 
 \subsection{LiDAR Sensor}
@@ -890,7 +894,7 @@ results of the sensor, showing how it's performance changes with the number of b
         0.0349 \\
         \hline
     \end{tabular}
-    \caption{Table of sensor performance with varying range and number of beams. The values are the average time taken
+    \caption{Table of sensor run-times with varying range and number of beams. The values are the average time taken
     to complete a scan in seconds.}
     \label{results_tab}
 \end{table}
@@ -1006,6 +1010,7 @@ extraction algorithm did not always detect present features. This meant that the
 accurately estimate the agent's position, making it less reliable. In order to combat this issue in the future, I would need to improve
 the seeded region growing algorithm to be able to detect multiple features at once, which would mean multiple feature measurements
 could be passed to the EKF algorithm. \\
+
 \subsection{Future Work}
 In future work, I would also like to attempt to implement a different variant of the EKF algorithm, as one of the limitations of my implementation
 is that it needed the locations of the landmarks to be known beforehand. This is not always possible in real-world applications, as the agent
@@ -1031,6 +1036,8 @@ Initially, when approaching my dissertation, I wanted to implement a swarm-based
 the complexity of SWARM algorithms and decided to focus on the single-agent components of SLAM. This was a good decision, as it allowed me to
 focus on the fundamentals of SLAM, rather than getting bogged down in the complexities of swarm algorithms. I am happy with the progress I have
 made and am proud of what I have achieved.\\
+
+\newpage
 
 \section{Appendices}
 

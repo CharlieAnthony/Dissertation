@@ -11,6 +11,7 @@ from ekf import EKF
 
 pointcloud = []
 
+
 def main():
 	# Initialize environment
 	env_width = 1280
