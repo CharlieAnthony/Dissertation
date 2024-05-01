@@ -902,6 +902,29 @@ One of the challenges I faced when implementing the sensor was the trade-off bet
 time taken to complete a scan; as having more data points would allow the feature extraction algorithm to detect more
 accurate features, but significantly increase the time taken to complete a scan. For my implementation, I decided to use
 a sensor with 360 beams and a range of 150px, as it provided the best resolution without making the scan time too long.\\
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{plot1}
+    \end{minipage}
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{plot2}
+    \end{minipage}
+    \begin{minipage}{0.3\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{plot3}
+    \end{minipage}
+    \caption[Short caption]{Example of how changing the LiDAR noise effects the Feature Extraction Algorithm.
+    The true landmark is verticle at x=100, whilst the detected feature is shown in red.}
+    \label{fig:lidar_noise}
+\end{figure}
+Figure \ref{fig:lidar_noise} shows how changing the noise parameter in the LiDAR sensor can affect the Seeded Region Growing
+Algorithm. The left plot shows the LiDAR sensor with no noise, the middle plot shows the LiDAR sensor with a small amount of
+noise and the right plot shows the LiDAR sensor with a large amount of noise. The plots help demonstrate the importance of
+finding an appropriate noise level for the sensor, as too much noise significantly impacts the accuracy of the Feature Extraction
+Algorithm. The noise parameter I settles on was 0.0005, shown in the middle plot.\\
 
 \subsection{Feature Extraction}
 
