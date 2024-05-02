@@ -920,7 +920,7 @@ a sensor with 360 beams and a range of 150px, as it provided the best resolution
     The true landmark is verticle at x=100, whilst the detected feature is shown in red.}
     \label{fig:lidar_noise}
 \end{figure}
-Figure \ref{fig:lidar_noise} shows how changing the noise parameter in the LiDAR sensor can affect the Seeded Region Growing
+Figure~\ref{fig:lidar_noise} shows how changing the noise parameter in the LiDAR sensor can affect the Seeded Region Growing
 Algorithm. The left plot shows the LiDAR sensor with no noise, the middle plot shows the LiDAR sensor with a small amount of
 noise and the right plot shows the LiDAR sensor with a large amount of noise. The plots help demonstrate the importance of
 finding an appropriate noise level for the sensor, as too much noise significantly impacts the accuracy of the Feature Extraction
@@ -947,9 +947,20 @@ The algorithm was able to detect features such as corners and edges, which are i
 We can see in Figure \ref{fig:feature_extraction} that the algorithm can understand the structure of the environment; the left scan
 shows the algorithm detecting a wall, whilst also detecting a corner and a gap in the wall. The right scan similarly shows the
 algorithm detecting a wall.\\
-
-\textbf{Note: I need to add another performance metric showing the accuracy, or something similar, of the seeded region
-growing algorithm.}\\
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{histo}
+    \caption{Histogram of the distances between the detected features and the known landmarks. The red dashed line represents the
+    threshold used to determine if a feature is a new landmark or an existing one.}
+    \label{fig:FE_histogram}
+\end{figure}
+In order to measure the performance of the feature extraction algorithm, I used the data association algorithm to compare the
+detected features with the known landmarks; as mentioned previously, the data association algorithm works by comparing the endpoints
+of the detected features with the endpoints of the known landmarks. Figure \ref{fig:FE_histogram} shows a histogram of these distances
+after allowing the data association algorithm to run whilst the agent was exploring the environment. The histogram shows that the
+algorithm was able to detect features reasonably well, as most of the data points are below the threshold.
+There were some outliers however, which when investigated were found to be where walls met at a corner; demonstrating the limitations
+of my implementation.\\
 
 \subsection{Extended Kalman Filter Algorithm}
 
@@ -1134,6 +1145,10 @@ This meeting involved feedback for my Methods section draft. I sent it to Chris 
 could do with more attention. I plan on implementing this feedback next week. After, we spoke about how meetings would continue over the
 following weeks, and agreed that next week would be the final meeting, although we could continue to communicate over email should assistance
 be required.\\
+\subsubsection{Meeting 15 - 26/04/2024}
+This was the final meeting of the project. We discussed first discussed how I could make the final changes to my report, and which areas I should
+focus most of my attention on. We then discussed the presentation and how to prepare for it. Finally, we cleared up any final questions and
+discussed how we would communicate over the next few weeks.\\
 
 
 \subsection{Project Proposal}
