@@ -1,13 +1,11 @@
-# swarmsimenv
-first attempt at creating an environment for swarm simulations
+# EKF SLAM
+my simple EKF SLAM implementation
 ## setup
 run command
 ```pip install -r requirements.txt```
 
-## Requirements for env
-- basic environment and physics
-- robot source code modification
-- adding compatibility for different sensor types
-- environment design
-- adding robot view, graphs, etc
-- multi-robot control with networks
+## run
+run command
+```python main.py```
+
+- to turn on/off feature extraction, need to change measurements in main loop (need to add script parameters)

@@ -9,8 +9,6 @@ from ui import EnvironmentInterface
 from features import *
 from ekf import EKF
 
-pointcloud = []
-
 
 def main():
 	# Initialize environment
@@ -65,38 +63,35 @@ def main():
 
 		display_objects = []
 
-		# res = agent.detect()
-		# if res is not False and res is not None:
-		# 	line_eq = res[1]
-		# 	m, c = res[5]
-		# 	line_seg = res[0]
-		# 	OUTMOST = res[2]
-		# 	break_point_ind = res[3]
+		# results = agent.detect()
+		# if results is not False and results is not None:
+		# 	outmost_points = results[2]
+		# 	m, c = results[5]
 		#
-		# 	endpoints[0] = fd.projection_point_to_line(OUTMOST[0], m, c)
-		# 	endpoints[1] = fd.projection_point_to_line(OUTMOST[1], m, c)
+		# 	endpoints[0] = fd.projection_point_to_line(outmost_points[0], m, c)
+		# 	endpoints[1] = fd.projection_point_to_line(outmost_points[1], m, c)
 		# 	# print(f"line =[{m}, {c}, {endpoints}]")
 		# 	display_objects.append(pygame.draw.line(interface.get_screen(), (0, 150, 150), endpoints[0], endpoints[1], 2))
 
-		zs = agent.simple_detect(agent.get_state(), landmarks)
+		measurements = agent.simple_detect(agent.get_state(), landmarks)
+
 		# try:
 		# 	endpoints_m = [[endpoints[0][0] * 0.02, endpoints[0][1] * 0.02], [endpoints[1][0] * 0.02, endpoints[1][1] * 0.02]]
-		# 	# zs = agent.sim_measurements(agent.get_state(), landmarks)
-		# 	zs = fd.landmark_association(endpoints_m[0], endpoints_m[1], landmarks_lines, agent.get_state())
-		# 	# print(zs)
+		# 	# measurements = agent.sim_measurements(agent.get_state(), landmarks)
+		# 	measurements = fd.landmark_association(endpoints_m[0], endpoints_m[1], landmarks_lines, agent.get_state())
 		# except:
-		# 	zs = []
+		# 	measurements = []
 
 		# ekf logic
 		agent.mu, agent.sigma = ekf.prediction_update(agent.mu, agent.sigma, u, dt)
-		agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, zs)
+		agent.mu, agent.sigma = ekf.measurement_update(agent.mu, agent.sigma, measurements)
 
-		if pygame.time.get_ticks() % 10 == 0:
-			eigenvals, angle = agent.ekf.sigma2transform(agent.sigma[0:2, 0:2])
-			uncertainty = (eigenvals[0] + eigenvals[1]) / 2
-			state = agent.get_state()
-			pos = (state[0] // 0.02, state[1] // 0.02)
-			print(f"pos = {pos} | mu = {agent.mu[0]} | sigma = {uncertainty} | time = {pygame.time.get_ticks()}")
+		# if pygame.time.get_ticks() % 10 == 0:
+		# 	eigenvals, angle = agent.ekf.sigma2transform(agent.sigma[0:2, 0:2])
+		# 	uncertainty = (eigenvals[0] + eigenvals[1]) / 2
+		# 	state = agent.get_state()
+		# 	pos = (state[0] // 0.02, state[1] // 0.02)
+		# 	print(f"pos = {pos} | mu = {agent.mu[0]} | sigma = {uncertainty} | time = {pygame.time.get_ticks()}")
 			# print(f"pos = {pos}")
 			# positions += f"{pos}, "
 		interface.get_screen().fill((255, 255, 255))

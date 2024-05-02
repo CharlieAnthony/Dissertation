@@ -21,6 +21,8 @@ class Agent:
         self.env = environment
         self.lidar = LidarSensor(150, 360, self.env)
         self.n_state = 3
+        self.max_velocity = 2.0
+        self.max_omega = 2.0
         self.n_landmarks = len(landmarks)
         self.mu = np.zeros((self.n_state + 2 * self.n_landmarks, 1))
         self.mu[:] = np.nan
@@ -37,7 +39,6 @@ class Agent:
         # state[0] = x position (m)
         # state[1] = y position (m)
         # state[2] = bearing (rad)
-
         self.state = state
         self.state[2] = self.state[2] % (2 * np.pi)
 
@@ -121,16 +122,14 @@ class Agent:
         :param y: state
         :return: derivative of the state
         """
-        max_v = 2.0
-        max_omega = 2.0
         theta = y[2]
-        v = max(min(y[3], max_v), -max_v)  # forward velocity
-        omega = max(min(y[4], max_omega), -max_omega)  # forward and angular velocity
-        ydot = np.zeros(5)
-        ydot[0] = v * np.cos(theta)
-        ydot[1] = v * np.sin(theta)
-        ydot[2] = omega
-        return ydot
+        v = max(min(y[3], self.max_velocity), -self.max_velocity)  # forward velocity
+        omega = max(min(y[4], self.max_omega), -self.max_omega)  # forward and angular velocity
+        new_state = np.zeros(5)
+        new_state[0] = v * np.cos(theta)
+        new_state[1] = v * np.sin(theta)
+        new_state[2] = omega
+        return new_state
 
     def detect(self):
         """
@@ -225,16 +224,26 @@ class Agent:
         for i in range(self.n_landmarks):
             x = mu[self.n_state + i * 2]
             y = mu[self.n_state + i * 2 + 1]
-            sig = sigma[self.n_state + i * 2:self.n_state + i * 2 + 2, self.n_state + i * 2:self.n_state + i * 2 + 2]
+            sig = self.get_sigma_value(sigma, i)
             # if landmark has been discovered
             if ~np.isnan(x):
                 pixel_pos = (int(x / 0.02), int(y / 0.02))
                 eigenvals, angle = self.ekf.sigma2transform(sig)
                 # if the uncertainty is small enough, draw the ellipse
-                if np.max(eigenvals) < 15:
+                if np.max(eigenvals) < 20:
                     sigma_pixel = (int(eigenvals[0] / 0.02), int(eigenvals[1] / 0.02))
                     objects.append(self.draw_agent_uncertainty(screen, pixel_pos, sigma_pixel, angle)[0])
         return objects
+
+    def get_sigma_value(self, sigma, i):
+        """
+        Get the sigma value for landmark i
+        :param sigma:
+        :param i:
+        :return:
+        """
+        return sigma[self.n_state + i * 2:self.n_state + i * 2 + 2, self.n_state + i * 2:self.n_state + i * 2 + 2]
+
 
     def state_to_deg(self, angle):
         """

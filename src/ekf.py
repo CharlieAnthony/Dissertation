@@ -17,7 +17,11 @@ class EKF:
         self.Fx = np.block([[np.eye(3), np.zeros((self.n_state, 2 * self.n_landmarks))]])
 
         # noise: m/s, m/s, rad/s
-        self.R = np.diag([0.001, 0.001, 0.0005])
+        # self.R = np.diag([0.001, 0.001, 0.00005])
+        # self.R = np.diag([0.01, 0.01, 0.0005])
+        # self.R = np.diag([0.001, 0.001, 0.005])
+        self.R = np.diag([0.001, 0.001, 0.0005]) # works without breaking it
+
 
     def prediction_update(self, mu, sigma, u, dt):
         """
@@ -62,7 +66,11 @@ class EKF:
         # helper matrices
         Ks = [np.zeros((mu.shape[0], 2)) for _ in range(self.n_landmarks)]
         Hs = [np.zeros((2, mu.shape[0])) for _ in range(self.n_landmarks)]
-        Q = np.diag([0.003, 0.005])
+
+        # Q = np.diag([0.002, 0.005])
+        Q = np.diag([0.003, 0.006])
+        # Q = np.diag([0.004, 0.007])
+
         # iterate over measurements, update estimates with them
         # ignored the landmark signature (s in their equation)
         for z in measurements:
@@ -75,14 +83,15 @@ class EKF:
                 mu[self.n_state + 2 * l_idx: self.n_state + 2 * l_idx + 2] = mu_landmark
             delta = mu_landmark - np.array([[rx], [ry]]) # contains delta x and delta y
             q = np.linalg.norm(delta) ** 2
-
+            # line 13 in eq
             dist_est = np.sqrt(q)
             phi_est = np.arctan2(delta[1, 0], delta[0, 0]) - theta
             phi_est = np.arctan2(np.sin(phi_est), np.cos(phi_est)) # limits phi to -pi to pi
+            # creates z_t^i hat
             z_est_arr = np.array([[dist_est], [phi_est]])
             z_act_arr = np.array([[dist], [phi]])
             delta_zs[l_idx] = z_act_arr - z_est_arr
-
+            # line 14 in eq
             Fxj = np.block([[self.Fx], [np.zeros((2, self.Fx.shape[1]))]])
             # splicing for bottom row, third section of Fxj
             Fxj[self.n_state:self.n_state + 2, self.n_state + 2 * l_idx:self.n_state + 2 * l_idx + 2] = np.eye(2)
@@ -90,8 +99,8 @@ class EKF:
             H = np.array([[-delta[0, 0] / np.sqrt(q), -delta[1, 0] / np.sqrt(q), 0, delta[0, 0] / np.sqrt(q),
                            delta[1, 0] / np.sqrt(q)], \
                           [delta[1, 0] / q, -delta[0, 0] / q, -1, -delta[1, 0] / q, +delta[0, 0] / q]])
-
             H = H.dot(Fxj)
+            # line 16 in eq
             Hs[l_idx] = H
             Ks[l_idx] = sigma.dot(np.transpose(H)).dot(
                 np.linalg.inv(H.dot(sigma).dot(np.transpose(H)) + Q))  # Add to list of matrices

@@ -7,12 +7,12 @@ class feature_dectection:
     def __init__(self):
         self.two_points = None
         # SRG parameters
-        self.epsilon = 10  # maximum distance from a point to a line
+        self.epsilon = 20  # maximum distance from a point to a line
         self.delta = 501  # maximum distance between two points
         self.Snum = 6  # number of points to fit a line
-        self.Pmin = 20  # minimum points seed segment should have
-        self.Gmax = 20  # maximum distance between two points in a line segment
-        self.Lmin = 20  # minimum length of a line segment
+        self.Pmin = 30  # minimum points seed segment should have
+        self.Gmax = 30  # maximum distance between two points in a line segment
+        self.Lmin = 30  # minimum length of a line segment
         self.Lr = 0  # real length of line segment
         self.Pr = 0  # number of points in line segment
         # helper variables
@@ -25,6 +25,15 @@ class feature_dectection:
         self.association_thres = 1
 
     @staticmethod
+    def meters_to_pixels(meters):
+        """
+        Converts meters to pixels
+        :param meters: meters
+        :return: pixels
+        """
+        return meters / 0.02
+
+    @staticmethod
     def euclidean_distance(point1, point2):
         """
         Calculates the Euclidean distance between two points
@@ -34,7 +43,22 @@ class feature_dectection:
         """
         return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
-    def dist_point_to_line(self, params, point):
+    @staticmethod
+    def angle_dist_to_coord(dist, theta, pos):
+        """
+        Converts a distance and angle to a position
+        :param dist: distance from the robot
+        :param theta: angle from the robot
+        :param pos: robot position
+        :return: position
+        """
+        theta = math.radians(theta)
+        x = (dist * math.cos(theta)) + pos[0]
+        y = (-dist * math.sin(theta)) + pos[1]
+        return (int(x), int(y))
+
+    @staticmethod
+    def dist_point_to_line(params, point):
         """
         Calculates the distance between a point and a line
         :param params: in form ax + by + c = 0
@@ -45,21 +69,37 @@ class feature_dectection:
         a, b, c = params
         return abs(a * x + b * y + c) / math.sqrt(a ** 2 + b ** 2)
 
-    def line_to_point(self, m, c):
+    @staticmethod
+    def line_to_point(m, c):
         """
         Extract two points on a line given a line equation
         :param m: slope
         :param c: y-intercept
         :return: line parameters
         """
-        # calculates points on line where x = 5 and x = 2000
-        x = 5
+        # calculates points on line where x = 1 and x = 5000
+        x = 1
         y = m * x + c
-        x2 = 2000
+        x2 = 5000
         y2 = m * x2 + c
         return [(x, y), (x2, y2)]
 
-    def line_form_to_slope_intercept(self, x, y, c):
+    @staticmethod
+    def points_to_line(p1, p2):
+        """
+        Extract the line parameters from two points in the form y = mx + c
+        :param p1: first point
+        :param p2: second point
+        :return: line parameters
+        """
+        if p2[0] != p1[0]:
+            m = (p2[1] - p1[1]) / (p2[0] - p1[0])
+            c = p1[1] - m * p1[0]
+            return m, c
+        return 0, 0
+
+    @staticmethod
+    def line_form_to_slope_intercept(x, y, c):
         """
         Converts a general line equation to slope-intercept form
         :param x: x coefficient
@@ -69,7 +109,8 @@ class feature_dectection:
         """
         return (-x / y), (-c / y)
 
-    def slope_intercept_to_general(self, m, n):
+    @staticmethod
+    def slope_intercept_to_general(m, n):
         """
         Converts a slope-intercept line equation to general form
         :param m: slope
@@ -89,8 +130,8 @@ class feature_dectection:
         lcm = den_a * den_c / gcd
         return a * lcm, b * lcm, c * lcm
 
-
-    def line_intersect_general(self, line1, line2):
+    @staticmethod
+    def line_intersect_general(line1, line2):
         """
         Calculates the intersection between two lines in general form
         :param line1: 1st line parameters
@@ -106,20 +147,8 @@ class feature_dectection:
             return x, y
         return None
 
-    def points_to_line(self, p1, p2):
-        """
-        Extract the line parameters from two points in the form y = mx + c
-        :param p1: first point
-        :param p2: second point
-        :return: line parameters
-        """
-        if p2[0] != p1[0]:
-            m = (p2[1] - p1[1]) / (p2[0] - p1[0])
-            c = p1[1] - m * p1[0]
-            return m, c
-        return 0, 0
-
-    def projection_point_to_line(self, point, m, b):
+    @staticmethod
+    def projection_point_to_line(point, m, b):
         """
         Projects a point onto a line
         :param point:
@@ -128,24 +157,11 @@ class feature_dectection:
         :return: projected point
         """
         x, y = point
-        m2 = -1 / m # perpendicular slope
-        c2 = y - m2 * x # perpendicular y-intercept
+        m2 = -1 / m  # perpendicular slope
+        c2 = y - m2 * x  # perpendicular y-intercept
         x_intercept = - (b - c2) / (m - m2)
         y_intercept = m2 * x_intercept + c2
         return x_intercept, y_intercept
-
-    def angle_dist_to_coord(self, dist, theta, pos):
-        """
-        Converts a distance and angle to a position
-        :param dist: distance from the robot
-        :param theta: angle from the robot
-        :param pos: robot position
-        :return: position
-        """
-        theta = math.radians(theta)
-        x = (dist * math.cos(theta)) + pos[0]
-        y = (-dist * math.sin(theta)) + pos[1]
-        return (int(x), int(y))
 
     def set_laser_points(self, data):
         """
@@ -162,6 +178,17 @@ class feature_dectection:
                 # coord = (int(p[0]), int(p[1]))
                 self.points.append([pos, p[1]])
         self.Np = len(self.points) - 1
+
+    def regression_fit_line(self, laser_points):
+        """
+        Fits a line to the laser points using least squares regression
+        :param laser_points: laser points
+        :return: line parameters
+        """
+        x = np.array([p[0][0] for p in laser_points])
+        y = np.array([p[0][1] for p in laser_points])
+        m, c = np.polyfit(x, y, 1)
+        return m, c
 
     def linear_func(self, p, x):
         """
@@ -300,6 +327,9 @@ class feature_dectection:
         d2 = self.euclidean_distance(line1_endpoint2, line2_endpoint2)
         d3 = self.euclidean_distance(line1_endpoint1, line2_endpoint2)
         d4 = self.euclidean_distance(line1_endpoint2, line2_endpoint1)
+        # ave_1 = (d1 + d2) / 2
+        # ave_2 = (d3 + d4) / 2
+        # print(min(ave_1, ave_2))
         if d1 < self.association_thres and d2 < self.association_thres:
             return True
         elif d3 < self.association_thres and d4 < self.association_thres:

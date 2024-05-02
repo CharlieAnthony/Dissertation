@@ -31,7 +31,7 @@
     \vspace*{5cm}
 
     \Large
-    \textbf{SLAM: Exploration and Mapping in Simulated testing Environments}
+    \textbf{SLAM: Exploration and Localisation in Simulated Testing Environments}
 
     \vspace{1cm}
 
@@ -77,12 +77,12 @@ SLAM has become a popular area of research in robotics, as it allows agents to c
 localising themselves within it. This dicepline is particularly useful in autonomous vehicles, drones and robotic vacuum cleaners,
 where navigation is critical. This project is split into two main parts: feature detection and localisation, with the aim of creating
 a fully functioning SLAM algorithm.\\
-Feature detection was achieved by implementing the Seeded Region Growing algorithm, which detected features in the environment.
+Feature detection was achieved by implementing the Seeded Region Growing algorithm, which extracted features from the environment.
 These features could then be passed to a data association algorithm, which determines whether the feature is new or has been seen before.
-Localisation was achieved by implementing the Extended Kalman Filter (EKF) algorithm, which took measurements from the Seeded Region
-Growing algorithm and used them to estimate the agents position.\\
-Utilising python and various scientific libraries, I was able to create a simulation environment where the agents could explore and
-update it's update it's positional estimate. My implementation was able to successfully localise the agent in the environment, however
+Localisation was achieved by implementing the Extended Kalman Filter (EKF) algorithm, which took measurements from the seeded region
+growing algorithm and used them to estimate the agent's position.\\
+Utilising python, pygame and various scientific libraries, I was able to create a simulation environment where the agent could explore and
+update it's update it's position estimate. My implementation was able to successfully localise the agent in the environment, however
 struggled to integrate the feature detection algorithm to it's full potential. This project has shown that it is possible to create a basic SLAM
 algorithm in a simulated environment, and has provided a solid foundation for future work in this area.
 
@@ -97,19 +97,17 @@ by no means a new concept, with fundamental papers being published in the 1980s.
 in recent years, with the rise of automation in everyday life. Over time, numerous SLAM algorithms have been developed; each
 attempting to tackle the problem in a different way. As the name suggests, SLAM's main goals are to create a map of the environment,
 and to localise the agent within that environment.\\
+
 In order for SLAM algorithms to work, the agent must first interpret data from its environment, using sensors such as cameras and LiDAR.
 The agent will then perform some pre-processing on this data, such as feature extraction and data association, before passing it to the
-localisation algorithm. The localisation algorithm will then use this information
-to help create a prediction of the agents position.\\
+localisation algorithm. The localisation algorithm will then use this information to help create a prediction of the agent's position.\\
+
 The main aim of this project is to implement a SLAM algorithm in a simulated environment. This will involve creating a simulation
-interface, where the user can see the agents and the environment. I will then implement core parts of the SLAM algorithm, such as
+interface, where the user can see the agent and the environment. I will then implement core parts of the SLAM algorithm, such as
 feature extraction and data association. I will then attempt to implement an Extended Kalman Filter (EKF), which the agent will use
 to localise itself in the environment. Finally, should time permit, I would like to attempt to implement a more complex SLAM algorithm,
 such as FastSLAM.\\
 
-
-
-%Professional and Ethical Considerations
 
 \section{Literature Review} % 3000 words - currently 2800
 
@@ -133,9 +131,9 @@ such as FastSLAM.\\
 
 SLAM (Simultaneous localization and Mapping) is a technique used in robotics to create a map of an unknown environment \cite{SLAM_overview}.
 It is an important area of research in robotics as it is heavily used in autonomous agents; allowing them to understand and navigate their environment
-effectively. Figure \ref{fig:SLAM_agent} shows an example of an agent scanning its environment, with the sensors visually added to the image.\\
+effectively. Figure \ref{fig:SLAM_agent} shows an example of an agent scanning it's environment, with the sensors visually added to the image.\\
 SLAM can be broken down into two sub-problems: localization and mapping. Localization is the process of determining the
-location of the agent in its environment, whilst mapping is the process of constructing a map of the environment. The maps
+location of the agent in it's environment, whilst mapping is the process of constructing a map of the environment. The maps
 are constructed using data collected from sensors, such as cameras and laser scanners; Figure \ref{fig:SLAM_map} shows this.
 A lot of existing work in SLAM is based on single agent applications, however, there is a growing interest in multi-agent
 SLAM.\\
@@ -145,8 +143,8 @@ LiDAR scans or other sensor data. The front-end will then process this data - ex
 Furthermore, the front-end will also perform data association, which will compare new features/landmarks to data that has
 been previously collected. The back-end is where the agent uses the data collected by the front-end to create a map
 of the environment and localise itself. There are a number of paradigms which may be used during this process, such as Graph-based
-SLAM, Particle filtering and Extended Kalman Filters. By combining the Front-end and the Back-end, the agent will be able to
-create an internal representation of its environment and its position in that environment.
+SLAM, Particle Filters and Extended Kalman Filters. By combining the Front-end and the Back-end, the agent will be able to
+create an internal representation of it's environment and it's position in that environment.
 
 \subsection{Background and Evolution of SLAM} % 600 words - currently 513
 In the mid 1980s, SLAM concepts were first introduced by Smith and Cheeseman \cite{Early_SLAM}.
@@ -158,7 +156,7 @@ to identify objects in the environment.
 Smith and Cheeseman used the Kalman Filter equations for static-state estimations, and then merged these state estimations
 to create a representation of the environment.\\
 The next major developments in SLAM came shortly after, in the early 90s, from the work of Leonard and Durrant-Whyte.
-In their paper, they identify further challenges in SLAM, such as the data association problem and environment dynamics \cite{First_EKF}.
+In their paper, they identified further challenges in SLAM, such as the data association problem and environment dynamics \cite{First_EKF}.
 They also outlined one of the traditional problems with SLAM, which is the "chicken and egg" problem.
 This arises as to build a useful map, the agent needs to know where it is, and to know where it is, it needs a useful map.
 To tackle this, they proposed the use of an Extended Kalman Filter (EKF), which builds on the traditional Kalman Filter equations by allowing for non-linear state estimations.
@@ -181,15 +179,16 @@ it's weaknesses are that it is not as accurate as EKF SLAM and it struggles with
     \begin{minipage}{0.8\textwidth}
         \centering
         \includegraphics[width=\linewidth]{SLAM_problem} % First image
-        \caption[Short caption]{Formal representation of the SLAM problem (reproduced from \cite{SLAM_summary})}
+        \caption[Short caption]{Formal representation of the SLAM problem, showing the agent's estimated positions and it's true route. (reproduced from \cite{SLAM_summary})}
         \label{fig:SLAM_problem}
     \end{minipage}\hfill
 \end{figure}
 
 Finally, in 2006 Durrant-Whyte and Bailey wrote a significant paper outlining the future of SLAM~\cite{SLAM_summary}.
-They started by discussing existing approaches to the problem and then formally outlining the SLAM problem, shown in Figure~\ref{fig:SLAM_problem}.
+They started by discussing existing approaches to the problem and then formally outlining the SLAM problem, shown in Figure~\ref{fig:SLAM_problem};
+demonstrating how a system could localise, given a set of measurements and a map.
 They then went into further detail on how both EFK SLAM and FastSLAM work, and then discussed the limitations of each approach.
-They also wrote a second paper, discussing the future of SLAM, including multi-agent SLAM, 3D SLAM and Dynamic environments~\cite{Further_SLAM}.
+They also wrote a second paper, discussing the future of SLAM, including multi-agent SLAM, 3D SLAM and dynamic environments~\cite{Further_SLAM}.
 
 \subsection{Technical Frameworks and Models} % 800 words - currently 1113
 \subsubsection{Mapping techniques}
@@ -221,14 +220,14 @@ Occupancy grids are typically implemented in conjunction with distance sensors, 
 points in the environment, which can then be used to update the occupancy grid. \\
 Feature-based maps are another common type of map used in SLAM. They work by having the agent detect features in the environment, such as
 walls, corners and edges.
-These features are then used to define landmarks, which are then used to create a map of the environment.
+These features are then used to define landmarks, which can be used to create a map of the environment.
 Landmarks are distinct features in the environment which can be used to localise the agent; a common metaphor used to describe landmarks is a distinctive
 skyscraper in a city, like the Shard in London, which you could use to figure out your position in relation to the landmark.
 Feature-based maps are also implemented with distance sensors, as the agent can use points detected by the sensor to detect features. \\
 \begin{figure}
     \centering
     \includegraphics[width=0.7\linewidth]{semantic_maps}
-    \caption[Short caption]{Example of a semantic map (reproduced from \cite{semantic_map})}
+    \caption[Short caption]{Example of a semantic map, showing detected features in a lab environment (reproduced from \cite{semantic_map}.)}
     \label{fig:semantic_map}
 \end{figure}
 Finally, semantic maps are a more recent addition to SLAM, which work by allowing the agent to detect and classify objects in the environment.
@@ -276,9 +275,9 @@ The update functions are defined as:
     \end{equation}
 \end{itemize}
 The Kalman Gain equation determines how impactful the new sensor reading \(z_k\) should be, based on the previous position's
-uncertainty \(P_{k}\). \(H_k\) is the Jacobian of the measurement function \(h(\hat{x}_{k}, 0)\) with respect to the state, and \(V_k\) is the Jacobian of the measurement function with respect to the measurement noise.
-The state update equation then updates the agents position based on the Kalman Gain.
-Finally, the covariance update equation updates the uncertainty of the agents position based on the Kalman Gain.
+uncertainty \(P_{k}\). \(H_k\) is the jacobian of the measurement function \(h(\hat{x}_{k}, 0)\) with respect to the state, and \(V_k\) is the jacobian of the measurement function with respect to the measurement noise.
+The state update equation then updates the agent's position estimation based on the Kalman Gain.
+Finally, the covariance update equation updates the uncertainty of the agent's position and the position of known landmarks based on the Kalman Gain.
 One of the limitations of the Kalman Filter equations is that they are only valid for linear functions, which makes them less useful in practice.
 To adapt the Kalman Filter to work with non-linear functions, the Extended Kalman Filter (EKF) is used.
 The EKF works by linearising the state transition and measurement functions, which allows the Kalman Filter equations to be used.
@@ -308,7 +307,7 @@ Particle Filters, or Monte Carlo Localization, is another popular technique used
 particles randomly positioned across the environment which represent the possible positions of the agent (posterior).
 Upon initialisation, we start by generating a set of particles, \( \left{ x_0^{(i)} \right}^N_{i=1}\), which are randomly
 distributed across the environment.
-Each particle is assigned a weight, \(w_0^{(i)})\), which is used to represent the probability that the particle's position is
+Each particle is assigned a weight, \(w_0^{(i)}\), which is used to represent the probability that the particle's position is
 the true position of the agent.
 As the agent moves, the particle filter first predicts the new position of each particle.
 The predict function could be shown as:
@@ -364,7 +363,7 @@ as modern vehicles are equipped with cameras and powerful computers, which can b
 Hector SLAM is a more recent development in SLAM, which uses LiDAR to create a map of the environment. It is significant because it
 differs from other previously mentioned techniques by relying less on wheel odometry and other forms of motion estimation. Instead,
 Hector SLAM employs a scan matching algorithm, which works by comparing the current LiDAR scan to previous scans, and using the
-differences to estimate the agents position. Hess et al implemented Hector SLAM using a branch and bound algorithm, which allowed
+differences to estimate the agent's position. Hess et al implemented Hector SLAM using a branch and bound algorithm, which allowed
 them to find the best match between scans \cite{Hector_SLAM}; other implementations have used gradient descent to achieve similar
 results. Overall, this technique is particularly useful in environments where wheel information is less reliable, such as on rough terrain
 or on slippery surfaces. \\
@@ -557,7 +556,7 @@ of the profession. \\
 \begin{figure}[H]
     \centering
     \fbox{\includegraphics[width=0.7\linewidth]{environment_example.png}}
-    \caption{Screenshot of the simulation environment - shows the agent as a red circle, with a small direction indicator in green. The black lines represent objects in the environment.}
+    \caption{Screenshot of the simulation environment - shows the agent as a red circle, with a small direction indicator on the agent in green. The black lines represent objects in the environment.}
     \label{fig:environment_example}
 \end{figure}
 When constructing the graphical user interface (GUI), simplicity has always been the focus. To maintain this, the GUI clearly displays
@@ -570,8 +569,7 @@ represent the environment as they are efficient and easy to manipulate.\\
 A realistic sensor is crucial for the agent to be able to detect its environment. To achieve this, I have implemented a LiDAR sensor
 that works in a similar way to real-world LiDAR sensors; it rotates 360 degrees and takes measurements at regular intervals. My sensor
 implementation mimics real-world LiDAR sensors by expanding a ray from the agent into the environment, which then returns a distance
-measurement if it hits an object. When using this in my project, I also add a small amount of noise to the measurements received from
-this function, to help make the sensor more realistic. Below is the pseudocode for the sensor implementation.\\
+measurement if it hits an object.  Below is the pseudocode for the sensor implementation.\\
 \begin{algorithm}[H]
     \caption{LiDAR Sensor Algorithm}\label{alg:lidar_sensor}
     \begin{algorithmic}
@@ -604,7 +602,7 @@ adding a small amount of gaussian noise to the distance measurements, which help
 Feature extraction is the process of detecting and extracting features from sensor data. In the context of SLAM, features
 are points of interest in the environment, such as corners, edges and lines. These features can then be used to create a map
 of the environment. There are many different techniques for feature extraction, such as the Harris corner detector and the
-split-and-merge algorithm. My implementation uses Seeded region growing, which was proposed by Gao et al.
+split-and-merge algorithm. My implementation uses seeded region growing, which was proposed by Gao et al.
 \cite{seeded_region_growing}.\\
 Seed segment detection works by observing a set of points from a single sweep. The algorithm starts by fitting a line through
 the given points. Then, in order for a seed segment to be further considered, it must satisfy the following two conditions:
@@ -857,8 +855,8 @@ but effective; it's computational efficiency is bounded by the number of landmar
 \subsection{LiDAR Sensor}
 To achieve a successful implementation of SLAM, I needed to ensure that the agent could accurately map the environment; which
 required a good sensor to be created. My implementation of the LiDAR sensor was successful, as it was able to replicate the
-behaviour of a real-world LiDAR sensor, whilst also being computationally reasonable. Table \ref{results_tab} shows various
-results of the sensor, showing how it's performance changes with the number of beams and the range of the sensor. \\
+behaviour of a real-world LiDAR sensor, whilst also being computationally reasonable. Table \ref{results_tab} shows how the sensor's
+run-time changes as you change the number of beams and the range of the sensor. \\
 \begin{table}[H]
     \centering
     \begin{tabular}{|r|c|c|c|c|}
@@ -894,7 +892,7 @@ results of the sensor, showing how it's performance changes with the number of b
         0.0349 \\
         \hline
     \end{tabular}
-    \caption{Table of sensor run-times with varying range and number of beams. The values are the average time taken
+    \caption{Table of sensor run-times with varying range (in pixels) and number of beams. The values are the average time taken
     to complete a scan in seconds.}
     \label{results_tab}
 \end{table}
@@ -924,7 +922,7 @@ Figure~\ref{fig:lidar_noise} shows how changing the noise parameter in the LiDAR
 Algorithm. The left plot shows the LiDAR sensor with no noise, the middle plot shows the LiDAR sensor with a small amount of
 noise and the right plot shows the LiDAR sensor with a large amount of noise. The plots help demonstrate the importance of
 finding an appropriate noise level for the sensor, as too much noise significantly impacts the accuracy of the Feature Extraction
-Algorithm. The noise parameter I settles on was 0.0005, shown in the middle plot.\\
+Algorithm. The noise parameter I settled on was 0.0005, shown in the middle plot.\\
 
 \subsection{Feature Extraction}
 
@@ -945,9 +943,12 @@ Algorithm. The noise parameter I settles on was 0.0005, shown in the middle plot
 The seeded region growing algorithm was successful in detecting features in the environment, whilst avoiding false positives.
 The algorithm was able to detect features such as corners and edges, which are important when attempting to localise the agent.
 We can see in Figure \ref{fig:feature_extraction} that the algorithm can understand the structure of the environment; the left scan
-shows the algorithm detecting a wall, whilst also detecting a corner and a gap in the wall. The right scan similarly shows the
-algorithm detecting a wall.\\
-\begin{figure}[H]
+shows the algorithm detecting a wall, without expanding the segment over the gap in the wall or into the corner. The right scan
+similarly shows the algorithm detecting a wall.\\
+One of the drawbacks of my implementation of the seeded region growing algorithm is that my implementation was only able to return
+one feature per scan, which makes it less practical for real-world applications. This can be seen in the left scan of Figure \ref{fig:feature_extraction},
+where the algorithm only detects the bottom wall, and fails to recognise the surrounding features. \\
+\begin{figure}[h]
     \centering
     \includegraphics[width=0.7\linewidth]{histo}
     \caption{Histogram of the distances between the detected features and the known landmarks. The red dashed line represents the
@@ -959,8 +960,8 @@ detected features with the known landmarks; as mentioned previously, the data as
 of the detected features with the endpoints of the known landmarks. Figure \ref{fig:FE_histogram} shows a histogram of these distances
 after allowing the data association algorithm to run whilst the agent was exploring the environment. The histogram shows that the
 algorithm was able to detect features reasonably well, as most of the data points are below the threshold.
-There were some outliers however, which when investigated were found to be where walls met at a corner; demonstrating the limitations
-of my implementation.\\
+There were some outliers however, which when investigated were found to be when the agent positioned itself close to a corner, which
+caused the algorithm to detect the corner as a new landmark.\\
 
 \subsection{Extended Kalman Filter Algorithm}
 
@@ -978,7 +979,7 @@ of my implementation.\\
     the agent isn't using the feature extraction algorithm}
     \label{fig:ekf_graphs}
 \end{figure}
-Figure \ref{fig:ekf_graphs} shows the results of the EKF algorithm without using the Feature Extraction algorithm; instead, it simply takes
+Figure~\ref{fig:ekf_graphs} shows the results of the EKF algorithm without using the feature extraction algorithm; instead, it simply takes
 the distance from the agent to each landmark and for every landmark, if the distance is less than a threshold, the measurement is used.
 The left graph shows the agent's path through the environment with the route coloured with a gradient. The right graph shows the agent's
 uncertainty, sigma, which has the same colour gradient to help provide context; the sigma values were calculated by taking the average of
@@ -1001,17 +1002,17 @@ Feature Extraction algorithm was important as it allowed me to ensure the EKF al
     \label{fig:FE_EKF_graphs}
 \end{figure}
 
-Figure \ref{fig:FE_EKF_graphs} shows the results of the EKF algorithm when using the Feature Extraction algorithm. The plot on the right demonstrates
-the impact of the Feature Extraction algorithm on the agent's path through the environment. The agent is able to better localise itself in the environment
-without the Feature Extraction algorithm as it can identify landmarks from a greater range of positions. Whilst highlighting the impact of using the Feature
-Extraction algorithm, this experiment does indicate that all the Feature Extraction algorithm, the Data Association algorithm and the EKF algorithm are all
+Figure \ref{fig:FE_EKF_graphs} shows the results of the EKF algorithm when using the feature extraction algorithm. The plot on the right demonstrates
+the impact of the feature extraction algorithm on the agent's path through the environment. The agent is able to better localise itself in the environment
+without the feature extraction algorithm as it can identify landmarks from a greater range of positions. Whilst highlighting the impact of using the feature
+extraction algorithm, this experiment also indicates that all the feature extraction algorithm, the data association algorithm and the EKF algorithm are all
 working as intended.\\
 
 \subsection{Exploration Strategy}
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.7\linewidth]{heatmap}
-    \caption[Short caption]{Robot exploration heatmap of the environment.}
+    \caption[Short caption]{Agent exploration heatmap of the environment after running the simulation for 5 minutes.}
     \label{fig:heatmap}
 \end{figure}
 My exploration strategy was successful in helping map the environment, as it was able to prevent the agent from colliding with
@@ -1022,7 +1023,7 @@ agent doing a good job of exploring the centre of the environment, but struggles
 
 \section{Discussion}
 \subsection{Overview}
-The results of my project show that I have achieved my aim of creating a basic SLAM implementation, entirely from scratch. I have
+The results of my project show that I have achieved my aim of creating a basic SLAM implementation. I have
 successfully implemented a LiDAR sensor, a feature extraction algorithm, an exploration strategy and an EKF algorithm. With regards
 to the original requirements of the project, I believe I have met all of them. My findings show that my LiDAR sensor is appropriate for
 the simulation environment, as provides a solid foundation for the feature extraction algorithm. The feature extraction algorithm was
@@ -1031,16 +1032,17 @@ itself in the environment, providing a good estimate of the agent's position and
 my project, as I have been able to create a basic SLAM implementation which was a complex and challenging task.\\
 
 \subsection{Algorithm Limitations}
-When discussing the performance of the seeded region growing algorithm, it is clear that my implementation is not perfect. One of the
+When discussing the performance of the seeded region growing algorithm, it is clear that my implementation is not perfect. As mentioned in
+my results section, one of the
 main issues with my implementation is that it can only detect one feature at a time, which is not ideal for real-world applications. For
-example, in situtations where there are multiple features close together, the algorithm may struggle to detect them all. This is because
-the LiDAR points passed to the algorithm are always passed in the same order, regardless of the agent's orientation. This means that
-when the feature extraction algorithm is called, it will always detect the same feature first, and will often miss other features consistently.
-This is a significant limitation of my implementation, as it means that the agent may not be able to accurately map the environment.\\
+example, in situtations where there are multiple features close together, the algorithm cannot detect them all. This is because the LiDAR points
+passed to the algorithm are always passed in the same order, regardless of the agent's orientation. This means that when the feature extraction
+algorithm is called, it will always detect the same feature first, and will often miss other features consistently. This is a significant limitation of my
+implementation, as it means that the agent may not be able to accurately map the environment.\\
 
 Furthermore, this issue then had a knock-on effect on the EKF algorithm, as it relies on the feature extraction algorithm to provide
-accurate landmarks. This meant that the EKF algorithm was not able to localise the agent as accurately as effectively, as the feature
-extraction algorithm did not always detect present features. This meant that the EKF algorithm didn't have enough information to
+accurate landmarks. This meant that the EKF algorithm was not able to localise the agent as accurately due to the feature
+extraction algorithm not always detect present features. This meant that the EKF algorithm didn't have enough information to
 accurately estimate the agent's position, making it less reliable. In order to combat this issue in the future, I would need to improve
 the seeded region growing algorithm to be able to detect multiple features at once, which would mean multiple feature measurements
 could be passed to the EKF algorithm. \\
@@ -1050,11 +1052,13 @@ In future work, I would also like to attempt to implement a different variant of
 is that it needed the locations of the landmarks to be known beforehand. This is not always possible in real-world applications, as the agent
 may not have any prior knowledge of the environment. To achieve this, I would need to implement a variant of the EKF algorithm that is able
 to dynamically add new landmarks to the map, and therefore increase or decrease the size of the state vector. This would be a significant
-improvement to my project, as it would make it more applicable to real-world scenarios.\\
+improvement to my project, as it would make it more applicable to real-world scenarios. Furthermore, I would like to implement an algorithm
+that can generate a map of the environment, as my implementation of the EKF solely focused on localisation. This would help address the
+entirety of the SLAM problem, rather than just the localisation aspect.\\
 
 The exploration strategy was another area of my project that could be improved. The wall tracking strategy was quick and easy to implement,
 but it was not the most efficient strategy for mapping the environment. This is because it would often get caught in loops, where it would simply
-drive around the same area, rather than exploring new areas. One way this could be improved is by implementing a more sophisticated exploration
+drive around the same area, rather than exploring new areas. One way this could be improved is by implementing a more sophisticated exploration strategy
 such as frontier-based exploration, which would encourage the agent to explore new areas of the environment. This would help the agent to build
 a more accurate map of the environment, as it would be able to explore more of it.\\
 
